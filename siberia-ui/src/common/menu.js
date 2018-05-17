@@ -23,6 +23,17 @@ const menuData = [
     ],
   },
   {
+    name: '发布',
+    icon: 'appstore-o',
+    path: 'deployement',
+    children: [
+      {
+        name: '发布通道',
+        path: 'pipeline',
+      },
+    ],
+  },
+  {
     name: '表单页',
     icon: 'form',
     path: 'form',
