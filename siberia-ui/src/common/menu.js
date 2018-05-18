@@ -23,12 +23,12 @@ const menuData = [
     ],
   },
   {
-    name: '发布',
-    icon: 'appstore-o',
-    path: 'deployement',
+    name: 'Deployment',
+    icon: 'dashboard',
+    path: 'deployment',
     children: [
       {
-        name: '发布通道',
+        name: 'Pipeline',
         path: 'pipeline',
       },
     ],
