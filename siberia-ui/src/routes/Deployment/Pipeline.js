@@ -24,14 +24,14 @@ const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 const { Search } = Input;
 
-@connect(({ list, loading }) => ({
-  list,
-  loading: loading.models.list,
+@connect(({ pipeline, loading }) => ({
+  pipeline,
+  loading: loading.models.pipeline,
 }))
 export default class BasicList extends PureComponent {
   componentDidMount() {
     this.props.dispatch({
-      type: 'list/fetch',
+      type: 'pipeline/fetch',
       payload: {
         count: 5,
       },
@@ -39,7 +39,8 @@ export default class BasicList extends PureComponent {
   }
 
   render() {
-    const { list: { list }, loading } = this.props;
+    console.log(this.props);
+    const { pipeline: { pipelineList }, loading } = this.props;
 
     const Info = ({ title, value, bordered }) => (
       <div className={styles.headerInfo}>
@@ -135,7 +136,7 @@ export default class BasicList extends PureComponent {
               rowKey="id"
               loading={loading}
               pagination={paginationProps}
-              dataSource={list}
+              dataSource={pipelineList}
               renderItem={item => (
                 <List.Item actions={[<a>编辑</a>, <MoreBtn />]}>
                   <List.Item.Meta

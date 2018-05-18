@@ -24,7 +24,7 @@ const menuData = [
   },
   {
     name: 'Deployment',
-    icon: 'dashboard',
+    icon: 'appstore-o',
     path: 'deployment',
     children: [
       {

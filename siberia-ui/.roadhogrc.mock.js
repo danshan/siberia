@@ -7,6 +7,8 @@ import { getProfileAdvancedData } from './mock/profile';
 import { getNotices } from './mock/notices';
 import { format, delay } from 'roadhog-api-doc';
 
+import { paginatePipelineList } from './mock/pipeline';
+
 // 是否禁用代理
 const noProxy = process.env.NO_PROXY === 'true';
 
@@ -135,6 +137,8 @@ const proxy = {
       path: '/base/category/list',
     });
   },
+
+  'GET /api/pipelines': paginatePipelineList,
 };
 
 export default (noProxy ? {} : delay(proxy, 1000));
