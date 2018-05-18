@@ -4,21 +4,22 @@ export default {
   namespace: 'pipeline',
 
   state: {
-    pipelineList: [],
+    pipelineList: {},
+    pipeline: {},
   },
 
   effects: {
-    *fetch({ payload }, { call, put }) {
+    *paginatePipelineList({ payload }, { call, put }) {
       const response = yield call(paginatePipelineList, payload);
       yield put({
-        type: 'queryList',
-        payload: Array.isArray(response) ? response : [],
+        type: 'paginate',
+        payload: response,
       });
     },
   },
 
   reducers: {
-    queryList(state, action) {
+    paginate(state, action) {
       return {
         ...state,
         pipelineList: action.payload,

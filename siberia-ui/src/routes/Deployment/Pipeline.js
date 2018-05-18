@@ -13,7 +13,6 @@ import {
   Icon,
   Dropdown,
   Menu,
-  Avatar,
   Modal,
   Form,
 } from 'antd';
@@ -67,7 +66,7 @@ export default class Pipeline extends PureComponent {
 
   componentDidMount() {
     this.props.dispatch({
-      type: 'pipeline/fetch',
+      type: 'pipeline/paginatePipelineList',
       payload: {
         count: 5,
       },
@@ -97,7 +96,7 @@ export default class Pipeline extends PureComponent {
         <RadioGroup defaultValue="all">
           <RadioButton value="all">全部</RadioButton>
           <RadioButton value="progress">进行中</RadioButton>
-          <RadioButton value="waiting">等待中</RadioButton>
+          <RadioButton value="done">已完成</RadioButton>
         </RadioGroup>
         <Search className={styles.extraContentSearch} placeholder="请输入" onSearch={() => ({})} />
       </div>
@@ -110,15 +109,15 @@ export default class Pipeline extends PureComponent {
       total: 50,
     };
 
-    const ListContent = ({ data: { owner, createdAt, percent, status } }) => (
+    const ListContent = ({ data: { createBy, createTime, percent, status } }) => (
       <div className={styles.listContent}>
         <div className={styles.listContentItem}>
           <span>Owner</span>
-          <p>{owner}</p>
+          <p>{createBy}</p>
         </div>
         <div className={styles.listContentItem}>
           <span>开始时间</span>
-          <p>{moment(createdAt).format('YYYY-MM-DD HH:mm')}</p>
+          <p>{moment(createTime).format('YYYY-MM-DD HH:mm')}</p>
         </div>
         <div className={styles.listContentItem}>
           <Progress percent={percent} status={status} strokeWidth={6} style={{ width: 180 }} />
@@ -188,13 +187,12 @@ export default class Pipeline extends PureComponent {
               rowKey="id"
               loading={loading}
               pagination={paginationProps}
-              dataSource={pipelineList}
+              dataSource={pipelineList.data.list}
               renderItem={item => (
                 <List.Item actions={[<a>编辑</a>, <MoreBtn />]}>
                   <List.Item.Meta
-                    avatar={<Avatar src={item.logo} shape="square" size="large" />}
                     title={<a href={item.href}>{item.title}</a>}
-                    description={item.subDescription}
+                    description={item.description}
                   />
                   <ListContent data={item} />
                 </List.Item>
