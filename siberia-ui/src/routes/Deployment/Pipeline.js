@@ -14,6 +14,8 @@ import {
   Dropdown,
   Menu,
   Avatar,
+  Modal,
+  Form,
 } from 'antd';
 
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
@@ -24,11 +26,45 @@ const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 const { Search } = Input;
 
+const CreateForm = Form.create()(props => {
+  const { modalVisible, form, handleAdd, handleModalVisible } = props;
+  const okHandle = () => {
+    form.validateFields((err, fieldsValue) => {
+      if (err) return;
+      form.resetFields();
+      handleAdd(fieldsValue);
+    });
+  };
+  return (
+    <Modal
+      title="新建发布流水线"
+      visible={modalVisible}
+      onOk={okHandle}
+      onCancel={() => handleModalVisible()}
+    >
+      <Form.Item labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="标题">
+        {form.getFieldDecorator('title', {
+          rules: [{ required: true, message: 'Please input pipeline title...' }],
+        })(<Input placeholder="请输入标题" />)}
+      </Form.Item>
+      <Form.Item labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="描述">
+        {form.getFieldDecorator('description', {
+          rules: [{ required: true, message: 'Please input some description...' }],
+        })(<Input placeholder="请输入描述" />)}
+      </Form.Item>
+    </Modal>
+  );
+});
+
 @connect(({ pipeline, loading }) => ({
   pipeline,
   loading: loading.models.pipeline,
 }))
-export default class BasicList extends PureComponent {
+export default class Pipeline extends PureComponent {
+  state = {
+    modalVisible: false,
+  };
+
   componentDidMount() {
     this.props.dispatch({
       type: 'pipeline/fetch',
@@ -38,9 +74,15 @@ export default class BasicList extends PureComponent {
     });
   }
 
+  handleModalVisible = flag => {
+    this.setState({
+      modalVisible: !!flag,
+    });
+  };
+
   render() {
-    console.log(this.props);
     const { pipeline: { pipelineList }, loading } = this.props;
+    const { modalVisible } = this.state;
 
     const Info = ({ title, value, bordered }) => (
       <div className={styles.headerInfo}>
@@ -103,6 +145,11 @@ export default class BasicList extends PureComponent {
       </Dropdown>
     );
 
+    const parentMethods = {
+      handleAdd: this.handleAdd,
+      handleModalVisible: this.handleModalVisible,
+    };
+
     return (
       <PageHeaderLayout>
         <div className={styles.standardList}>
@@ -128,8 +175,13 @@ export default class BasicList extends PureComponent {
             bodyStyle={{ padding: '0 32px 40px 32px' }}
             extra={extraContent}
           >
-            <Button type="dashed" style={{ width: '100%', marginBottom: 8 }} icon="plus">
-              添加
+            <Button
+              type="dashed"
+              onClick={() => this.handleModalVisible(true)}
+              style={{ width: '100%', marginBottom: 8 }}
+              icon="plus"
+            >
+              新建
             </Button>
             <List
               size="large"
@@ -149,6 +201,7 @@ export default class BasicList extends PureComponent {
               )}
             />
           </Card>
+          <CreateForm {...parentMethods} modalVisible={modalVisible} />
         </div>
       </PageHeaderLayout>
     );
