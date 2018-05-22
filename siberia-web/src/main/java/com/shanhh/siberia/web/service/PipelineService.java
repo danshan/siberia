@@ -2,6 +2,7 @@ package com.shanhh.siberia.web.service;
 
 import com.github.pagehelper.PageInfo;
 import com.shanhh.siberia.client.dto.pipeline.PipelineDTO;
+import com.shanhh.siberia.client.dto.pipeline.PipelineDeploymentDTO;
 
 /**
  * @author shanhonghao
@@ -9,4 +10,6 @@ import com.shanhh.siberia.client.dto.pipeline.PipelineDTO;
  */
 public interface PipelineService {
     PageInfo<PipelineDTO> paginatePipelines(int pageNum, int pageSize);
+
+    PageInfo<PipelineDeploymentDTO> paginatePipelineDeployments(int max, int min);
 }

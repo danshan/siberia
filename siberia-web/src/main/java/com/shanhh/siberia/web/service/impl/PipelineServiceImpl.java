@@ -3,6 +3,7 @@ package com.shanhh.siberia.web.service.impl;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import com.shanhh.siberia.client.dto.pipeline.PipelineDTO;
+import com.shanhh.siberia.client.dto.pipeline.PipelineDeploymentDTO;
 import com.shanhh.siberia.web.service.PipelineService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,15 @@ public class PipelineServiceImpl implements PipelineService {
         List<PipelineDTO> results = Lists.newLinkedList();
         for (int i = 0; i < pageSize; i++) {
             results.add(PipelineDTO.mock());
+        }
+        return new PageInfo<>(results);
+    }
+
+    @Override
+    public PageInfo<PipelineDeploymentDTO> paginatePipelineDeployments(int pageNum, int pageSize) {
+        List<PipelineDeploymentDTO> results = Lists.newLinkedList();
+        for (int i = 0; i < pageSize; i++) {
+            results.add(PipelineDeploymentDTO.mock());
         }
         return new PageInfo<>(results);
     }

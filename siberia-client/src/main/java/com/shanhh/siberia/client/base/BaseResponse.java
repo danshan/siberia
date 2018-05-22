@@ -1,4 +1,4 @@
-package com.shanhh.siberia.client.dto.pipeline;
+package com.shanhh.siberia.client.base;
 
 import com.shanhh.siberia.client.base.RespCode;
 import lombok.AllArgsConstructor;

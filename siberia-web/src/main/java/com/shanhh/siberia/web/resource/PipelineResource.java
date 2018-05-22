@@ -1,8 +1,9 @@
 package com.shanhh.siberia.web.resource;
 
 import com.github.pagehelper.PageInfo;
-import com.shanhh.siberia.client.dto.pipeline.BaseResponse;
+import com.shanhh.siberia.client.base.BaseResponse;
 import com.shanhh.siberia.client.dto.pipeline.PipelineDTO;
+import com.shanhh.siberia.client.dto.pipeline.PipelineDeploymentDTO;
 import com.shanhh.siberia.web.service.PipelineService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -34,7 +35,7 @@ public class PipelineResource {
 
     @RequestMapping(method = RequestMethod.GET)
     @ApiOperation(value = "paginate pipelines", response = BaseResponse.class)
-    public BaseResponse paginatePipeline(
+    public BaseResponse paginatePipelines(
             @ApiParam(value = "start page index", required = false, defaultValue = "1")
             @RequestParam(value = "pageNum", required = false, defaultValue = "1") int pageNum,
 
@@ -42,6 +43,20 @@ public class PipelineResource {
             @RequestParam(value = "pageSize", required = false, defaultValue = LIMIT_DEFAULT) int pageSize
     ) {
         PageInfo<PipelineDTO> pageInfo = pipelineService.paginatePipelines(
+                Math.max(pageNum, 1), Math.min(pageSize, LIMIT_MAX));
+        return new BaseResponse(pageInfo);
+    }
+
+    @RequestMapping(value = "{pipelineId}/deployments", method = RequestMethod.GET)
+    @ApiOperation(value = "paginate pipeline deployments for pipeline id", response = BaseResponse.class)
+    public BaseResponse paginatePipelineDeployments(
+            @ApiParam(value = "start page index", required = false, defaultValue = "1")
+            @RequestParam(value = "pageNum", required = false, defaultValue = "1") int pageNum,
+
+            @ApiParam(value = "page size", required = false, defaultValue = LIMIT_DEFAULT)
+            @RequestParam(value = "pageSize", required = false, defaultValue = LIMIT_DEFAULT) int pageSize
+    ) {
+        PageInfo<PipelineDeploymentDTO> pageInfo = pipelineService.paginatePipelineDeployments(
                 Math.max(pageNum, 1), Math.min(pageSize, LIMIT_MAX));
         return new BaseResponse(pageInfo);
     }
