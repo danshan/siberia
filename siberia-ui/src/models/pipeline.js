@@ -1,10 +1,14 @@
-import { paginatePipelineList } from '../services/api';
+import { paginatePipelineList, loadPipeline } from '../services/api';
 
 export default {
   namespace: 'pipeline',
 
   state: {
-    pipelineList: {},
+    pipelineList: {
+      data: {
+        list: [],
+      },
+    },
     pipeline: {},
   },
 
@@ -16,6 +20,14 @@ export default {
         payload: response,
       });
     },
+
+    *loadPipeline({ payload }, { call, put }) {
+      const response = yield call(loadPipeline, payload);
+      yield put({
+        type: 'load',
+        payload: response,
+      });
+    },
   },
 
   reducers: {
@@ -23,6 +35,13 @@ export default {
       return {
         ...state,
         pipelineList: action.payload,
+      };
+    },
+
+    load(state, action) {
+      return {
+        ...state,
+        pipeline: action.payload,
       };
     },
   },

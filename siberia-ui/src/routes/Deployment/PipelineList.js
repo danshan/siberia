@@ -105,8 +105,8 @@ export default class Pipeline extends PureComponent {
     const paginationProps = {
       showSizeChanger: true,
       showQuickJumper: true,
-      pageSize: 5,
-      total: 50,
+      pageSize: pipelineList.data.size,
+      total: pipelineList.data.total,
     };
 
     const ListContent = ({ data: { createBy, createTime, percent, status } }) => (
@@ -187,7 +187,7 @@ export default class Pipeline extends PureComponent {
               rowKey="id"
               loading={loading}
               pagination={paginationProps}
-              dataSource={pipelineList}
+              dataSource={pipelineList.data.list}
               renderItem={item => (
                 <List.Item actions={[<a>编辑</a>, <MoreBtn />]}>
                   <List.Item.Meta

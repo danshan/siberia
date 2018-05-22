@@ -79,6 +79,10 @@ export async function queryNotices() {
 }
 
 export async function paginatePipelineList() {
-  console.log('fuck');
   return request('/api/pipelines');
+}
+
+export async function loadPipeline(params) {
+  console.log(params);
+  return request(`/api/pipeline/${params.pipelineId}`);
 }

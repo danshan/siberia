@@ -1,5 +1,3 @@
-import { parse } from 'url';
-
 const pipelineList = {
   respCode: {
     code: '200',
@@ -120,16 +118,28 @@ const pipelineList = {
   },
 };
 
-export function paginatePipelineList(req, res, u) {
-  let url = u;
-  if (!url || Object.prototype.toString.call(url) !== '[object String]') {
-    url = req.url; // eslint-disable-line
-  }
+const pipeline = {
+  id: 2051206487,
+  title: 'Vue',
+  description: '城镇中有那么多的酒馆，她却偏偏走进了我的酒馆',
+  createBy: '曲丽丽',
+  updateBy: '鱼酱',
+  createTime: '2018-05-17 14:18:40',
+  updateTime: '2018-05-18 04:18:40',
+};
 
-  const params = parse(url, true).query;
-  const count = params.count * 1 || 20; // eslint-disable-line
-
+export function paginatePipelineList(req, res) {
   const result = pipelineList;
+
+  if (res && res.json) {
+    res.json(result);
+  } else {
+    return result;
+  }
+}
+
+export function loadPipeline(req, res) {
+  const result = pipeline;
 
   if (res && res.json) {
     res.json(result);
@@ -140,4 +150,5 @@ export function paginatePipelineList(req, res, u) {
 
 export default {
   paginatePipelineList,
+  loadPipeline,
 };
