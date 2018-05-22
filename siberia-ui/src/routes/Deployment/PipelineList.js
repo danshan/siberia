@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import moment from 'moment';
 import { connect } from 'dva';
+import { Link } from 'dva/router';
 import {
   List,
   Card,
@@ -191,7 +192,7 @@ export default class Pipeline extends PureComponent {
               renderItem={item => (
                 <List.Item actions={[<a>编辑</a>, <MoreBtn />]}>
                   <List.Item.Meta
-                    title={<a href={item.href}>{item.title}</a>}
+                    title={<Link to={`pipeline/${item.id}`}>{item.title}</Link>}
                     description={item.description}
                   />
                   <ListContent data={item} />

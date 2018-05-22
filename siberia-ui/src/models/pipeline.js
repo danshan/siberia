@@ -6,6 +6,8 @@ export default {
   state: {
     pipelineList: {
       data: {
+        total: 0,
+        size: 0,
         list: [],
       },
     },

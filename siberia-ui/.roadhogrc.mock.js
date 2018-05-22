@@ -142,4 +142,8 @@ const proxy = {
   'GET /api/pipeline/:pipelineId': loadPipeline,
 };
 
-export default (noProxy ? {} : delay(proxy, 1000));
+const localhost = {
+  'GET *': 'http://127.0.0.1:8080',
+};
+
+export default (noProxy ? localhost : delay(proxy, 1000));
