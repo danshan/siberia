@@ -19,7 +19,7 @@ import {
 
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
-import styles from './Pipeline.less';
+import styles from './PipelineList.less';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -187,7 +187,7 @@ export default class Pipeline extends PureComponent {
               rowKey="id"
               loading={loading}
               pagination={paginationProps}
-              dataSource={pipelineList.data.list}
+              dataSource={pipelineList}
               renderItem={item => (
                 <List.Item actions={[<a>编辑</a>, <MoreBtn />]}>
                   <List.Item.Meta

@@ -29,7 +29,7 @@ const menuData = [
     children: [
       {
         name: '发布流水线',
-        path: 'pipeline',
+        path: 'pipelinelist',
       },
     ],
   },
