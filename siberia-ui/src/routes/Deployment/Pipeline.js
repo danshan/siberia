@@ -1,6 +1,5 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
-import moment from 'moment';
 import {
   Row,
   Col,
@@ -75,6 +74,12 @@ export default class TableList extends PureComponent {
     const { dispatch } = this.props;
     dispatch({
       type: 'pipeline/loadPipeline',
+      payload: {
+        pipelineId: this.props.match.params.pipelineId,
+      },
+    });
+    dispatch({
+      type: 'pipeline/paginatePipelineDeploymentList',
       payload: {
         pipelineId: this.props.match.params.pipelineId,
       },
@@ -315,21 +320,28 @@ export default class TableList extends PureComponent {
   }
 
   render() {
-    const { pipeline: { pipeline }, loading } = this.props;
+    const { pipeline: { pipeline, pipelineDeploymentList }, loading } = this.props;
     const { selectedRows, modalVisible } = this.state;
+    console.log(pipelineDeploymentList.data.list);
+
+    const content = (
+      <div className={styles.pageHeaderContent}>
+        <p>{pipeline.description}</p>
+      </div>
+    );
 
     const columns = [
       {
-        title: '规则编号',
-        dataIndex: 'no',
+        title: 'Project',
+        dataIndex: 'project',
       },
       {
-        title: '描述',
-        dataIndex: 'description',
+        title: 'Module',
+        dataIndex: 'module',
       },
       {
-        title: '服务调用次数',
-        dataIndex: 'callNo',
+        title: 'Build No.',
+        dataIndex: 'buildNo',
         sorter: true,
         align: 'right',
         render: val => `${val} 万`,
@@ -364,9 +376,8 @@ export default class TableList extends PureComponent {
       },
       {
         title: '更新时间',
-        dataIndex: 'updatedAt',
+        dataIndex: 'updateTime',
         sorter: true,
-        render: val => <span>{moment(val).format('YYYY-MM-DD HH:mm:ss')}</span>,
       },
       {
         title: '操作',
@@ -393,7 +404,7 @@ export default class TableList extends PureComponent {
     };
 
     return (
-      <PageHeaderLayout title="查询表格">
+      <PageHeaderLayout title={pipeline.title} content={content}>
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
@@ -415,10 +426,11 @@ export default class TableList extends PureComponent {
             <StandardTable
               selectedRows={selectedRows}
               loading={loading}
-              data={pipeline}
+              data={pipelineDeploymentList.data}
               columns={columns}
               onSelectRow={this.handleSelectRows}
               onChange={this.handleStandardTableChange}
+              rowKey="id"
             />
           </div>
         </Card>

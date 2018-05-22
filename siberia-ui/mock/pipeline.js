@@ -128,6 +128,156 @@ const pipeline = {
   updateTime: '2018-05-18 04:18:40',
 };
 
+const pipelineDeploymentList = {
+  respCode: {
+    code: '200',
+    message: 'success',
+  },
+  data: {
+    pageNum: 1,
+    pageSize: 10,
+    size: 10,
+    startRow: 0,
+    endRow: 9,
+    total: 10,
+    pages: 1,
+    list: [
+      {
+        id: 12449006,
+        pipelineId: 1207371172,
+        project: 'apple',
+        module: 'apple-ui',
+        buildNo: 0,
+        taskList: null,
+        createBy: '仲尼',
+        updateBy: '吴加好',
+        createTime: '2018-05-21 14:54:05',
+        updateTime: '2018-05-22 00:54:05',
+      },
+      {
+        id: 23403620,
+        pipelineId: 1561614646,
+        project: 'amazon',
+        module: 'amazon-ui',
+        buildNo: 0,
+        taskList: null,
+        createBy: '朱偏右',
+        updateBy: '乐哥',
+        createTime: '2018-05-21 10:54:05',
+        updateTime: '2018-05-21 20:54:05',
+      },
+      {
+        id: 1710287873,
+        pipelineId: 1604255916,
+        project: 'google',
+        module: 'google-ui',
+        buildNo: 0,
+        taskList: null,
+        createBy: '吴加好',
+        updateBy: '乐哥',
+        createTime: '2018-05-21 12:54:05',
+        updateTime: '2018-05-21 22:54:05',
+      },
+      {
+        id: 146669268,
+        pipelineId: 272465141,
+        project: 'google',
+        module: 'google-ui',
+        buildNo: 0,
+        taskList: null,
+        createBy: '朱偏右',
+        updateBy: '仲尼',
+        createTime: '2018-05-21 10:54:05',
+        updateTime: '2018-05-21 22:54:05',
+      },
+      {
+        id: 433897083,
+        pipelineId: 1129606955,
+        project: 'amazon',
+        module: 'amazon-service',
+        buildNo: 0,
+        taskList: null,
+        createBy: '谭小仪',
+        updateBy: '吴加好',
+        createTime: '2018-05-21 16:54:05',
+        updateTime: '2018-05-21 22:54:05',
+      },
+      {
+        id: 200401768,
+        pipelineId: 718713811,
+        project: 'google',
+        module: 'google-ui',
+        buildNo: 0,
+        taskList: null,
+        createBy: '朱偏右',
+        updateBy: '付小小',
+        createTime: '2018-05-21 10:54:05',
+        updateTime: '2018-05-22 02:54:05',
+      },
+      {
+        id: 1443806493,
+        pipelineId: 1262855705,
+        project: 'amazon',
+        module: 'amazon-service',
+        buildNo: 0,
+        taskList: null,
+        createBy: '谭小仪',
+        updateBy: '仲尼',
+        createTime: '2018-05-21 10:54:05',
+        updateTime: '2018-05-22 02:54:05',
+      },
+      {
+        id: 1991393904,
+        pipelineId: 851348246,
+        project: 'amazon',
+        module: 'amazon-gateway',
+        buildNo: 0,
+        taskList: null,
+        createBy: '周星星',
+        updateBy: '朱偏右',
+        createTime: '2018-05-21 10:54:05',
+        updateTime: '2018-05-22 02:54:05',
+      },
+      {
+        id: 423881159,
+        pipelineId: 663889163,
+        project: 'apple',
+        module: 'apple-gateway',
+        buildNo: 0,
+        taskList: null,
+        createBy: '仲尼',
+        updateBy: '林东东',
+        createTime: '2018-05-21 10:54:05',
+        updateTime: '2018-05-21 20:54:05',
+      },
+      {
+        id: 947472733,
+        pipelineId: 1451454117,
+        project: 'amazon',
+        module: 'amazon-service',
+        buildNo: 0,
+        taskList: null,
+        createBy: '周星星',
+        updateBy: '乐哥',
+        createTime: '2018-05-21 10:54:05',
+        updateTime: '2018-05-21 22:54:05',
+      },
+    ],
+    prePage: 0,
+    nextPage: 0,
+    isFirstPage: true,
+    isLastPage: true,
+    hasPreviousPage: false,
+    hasNextPage: false,
+    navigatePages: 8,
+    navigatepageNums: [1],
+    navigateFirstPage: 1,
+    navigateLastPage: 1,
+    firstPage: 1,
+    lastPage: 1,
+  },
+};
+
 export function paginatePipelineList(req, res) {
   const result = pipelineList;
 
@@ -140,6 +290,16 @@ export function paginatePipelineList(req, res) {
 
 export function loadPipeline(req, res) {
   const result = pipeline;
+
+  if (res && res.json) {
+    res.json(result);
+  } else {
+    return result;
+  }
+}
+
+export function paginatePipelineDeploymentList(req, res) {
+  const result = pipelineDeploymentList;
 
   if (res && res.json) {
     res.json(result);

@@ -83,6 +83,9 @@ export async function paginatePipelineList() {
 }
 
 export async function loadPipeline(params) {
-  console.log(params);
-  return request(`/api/pipeline/${params.pipelineId}`);
+  return request(`/api/pipelines/${params.pipelineId}`);
+}
+
+export async function paginatePipelineDeploymentList(params) {
+  return request(`/api/pipelines/${params.pipelineId}/deployments`);
 }
