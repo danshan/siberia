@@ -311,4 +311,5 @@ export function paginatePipelineDeploymentList(req, res) {
 export default {
   paginatePipelineList,
   loadPipeline,
+  paginatePipelineDeploymentList,
 };

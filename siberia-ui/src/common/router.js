@@ -94,6 +94,9 @@ export const getRouterData = app => {
     '/deployment/pipeline/:pipelineId': {
       component: dynamicWrapper(app, ['pipeline'], () => import('../routes/Deployment/Pipeline')),
     },
+    '/deployment/tasklist': {
+      component: dynamicWrapper(app, ['task'], () => import('../routes/Deployment/TaskList')),
+    },
     '/form/basic-form': {
       component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/BasicForm')),
     },

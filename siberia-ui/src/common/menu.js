@@ -31,6 +31,10 @@ const menuData = [
         name: '发布流水线',
         path: 'pipelinelist',
       },
+      {
+        name: '发布记录',
+        path: 'tasklist',
+      },
     ],
   },
   {

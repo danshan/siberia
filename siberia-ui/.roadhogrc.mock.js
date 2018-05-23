@@ -13,6 +13,8 @@ import {
   paginatePipelineDeploymentList,
 } from './mock/pipeline';
 
+import { paginateTaskList } from './mock/task';
+
 // 是否禁用代理
 const noProxy = process.env.NO_PROXY === 'true';
 
@@ -142,13 +144,19 @@ const proxy = {
     });
   },
 
+  // pipelines
+
   'GET /api/pipelines': paginatePipelineList,
   'GET /api/pipelines/:pipelineId': loadPipeline,
   'GET /api/pipelines/:pipelineId/deployments': paginatePipelineDeploymentList,
+
+  // tasks
+
+  'GET /api/tasks': paginateTaskList,
 };
 
 const localhost = {
-  'GET *': 'http://127.0.0.1:8080',
+  'GET /api/(.*)': 'http://127.0.0.1:8080/api/',
 };
 
 export default (noProxy ? localhost : delay(proxy, 1000));

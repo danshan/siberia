@@ -78,6 +78,8 @@ export async function queryNotices() {
   return request('/api/notices');
 }
 
+// pipelines
+
 export async function paginatePipelineList() {
   return request('/api/pipelines');
 }
@@ -88,4 +90,10 @@ export async function loadPipeline(params) {
 
 export async function paginatePipelineDeploymentList(params) {
   return request(`/api/pipelines/${params.pipelineId}/deployments`);
+}
+
+// tasks
+
+export async function paginateTaskList() {
+  return request('/api/tasks');
 }

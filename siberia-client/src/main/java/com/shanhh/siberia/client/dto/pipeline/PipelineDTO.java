@@ -2,9 +2,8 @@ package com.shanhh.siberia.client.dto.pipeline;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.apache.commons.lang3.RandomUtils;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -17,6 +16,7 @@ import java.util.Date;
  */
 @Data
 @NoArgsConstructor
+@ToString(exclude = {"createTime", "updateTime"})
 public class PipelineDTO implements Serializable {
 
     private int id;
@@ -26,11 +26,6 @@ public class PipelineDTO implements Serializable {
     private String updateBy;
     private Date createTime;
     private Date updateTime;
-
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
-    }
 
     public static PipelineDTO mock() {
         String[] title = {
