@@ -5,6 +5,8 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.apache.commons.lang3.RandomUtils;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -20,7 +22,11 @@ import java.util.Date;
 public class PipelineDTO implements Serializable {
 
     private int id;
+    @NotNull
+    @Size(min = 1, max = 255)
     private String title;
+    @NotNull
+    @Size(min = 0, max = 65535)
     private String description;
     private String createBy;
     private String updateBy;

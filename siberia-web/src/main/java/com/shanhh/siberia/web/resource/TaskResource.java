@@ -1,6 +1,5 @@
 package com.shanhh.siberia.web.resource;
 
-import com.github.pagehelper.PageInfo;
 import com.shanhh.siberia.client.base.BaseResponse;
 import com.shanhh.siberia.client.dto.task.TaskDTO;
 import com.shanhh.siberia.web.service.TaskService;
@@ -8,6 +7,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -35,14 +35,14 @@ public class TaskResource {
     @RequestMapping(method = RequestMethod.GET)
     @ApiOperation(value = "paginate tasks", response = BaseResponse.class)
     public BaseResponse paginatePipelines(
-            @ApiParam(value = "start page index", required = false, defaultValue = "1")
-            @RequestParam(value = "pageNum", required = false, defaultValue = "1") int pageNum,
+            @ApiParam(value = "start page index", required = false, defaultValue = "0")
+            @RequestParam(value = "pageNum", required = false, defaultValue = "0") int pageNum,
 
             @ApiParam(value = "page size", required = false, defaultValue = LIMIT_DEFAULT)
             @RequestParam(value = "pageSize", required = false, defaultValue = LIMIT_DEFAULT) int pageSize
     ) {
-        PageInfo<TaskDTO> pageInfo = taskService.paginateTasks(
-                Math.max(pageNum, 1), Math.min(pageSize, LIMIT_MAX));
+        Page<TaskDTO> pageInfo = taskService.paginateTasks(
+                Math.max(pageNum, 0), Math.min(pageSize, LIMIT_MAX));
         return new BaseResponse(pageInfo);
     }
 

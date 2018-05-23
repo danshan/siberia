@@ -1,9 +1,8 @@
 package com.shanhh.siberia.web.service;
 
-import com.github.pagehelper.PageInfo;
-import com.shanhh.siberia.client.base.BaseResponse;
 import com.shanhh.siberia.client.dto.pipeline.PipelineDTO;
 import com.shanhh.siberia.client.dto.pipeline.PipelineDeploymentDTO;
+import org.springframework.data.domain.Page;
 
 import java.util.Optional;
 
@@ -12,9 +11,9 @@ import java.util.Optional;
  * @since 2018-05-18 15:58
  */
 public interface PipelineService {
-    PageInfo<PipelineDTO> paginatePipelines(int pageNum, int pageSize);
+    Page<PipelineDTO> paginatePipelines(int pageNum, int pageSize);
 
-    PageInfo<PipelineDeploymentDTO> paginatePipelineDeployments(int pageNum, int pageSize);
+    Page<PipelineDeploymentDTO> paginatePipelineDeployments(int pageNum, int pageSize);
 
     Optional<PipelineDTO> loadPipeline(int pipelineId);
 

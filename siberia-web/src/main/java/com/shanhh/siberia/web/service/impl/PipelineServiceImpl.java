@@ -1,6 +1,5 @@
 package com.shanhh.siberia.web.service.impl;
 
-import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import com.shanhh.siberia.client.dto.pipeline.PipelineDTO;
 import com.shanhh.siberia.client.dto.pipeline.PipelineDeploymentDTO;
@@ -10,6 +9,9 @@ import com.shanhh.siberia.web.service.PipelineService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -28,21 +30,18 @@ public class PipelineServiceImpl implements PipelineService {
     private PipelineRepo pipelineRepo;
 
     @Override
-    public PageInfo<PipelineDTO> paginatePipelines(int pageNum, int pageSize) {
-        List<PipelineDTO> results = Lists.newLinkedList();
-        for (int i = 0; i < pageSize; i++) {
-            results.add(PipelineDTO.mock());
-        }
-        return new PageInfo<>(results);
+    public Page<PipelineDTO> paginatePipelines(int pageNum, int pageSize) {
+        Page<PipelineDTO> pipelines = pipelineRepo.findAll(new PageRequest(pageNum, pageSize)).map(this::convert);
+        return pipelines;
     }
 
     @Override
-    public PageInfo<PipelineDeploymentDTO> paginatePipelineDeployments(int pageNum, int pageSize) {
+    public Page<PipelineDeploymentDTO> paginatePipelineDeployments(int pageNum, int pageSize) {
         List<PipelineDeploymentDTO> results = Lists.newLinkedList();
         for (int i = 0; i < pageSize; i++) {
             results.add(PipelineDeploymentDTO.mock());
         }
-        return new PageInfo<>(results);
+        return new PageImpl<>(results);
     }
 
     @Override
@@ -66,9 +65,13 @@ public class PipelineServiceImpl implements PipelineService {
         pipeline.setUpdateBy(StringUtils.trimToEmpty(createBy));
         Pipeline saved = pipelineRepo.save(pipeline);
 
-        PipelineDTO result = new PipelineDTO();
-        BeanUtils.copyProperties(saved, result);
-        return result;
+        return convert(saved);
+    }
+
+    private PipelineDTO convert(Pipeline po) {
+        PipelineDTO dto = new PipelineDTO();
+        BeanUtils.copyProperties(po, dto);
+        return dto;
     }
 
 }

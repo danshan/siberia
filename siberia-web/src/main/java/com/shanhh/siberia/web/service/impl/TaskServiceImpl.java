@@ -1,10 +1,11 @@
 package com.shanhh.siberia.web.service.impl;
 
-import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import com.shanhh.siberia.client.dto.task.TaskDTO;
 import com.shanhh.siberia.web.service.TaskService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,11 +18,11 @@ import java.util.List;
 @Slf4j
 public class TaskServiceImpl implements TaskService {
     @Override
-    public PageInfo<TaskDTO> paginateTasks(int pageNum, int pageSize) {
+    public Page<TaskDTO> paginateTasks(int pageNum, int pageSize) {
         List<TaskDTO> results = Lists.newLinkedList();
         for (int i = 0; i < pageSize; i++) {
             results.add(TaskDTO.mock());
         }
-        return new PageInfo<>(results);
+        return new PageImpl(results);
     }
 }

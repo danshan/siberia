@@ -4,14 +4,7 @@ const tasklist = {
     message: 'success',
   },
   data: {
-    pageNum: 1,
-    pageSize: 10,
-    size: 10,
-    startRow: 0,
-    endRow: 9,
-    total: 10,
-    pages: 1,
-    list: [
+    content: [
       {
         id: 287262873,
         pipelineId: 1599502711,
@@ -163,18 +156,14 @@ const tasklist = {
         updateTime: '2018-05-22 20:45:20',
       },
     ],
-    prePage: 0,
-    nextPage: 0,
-    isFirstPage: true,
-    isLastPage: true,
-    hasPreviousPage: false,
-    hasNextPage: false,
-    navigatePages: 8,
-    navigatepageNums: [1],
-    navigateFirstPage: 1,
-    navigateLastPage: 1,
-    firstPage: 1,
-    lastPage: 1,
+    last: true,
+    totalPages: 1,
+    totalElements: 10,
+    size: 0,
+    number: 0,
+    sort: null,
+    first: true,
+    numberOfElements: 10,
   },
 };
 

@@ -1,6 +1,5 @@
 package com.shanhh.siberia.web.resource;
 
-import com.github.pagehelper.PageInfo;
 import com.shanhh.siberia.client.base.BaseResponse;
 import com.shanhh.siberia.client.dto.pipeline.PipelineDTO;
 import com.shanhh.siberia.client.dto.pipeline.PipelineDeploymentDTO;
@@ -9,6 +8,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
-import java.util.function.Function;
 
 /**
  * @author shanhonghao
@@ -37,14 +36,14 @@ public class PipelineResource {
     @RequestMapping(method = RequestMethod.GET)
     @ApiOperation(value = "paginate pipelines", response = BaseResponse.class)
     public BaseResponse paginatePipelines(
-            @ApiParam(value = "start page index", required = false, defaultValue = "1")
-            @RequestParam(value = "pageNum", required = false, defaultValue = "1") int pageNum,
+            @ApiParam(value = "start page index", required = false, defaultValue = "0")
+            @RequestParam(value = "pageNum", required = false, defaultValue = "0") int pageNum,
 
             @ApiParam(value = "page size", required = false, defaultValue = LIMIT_DEFAULT)
             @RequestParam(value = "pageSize", required = false, defaultValue = LIMIT_DEFAULT) int pageSize
     ) {
-        PageInfo<PipelineDTO> pageInfo = pipelineService.paginatePipelines(
-                Math.max(pageNum, 1), Math.min(pageSize, LIMIT_MAX));
+        Page<PipelineDTO> pageInfo = pipelineService.paginatePipelines(
+                Math.max(pageNum, 0), Math.min(pageSize, LIMIT_MAX));
         return new BaseResponse(pageInfo);
     }
 
@@ -60,8 +59,8 @@ public class PipelineResource {
     @RequestMapping(value = "{pipelineId}/deployments", method = RequestMethod.GET)
     @ApiOperation(value = "paginate pipeline deployments for pipeline id", response = BaseResponse.class)
     public BaseResponse paginatePipelineDeployments(
-            @ApiParam(value = "start page index", required = false, defaultValue = "1")
-            @RequestParam(value = "pageNum", required = false, defaultValue = "1") int pageNum,
+            @ApiParam(value = "start page index", required = false, defaultValue = "0")
+            @RequestParam(value = "pageNum", required = false, defaultValue = "0") int pageNum,
 
             @ApiParam(value = "page size", required = false, defaultValue = LIMIT_DEFAULT)
             @RequestParam(value = "pageSize", required = false, defaultValue = LIMIT_DEFAULT) int pageSize,
@@ -69,8 +68,8 @@ public class PipelineResource {
             @ApiParam(value = "pipeline id", required = true)
             @PathVariable("pipelineId") String pipelineId
     ) {
-        PageInfo<PipelineDeploymentDTO> pageInfo = pipelineService.paginatePipelineDeployments(
-                Math.max(pageNum, 1), Math.min(pageSize, LIMIT_MAX));
+        Page<PipelineDeploymentDTO> pageInfo = pipelineService.paginatePipelineDeployments(
+                Math.max(pageNum, 0), Math.min(pageSize, LIMIT_MAX));
         return new BaseResponse(pageInfo);
     }
 

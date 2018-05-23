@@ -1,7 +1,7 @@
 package com.shanhh.siberia.web.service;
 
-import com.github.pagehelper.PageInfo;
 import com.shanhh.siberia.client.dto.task.TaskDTO;
+import org.springframework.data.domain.Page;
 
 /**
  * @author shanhonghao
@@ -9,5 +9,5 @@ import com.shanhh.siberia.client.dto.task.TaskDTO;
  */
 public interface TaskService {
 
-    PageInfo<TaskDTO> paginateTasks(int pageNum, int pageSize);
+    Page<TaskDTO> paginateTasks(int pageNum, int pageSize);
 }

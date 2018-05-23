@@ -51,8 +51,9 @@ export default class TaskList extends PureComponent {
     const paginationProps = {
       showSizeChanger: true,
       showQuickJumper: true,
-      pageSize: taskList.data.size,
-      total: taskList.data.total,
+      current: taskList.number,
+      pageSize: taskList.size,
+      total: taskList.totalElements,
     };
 
     const ListContent = ({ data: { createBy, createTime, percent, status } }) => (
