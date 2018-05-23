@@ -9,10 +9,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 
 /**
  * @author shanhonghao
@@ -68,6 +70,15 @@ public class PipelineResource {
         PageInfo<PipelineDeploymentDTO> pageInfo = pipelineService.paginatePipelineDeployments(
                 Math.max(pageNum, 1), Math.min(pageSize, LIMIT_MAX));
         return new BaseResponse(pageInfo);
+    }
+
+    @RequestMapping(method = RequestMethod.POST)
+    @ApiOperation(value = "create pipeline", response = BaseResponse.class)
+    @ResponseStatus(HttpStatus.CREATED)
+    public BaseResponse<PipelineDTO> createPipeline(
+            @Valid @RequestBody PipelineDTO pipeline
+    ) {
+        return new BaseResponse<>(pipelineService.createPipeline(pipeline.getTitle(), pipeline.getDescription(), null));
     }
 
 }

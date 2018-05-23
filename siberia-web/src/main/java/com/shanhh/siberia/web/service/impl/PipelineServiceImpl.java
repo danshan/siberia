@@ -8,6 +8,8 @@ import com.shanhh.siberia.web.repo.PipelineRepo;
 import com.shanhh.siberia.web.repo.entity.Pipeline;
 import com.shanhh.siberia.web.service.PipelineService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -30,7 +32,6 @@ public class PipelineServiceImpl implements PipelineService {
         for (int i = 0; i < pageSize; i++) {
             results.add(PipelineDTO.mock());
         }
-        Iterable<Pipeline> all = pipelineRepo.findAll();
         return new PageInfo<>(results);
     }
 
@@ -46,6 +47,20 @@ public class PipelineServiceImpl implements PipelineService {
     @Override
     public PipelineDTO loadPipeline(String pipelineId) {
         return PipelineDTO.mock();
+    }
+
+    @Override
+    public PipelineDTO createPipeline(String title, String description, String createBy) {
+        Pipeline pipeline = new Pipeline();
+        pipeline.setTitle(StringUtils.trimToEmpty(title));
+        pipeline.setDescription(StringUtils.trimToEmpty(description));
+        pipeline.setCreateBy(StringUtils.trimToEmpty(createBy));
+        pipeline.setUpdateBy(StringUtils.trimToEmpty(createBy));
+        Pipeline saved = pipelineRepo.save(pipeline);
+
+        PipelineDTO result = new PipelineDTO();
+        BeanUtils.copyProperties(saved, result);
+        return result;
     }
 
 }
