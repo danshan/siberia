@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author shanhonghao
@@ -45,8 +46,15 @@ public class PipelineServiceImpl implements PipelineService {
     }
 
     @Override
-    public PipelineDTO loadPipeline(String pipelineId) {
-        return PipelineDTO.mock();
+    public Optional<PipelineDTO> loadPipeline(int pipelineId) {
+        Pipeline exists = pipelineRepo.findOne(pipelineId);
+        if (exists == null) {
+            return Optional.empty();
+        } else {
+            PipelineDTO result = new PipelineDTO();
+            BeanUtils.copyProperties(exists, result);
+            return Optional.of(result);
+        }
     }
 
     @Override

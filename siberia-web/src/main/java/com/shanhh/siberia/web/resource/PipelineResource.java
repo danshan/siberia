@@ -9,12 +9,14 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.util.function.Function;
 
 /**
  * @author shanhonghao
@@ -50,9 +52,9 @@ public class PipelineResource {
     @ApiOperation(value = "paginate pipelines", response = BaseResponse.class)
     public BaseResponse<PipelineDTO> loadPipeline(
             @ApiParam(value = "pipeline id", required = true)
-            @PathVariable("pipelineId") String pipelineId
+            @PathVariable("pipelineId") int pipelineId
     ) {
-        return new BaseResponse<>(pipelineService.loadPipeline(pipelineId));
+        return new BaseResponse<>(pipelineService.loadPipeline(pipelineId).orElseThrow(ResourceNotFoundException::new));
     }
 
     @RequestMapping(value = "{pipelineId}/deployments", method = RequestMethod.GET)
