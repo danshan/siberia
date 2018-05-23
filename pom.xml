@@ -30,6 +30,7 @@
         <!-- database -->
         <mysql-connector-java.version>5.1.43</mysql-connector-java.version>
         <pagehelper.version>5.1.2</pagehelper.version>
+        <h2.version>1.4.192</h2.version>
 
         <!-- swagger -->
         <springfox-swagger.version>2.8.0</springfox-swagger.version>
@@ -78,6 +79,11 @@
                 <groupId>com.github.pagehelper</groupId>
                 <artifactId>pagehelper</artifactId>
                 <version>${pagehelper.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <version>${h2.version}</version>
             </dependency>
 
             <!-- swagger -->

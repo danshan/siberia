@@ -4,10 +4,13 @@ import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import com.shanhh.siberia.client.dto.pipeline.PipelineDTO;
 import com.shanhh.siberia.client.dto.pipeline.PipelineDeploymentDTO;
+import com.shanhh.siberia.web.repo.PipelineRepo;
+import com.shanhh.siberia.web.repo.entity.Pipeline;
 import com.shanhh.siberia.web.service.PipelineService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -18,12 +21,16 @@ import java.util.List;
 @Slf4j
 public class PipelineServiceImpl implements PipelineService {
 
+    @Resource
+    private PipelineRepo pipelineRepo;
+
     @Override
     public PageInfo<PipelineDTO> paginatePipelines(int pageNum, int pageSize) {
         List<PipelineDTO> results = Lists.newLinkedList();
         for (int i = 0; i < pageSize; i++) {
             results.add(PipelineDTO.mock());
         }
+        Iterable<Pipeline> all = pipelineRepo.findAll();
         return new PageInfo<>(results);
     }
 
