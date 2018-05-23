@@ -8,8 +8,9 @@ import { getNotices } from './mock/notices';
 import { format, delay } from 'roadhog-api-doc';
 
 import {
-  loadPipeline,
   paginatePipelineList,
+  loadPipeline,
+  createPipeline,
   paginatePipelineDeploymentList,
 } from './mock/pipeline';
 
@@ -146,8 +147,9 @@ const proxy = {
 
   // pipelines
 
-  'GET /api/pipelines': paginatePipelineList,
   'GET /api/pipelines/:pipelineId': loadPipeline,
+  'GET /api/pipelines': paginatePipelineList,
+  'POST /api/pipelines': createPipeline,
   'GET /api/pipelines/:pipelineId/deployments': paginatePipelineDeploymentList,
 
   // tasks
@@ -157,6 +159,7 @@ const proxy = {
 
 const localhost = {
   'GET /api/(.*)': 'http://127.0.0.1:8080/api/',
+  'POST /api/(.*)': 'http://127.0.0.1:8080/api/',
 };
 
 export default (noProxy ? localhost : delay(proxy, 1000));

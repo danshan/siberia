@@ -88,6 +88,13 @@ export async function loadPipeline(params) {
   return request(`/api/pipelines/${params.pipelineId}`);
 }
 
+export async function createPipeline(params) {
+  return request('/api/pipelines', {
+    method: 'POST',
+    body: params,
+  });
+}
+
 export async function paginatePipelineDeploymentList(params) {
   return request(`/api/pipelines/${params.pipelineId}/deployments`);
 }

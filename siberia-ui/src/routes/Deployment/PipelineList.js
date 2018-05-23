@@ -31,8 +31,9 @@ const CreateForm = Form.create()(props => {
   const okHandle = () => {
     form.validateFields((err, fieldsValue) => {
       if (err) return;
-      form.resetFields();
       handleAdd(fieldsValue);
+      handleModalVisible();
+      form.resetFields();
     });
   };
   return (
@@ -80,6 +81,13 @@ export default class PipelineList extends PureComponent {
     });
   };
 
+  handleAdd = fieldValues => {
+    this.props.dispatch({
+      type: 'pipeline/createPipeline',
+      payload: fieldValues,
+    });
+  };
+
   render() {
     const { pipeline: { pipelineList }, loading } = this.props;
     const { modalVisible } = this.state;
@@ -106,8 +114,8 @@ export default class PipelineList extends PureComponent {
     const paginationProps = {
       showSizeChanger: true,
       showQuickJumper: true,
-      pageSize: pipelineList.data.size,
-      total: pipelineList.data.total,
+      pageSize: pipelineList.size,
+      total: pipelineList.total,
     };
 
     const ListContent = ({ data: { createBy, createTime, percent, status } }) => (
@@ -188,11 +196,11 @@ export default class PipelineList extends PureComponent {
               rowKey="id"
               loading={loading}
               pagination={paginationProps}
-              dataSource={pipelineList.data.list}
+              dataSource={pipelineList.list}
               renderItem={item => (
                 <List.Item actions={[<a>编辑</a>, <MoreBtn />]}>
                   <List.Item.Meta
-                    title={<Link to={`pipeline/${item.id}`}>{item.title}</Link>}
+                    title={<Link to={`pipelines/${item.id}`}>{item.title}</Link>}
                     description={item.description}
                   />
                   <ListContent data={item} />

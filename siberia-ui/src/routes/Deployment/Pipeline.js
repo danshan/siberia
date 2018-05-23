@@ -322,7 +322,6 @@ export default class TableList extends PureComponent {
   render() {
     const { pipeline: { pipeline, pipelineDeploymentList }, loading } = this.props;
     const { selectedRows, modalVisible } = this.state;
-    console.log(pipelineDeploymentList.data.list);
 
     const content = (
       <div className={styles.pageHeaderContent}>
@@ -426,7 +425,7 @@ export default class TableList extends PureComponent {
             <StandardTable
               selectedRows={selectedRows}
               loading={loading}
-              data={pipelineDeploymentList.data}
+              data={pipelineDeploymentList}
               columns={columns}
               onSelectRow={this.handleSelectRows}
               onChange={this.handleStandardTableChange}

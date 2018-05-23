@@ -1,6 +1,8 @@
+import { routerRedux } from 'dva/router';
 import {
   paginatePipelineList,
   loadPipeline,
+  createPipeline,
   paginatePipelineDeploymentList,
 } from '../services/api';
 
@@ -9,19 +11,15 @@ export default {
 
   state: {
     pipelineList: {
-      data: {
-        total: 0,
-        size: 0,
-        list: [],
-      },
+      total: 0,
+      size: 0,
+      list: [],
     },
     pipeline: {},
     pipelineDeploymentList: {
-      data: {
-        total: 0,
-        size: 0,
-        list: [],
-      },
+      total: 0,
+      size: 0,
+      list: [],
     },
   },
 
@@ -42,6 +40,17 @@ export default {
       });
     },
 
+    *createPipeline({ payload }, { call, put }) {
+      const response = yield call(createPipeline, payload);
+      yield put({
+        type: 'created',
+        payload: response,
+      });
+      if (response.data.id) {
+        yield put(routerRedux.push(`/deployment/pipelines/${response.data.id}`));
+      }
+    },
+
     *paginatePipelineDeploymentList({ payload }, { call, put }) {
       const response = yield call(paginatePipelineDeploymentList, payload);
       yield put({
@@ -55,21 +64,28 @@ export default {
     pipelineList(state, action) {
       return {
         ...state,
-        pipelineList: action.payload,
+        pipelineList: action.payload.data,
       };
     },
 
     pipeline(state, action) {
       return {
         ...state,
-        pipeline: action.payload,
+        pipeline: action.payload.data,
       };
     },
 
     pipelineDeploymentList(state, action) {
       return {
         ...state,
-        pipelineDeploymentList: action.payload,
+        pipelineDeploymentList: action.payload.data,
+      };
+    },
+
+    created(state, action) {
+      return {
+        ...state,
+        pipeline: action.payload.data,
       };
     },
   },

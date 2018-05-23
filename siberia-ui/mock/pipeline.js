@@ -298,6 +298,16 @@ export function loadPipeline(req, res) {
   }
 }
 
+export function createPipeline(req, res) {
+  const result = pipeline;
+
+  if (res && res.json) {
+    res.json(result);
+  } else {
+    return result;
+  }
+}
+
 export function paginatePipelineDeploymentList(req, res) {
   const result = pipelineDeploymentList;
 
@@ -311,5 +321,6 @@ export function paginatePipelineDeploymentList(req, res) {
 export default {
   paginatePipelineList,
   loadPipeline,
+  createPipeline,
   paginatePipelineDeploymentList,
 };
