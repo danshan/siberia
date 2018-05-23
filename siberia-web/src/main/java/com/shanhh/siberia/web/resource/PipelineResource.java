@@ -10,10 +10,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -47,6 +44,15 @@ public class PipelineResource {
         return new BaseResponse(pageInfo);
     }
 
+    @RequestMapping(value = "{pipelineId}", method = RequestMethod.GET)
+    @ApiOperation(value = "paginate pipelines", response = BaseResponse.class)
+    public BaseResponse<PipelineDTO> loadPipeline(
+            @ApiParam(value = "pipeline id", required = true)
+            @PathVariable("pipelineId") String pipelineId
+    ) {
+        return new BaseResponse<>(pipelineService.loadPipeline(pipelineId));
+    }
+
     @RequestMapping(value = "{pipelineId}/deployments", method = RequestMethod.GET)
     @ApiOperation(value = "paginate pipeline deployments for pipeline id", response = BaseResponse.class)
     public BaseResponse paginatePipelineDeployments(
@@ -54,7 +60,10 @@ public class PipelineResource {
             @RequestParam(value = "pageNum", required = false, defaultValue = "1") int pageNum,
 
             @ApiParam(value = "page size", required = false, defaultValue = LIMIT_DEFAULT)
-            @RequestParam(value = "pageSize", required = false, defaultValue = LIMIT_DEFAULT) int pageSize
+            @RequestParam(value = "pageSize", required = false, defaultValue = LIMIT_DEFAULT) int pageSize,
+
+            @ApiParam(value = "pipeline id", required = true)
+            @PathVariable("pipelineId") String pipelineId
     ) {
         PageInfo<PipelineDeploymentDTO> pageInfo = pipelineService.paginatePipelineDeployments(
                 Math.max(pageNum, 1), Math.min(pageSize, LIMIT_MAX));

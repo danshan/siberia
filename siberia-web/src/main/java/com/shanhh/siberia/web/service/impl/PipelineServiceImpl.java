@@ -36,4 +36,9 @@ public class PipelineServiceImpl implements PipelineService {
         return new PageInfo<>(results);
     }
 
+    @Override
+    public PipelineDTO loadPipeline(String pipelineId) {
+        return PipelineDTO.mock();
+    }
+
 }

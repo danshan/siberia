@@ -110,7 +110,7 @@ export default class TaskList extends PureComponent {
           <Card
             className={styles.listCard}
             bordered={false}
-            title="任务列¯表"
+            title="任务列表"
             style={{ marginTop: 24 }}
             bodyStyle={{ padding: '0 32px 40px 32px' }}
             extra={extraContent}

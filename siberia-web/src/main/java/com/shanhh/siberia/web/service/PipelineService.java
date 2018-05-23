@@ -1,6 +1,7 @@
 package com.shanhh.siberia.web.service;
 
 import com.github.pagehelper.PageInfo;
+import com.shanhh.siberia.client.base.BaseResponse;
 import com.shanhh.siberia.client.dto.pipeline.PipelineDTO;
 import com.shanhh.siberia.client.dto.pipeline.PipelineDeploymentDTO;
 
@@ -11,5 +12,7 @@ import com.shanhh.siberia.client.dto.pipeline.PipelineDeploymentDTO;
 public interface PipelineService {
     PageInfo<PipelineDTO> paginatePipelines(int pageNum, int pageSize);
 
-    PageInfo<PipelineDeploymentDTO> paginatePipelineDeployments(int max, int min);
+    PageInfo<PipelineDeploymentDTO> paginatePipelineDeployments(int pageNum, int pageSize);
+
+    PipelineDTO loadPipeline(String pipelineId);
 }
