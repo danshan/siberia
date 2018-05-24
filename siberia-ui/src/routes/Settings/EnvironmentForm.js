@@ -107,6 +107,7 @@ export default class EnvironmentForm extends PureComponent {
     this.clickedCancel = false;
   }
   render() {
+    console.log(this.props);
     const columns = [
       {
         title: 'ID',

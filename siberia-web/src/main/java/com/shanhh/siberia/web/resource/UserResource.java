@@ -1,5 +1,6 @@
 package com.shanhh.siberia.web.resource;
 
+import com.codahale.metrics.annotation.Timed;
 import com.shanhh.siberia.client.base.BaseResponse;
 import com.shanhh.siberia.client.dto.User.CurrentUserDTO;
 import io.swagger.annotations.Api;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class UserResource {
 
+    @Timed
     @RequestMapping(value = "currentUser", method = RequestMethod.GET)
     @ApiOperation(value = "load current user", response = BaseResponse.class)
     public BaseResponse<CurrentUserDTO> loadCurrentUser() {

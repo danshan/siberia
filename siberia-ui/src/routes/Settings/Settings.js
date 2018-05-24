@@ -25,7 +25,6 @@ class Settings extends PureComponent {
   state = {
     width: '100%',
   };
-
   componentDidMount() {
     window.addEventListener('resize', this.resizeFooterToolbar);
     this.props.dispatch({

@@ -1,5 +1,6 @@
 package com.shanhh.siberia.web.resource;
 
+import com.codahale.metrics.annotation.Timed;
 import com.shanhh.siberia.client.base.BaseResponse;
 import com.shanhh.siberia.client.dto.pipeline.PipelineDTO;
 import com.shanhh.siberia.client.dto.pipeline.PipelineDeploymentDTO;
@@ -33,6 +34,7 @@ public class PipelineResource {
     private static final int LIMIT_MAX = 50;
     private static final String LIMIT_DEFAULT = "10";
 
+    @Timed
     @RequestMapping(method = RequestMethod.GET)
     @ApiOperation(value = "paginate pipelines", response = BaseResponse.class)
     public BaseResponse paginatePipelines(
@@ -47,6 +49,7 @@ public class PipelineResource {
         return new BaseResponse(pageInfo);
     }
 
+    @Timed
     @RequestMapping(value = "{pipelineId}", method = RequestMethod.GET)
     @ApiOperation(value = "paginate pipelines", response = BaseResponse.class)
     public BaseResponse<PipelineDTO> loadPipeline(
@@ -56,6 +59,7 @@ public class PipelineResource {
         return new BaseResponse<>(pipelineService.loadPipeline(pipelineId).orElseThrow(ResourceNotFoundException::new));
     }
 
+    @Timed
     @RequestMapping(value = "{pipelineId}/deployments", method = RequestMethod.GET)
     @ApiOperation(value = "paginate pipeline deployments for pipeline id", response = BaseResponse.class)
     public BaseResponse paginatePipelineDeployments(
@@ -73,6 +77,7 @@ public class PipelineResource {
         return new BaseResponse(pageInfo);
     }
 
+    @Timed
     @RequestMapping(method = RequestMethod.POST)
     @ApiOperation(value = "create pipeline", response = BaseResponse.class)
     @ResponseStatus(HttpStatus.CREATED)

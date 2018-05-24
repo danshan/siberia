@@ -1,5 +1,6 @@
 package com.shanhh.siberia.web.resource;
 
+import com.codahale.metrics.annotation.Timed;
 import com.shanhh.siberia.client.base.BaseResponse;
 import com.shanhh.siberia.client.dto.task.TaskDTO;
 import com.shanhh.siberia.web.service.TaskService;
@@ -32,6 +33,7 @@ public class TaskResource {
     private static final int LIMIT_MAX = 50;
     private static final String LIMIT_DEFAULT = "10";
 
+    @Timed
     @RequestMapping(method = RequestMethod.GET)
     @ApiOperation(value = "paginate tasks", response = BaseResponse.class)
     public BaseResponse paginatePipelines(
