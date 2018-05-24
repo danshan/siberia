@@ -13,8 +13,8 @@ import {
   createPipeline,
   paginatePipelineDeploymentList,
 } from './mock/pipeline';
-
 import { paginateTaskList } from './mock/task';
+import { findEnvList } from './mock/settings';
 
 // 是否禁用代理
 const noProxy = process.env.NO_PROXY === 'true';
@@ -155,6 +155,10 @@ const proxy = {
   // tasks
 
   'GET /api/tasks': paginateTaskList,
+
+  // apps
+
+  'GET /api/settings/envs': findEnvList,
 };
 
 const localhost = {

@@ -86,6 +86,7 @@ export const getRouterData = app => {
       // name: '工作台',
       // authority: 'admin',
     },
+
     '/deployment/pipelinelist': {
       component: dynamicWrapper(app, ['pipeline'], () =>
         import('../routes/Deployment/PipelineList')
@@ -97,6 +98,11 @@ export const getRouterData = app => {
     '/deployment/tasklist': {
       component: dynamicWrapper(app, ['task'], () => import('../routes/Deployment/TaskList')),
     },
+
+    '/settings': {
+      component: dynamicWrapper(app, ['settings'], () => import('../routes/Settings/Settings')),
+    },
+
     '/form/basic-form': {
       component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/BasicForm')),
     },

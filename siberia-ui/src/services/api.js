@@ -104,3 +104,9 @@ export async function paginatePipelineDeploymentList(params) {
 export async function paginateTaskList() {
   return request('/api/tasks');
 }
+
+// settings
+
+export async function findEnvList() {
+  return request('/api/settings/envs');
+}

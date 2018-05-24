@@ -38,6 +38,17 @@ const menuData = [
     ],
   },
   {
+    name: '管理后台',
+    icon: 'setting',
+    path: '',
+    children: [
+      {
+        name: '环境配置',
+        path: 'settings#environment',
+      },
+    ],
+  },
+  {
     name: '表单页',
     icon: 'form',
     path: 'form',

@@ -5,11 +5,9 @@ export default {
 
   state: {
     taskList: {
-      data: {
-        total: 0,
-        size: 0,
-        list: [],
-      },
+      total: 0,
+      size: 0,
+      list: [],
     },
   },
 
@@ -27,7 +25,7 @@ export default {
     taskList(state, action) {
       return {
         ...state,
-        taskList: action.payload,
+        taskList: action.payload.data,
       };
     },
   },
