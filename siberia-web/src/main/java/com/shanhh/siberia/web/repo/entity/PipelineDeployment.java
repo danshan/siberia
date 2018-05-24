@@ -4,10 +4,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Date;
 
 /**
@@ -22,15 +19,22 @@ public class PipelineDeployment {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
+    @Column(nullable = false)
     private int pipelineId;
+    @Column(nullable = false)
     private String project;
+    @Column(nullable = false)
     private String module;
+    @Column(nullable = false)
     private int buildNo;
 
-//    private List<PipelineTaskDTO> taskList;
-
+    @Column(nullable = false, updatable = false)
     private String createBy;
+    @Column(nullable = false)
     private String updateBy;
+
+    @Column(insertable = false, updatable = false, columnDefinition = "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP")
     private Date createTime;
+    @Column(insertable = false, updatable = true, columnDefinition = "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP")
     private Date updateTime;
 }

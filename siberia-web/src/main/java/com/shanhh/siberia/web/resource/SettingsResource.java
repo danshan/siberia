@@ -10,10 +10,7 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -40,12 +37,35 @@ public class SettingsResource {
     }
 
     @Timed
-    @RequestMapping(value = "envs/{envId}", method = RequestMethod.GET)
-    @ApiOperation(value = "paginate pipelines", response = BaseResponse.class)
+    @RequestMapping(value = "envs/{envId}", method = RequestMethod.DELETE)
+    @ApiOperation(value = "delete environment by id", response = BaseResponse.class)
     public BaseResponse<EnvDTO> deleteEnvById(
             @ApiParam(value = "environment id", required = true)
             @PathVariable("envId") int envId
     ) {
         return new BaseResponse(settingsService.deleteEnvById(envId).orElseThrow(ResourceNotFoundException::new));
     }
+
+    @Timed
+    @RequestMapping(value = "envs/{envId}", method = RequestMethod.PUT)
+    @ApiOperation(value = "update environment by id", response = BaseResponse.class)
+    public BaseResponse<EnvDTO> updateEnvById(
+            @ApiParam(value = "environment id", required = true)
+            @PathVariable("envId") int envId,
+
+            @RequestBody EnvDTO env
+    ) {
+        env.setId(envId);
+        return new BaseResponse(settingsService.updateEnvById(env).orElseThrow(ResourceNotFoundException::new));
+    }
+
+    @Timed
+    @RequestMapping(value = "envs", method = RequestMethod.POST)
+    @ApiOperation(value = "update environment by id", response = BaseResponse.class)
+    public BaseResponse<EnvDTO> createEnv(
+            @RequestBody EnvDTO env
+    ) {
+        return new BaseResponse(settingsService.createEnv(env).orElseThrow(ResourceNotFoundException::new));
+    }
+
 }

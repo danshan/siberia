@@ -23,13 +23,13 @@ public class Env {
     private String name;
     @Column(nullable = false)
     private String description;
-    @Column(nullable = false)
+    @Column(nullable = false, updatable = false)
     private String createBy;
     @Column(nullable = false)
     private String updateBy;
 
     @Column(insertable = false, updatable = false, columnDefinition = "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP")
     private Date createTime;
-    @Column(insertable = false, updatable = true, columnDefinition = "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP")
+    @Column(insertable = false, columnDefinition = "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP")
     private Date updateTime;
 }

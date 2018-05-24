@@ -13,4 +13,8 @@ public interface SettingsService {
     List<EnvDTO> findEnvs();
 
     Optional<EnvDTO> deleteEnvById(int envId);
+
+    Optional<EnvDTO> updateEnvById(EnvDTO envDTO);
+
+    Optional<EnvDTO> createEnv(EnvDTO env);
 }

@@ -23,7 +23,7 @@ public class Pipeline {
     private String title;
     @Column(nullable = false, columnDefinition = "TEXT")
     private String description;
-    @Column(nullable = false)
+    @Column(nullable = false, updatable = false)
     private String createBy;
     @Column(nullable = false)
     private String updateBy;
