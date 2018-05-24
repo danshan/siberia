@@ -1,6 +1,6 @@
 package com.shanhh.siberia.client.dto.task;
 
-import com.shanhh.siberia.client.dto.app.Env;
+import com.shanhh.siberia.client.dto.settings.EnvDTO;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -22,7 +22,7 @@ public class TaskDTO implements Serializable {
     private int id;
     private int pipelineId;
     private List<String> nodes;
-    private Env env;
+    private EnvDTO env;
     private String project;
     private String module;
     private int buildNo;
