@@ -9,14 +9,14 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>siberia-web</artifactId>
+    <artifactId>siberia-core</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
             <groupId>com.shanhh.siberia</groupId>
-            <artifactId>siberia-core</artifactId>
+            <artifactId>siberia-client</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
 
@@ -47,10 +47,6 @@
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
