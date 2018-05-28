@@ -11,6 +11,7 @@ export default class EnvironmentForm extends PureComponent {
       loading: false,
     };
   }
+
   componentWillReceiveProps(nextProps) {
     if ('value' in nextProps) {
       this.setState({

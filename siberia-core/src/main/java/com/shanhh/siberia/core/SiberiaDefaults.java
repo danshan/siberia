@@ -35,4 +35,7 @@ public interface SiberiaDefaults {
         }
     }
 
+    interface Schedule {
+        int poolSize = 10;
+    }
 }

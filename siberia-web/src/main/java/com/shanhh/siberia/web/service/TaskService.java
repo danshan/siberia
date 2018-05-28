@@ -1,7 +1,10 @@
 package com.shanhh.siberia.web.service;
 
 import com.shanhh.siberia.client.dto.task.TaskDTO;
+import com.shanhh.siberia.client.dto.task.TaskStatus;
 import org.springframework.data.domain.Page;
+
+import java.util.List;
 
 /**
  * @author shanhonghao
@@ -10,4 +13,6 @@ import org.springframework.data.domain.Page;
 public interface TaskService {
 
     Page<TaskDTO> paginateTasks(int pageNum, int pageSize);
+
+    List<TaskDTO> findTasksByStatus(TaskStatus status);
 }

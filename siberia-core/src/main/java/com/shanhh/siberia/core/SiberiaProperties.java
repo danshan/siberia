@@ -20,6 +20,8 @@ public class SiberiaProperties {
     private final Async async = new Async();
     @Getter
     private final Metrics metrics = new Metrics();
+    @Getter
+    private final Schedule schedule = new Schedule();
 
     @NoArgsConstructor
     @Getter
@@ -66,8 +68,13 @@ public class SiberiaProperties {
         public static class Logs {
             private boolean enabled = SiberiaDefaults.Metrics.Logs.enabled;
             private long reportFrequency = SiberiaDefaults.Metrics.Logs.reportFrequency;
-
         }
     }
 
+    @NoArgsConstructor
+    @Getter
+    @Setter
+    public static class Schedule {
+        private int poolSize = SiberiaDefaults.Schedule.poolSize;
+    }
 }
