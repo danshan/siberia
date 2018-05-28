@@ -40,6 +40,9 @@ public class Task {
     @Column(nullable = false)
     private String status;
 
+    @Version
+    private int version;
+
     @Column(nullable = false, updatable = false)
     private String createBy;
     @Column(nullable = false)

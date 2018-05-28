@@ -30,6 +30,7 @@ public class TaskDTO implements Serializable {
     private Date endTime;
     private TaskStatus status;
 
+    private int version;
     private String createBy;
     private String updateBy;
     private Date createTime;
