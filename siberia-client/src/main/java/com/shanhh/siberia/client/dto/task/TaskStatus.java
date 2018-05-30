@@ -2,6 +2,9 @@ package com.shanhh.siberia.client.dto.task;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.google.common.collect.ImmutableMap;
+
+import java.util.Map;
 
 /**
  * @author shanhonghao
@@ -35,7 +38,10 @@ public enum TaskStatus {
     }
 
     @JsonValue
-    public TaskStatus value() {
-        return this;
+    public Map<String, Object> value() {
+        return ImmutableMap.<String, Object>builder()
+                .put("value", value)
+                .put("desc", desc)
+                .build();
     }
 }

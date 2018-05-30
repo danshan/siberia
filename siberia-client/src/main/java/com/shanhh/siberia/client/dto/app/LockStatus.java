@@ -2,6 +2,9 @@ package com.shanhh.siberia.client.dto.app;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.google.common.collect.ImmutableMap;
+
+import java.util.Map;
 
 /**
  * @author Dan
@@ -30,7 +33,10 @@ public enum LockStatus {
     }
 
     @JsonValue
-    public int value() {
-        return value;
+    public Map<String, Object> value() {
+        return ImmutableMap.<String, Object>builder()
+                .put("value", value)
+                .put("desc", desc)
+                .build();
     }
 }

@@ -3,6 +3,7 @@ package com.shanhh.siberia.client.dto.app;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -11,7 +12,7 @@ import java.util.Date;
  */
 @Data
 @NoArgsConstructor
-public class AppDTO {
+public class AppDTO implements Serializable {
 
     private int id;
     private String project;
