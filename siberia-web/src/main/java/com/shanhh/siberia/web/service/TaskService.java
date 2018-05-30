@@ -2,6 +2,8 @@ package com.shanhh.siberia.web.service;
 
 import com.shanhh.siberia.client.dto.task.TaskDTO;
 import com.shanhh.siberia.client.dto.task.TaskStatus;
+import com.shanhh.siberia.client.dto.task.TaskStepDTO;
+import com.shanhh.siberia.client.dto.task.TaskStepResult;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -18,4 +20,12 @@ public interface TaskService {
     List<TaskDTO> findTasksByStatus(TaskStatus status);
 
     Optional<TaskDTO> updateTaskStatusById(TaskDTO taskDTO, TaskStatus targetStatus);
+
+    List<TaskStepDTO> findTaskStepsByTaskId(int taskId);
+
+    Optional<TaskStepDTO> createTaskStep(int taskId, String step, TaskStepResult result, String detail, String operator);
+
+    int startTaskById(int taskId, TaskStatus taskStatus);
+
+    int endTaskById(int taskId, TaskStatus taskStatus);
 }

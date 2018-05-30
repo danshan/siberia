@@ -9,25 +9,20 @@ import java.util.Date;
 
 /**
  * @author shanhonghao
- * @since 2018-05-23 14:39
+ * @since 2018-05-30 13:41
  */
 @Data
 @NoArgsConstructor
 @ToString(exclude = {"createTime", "updateTime"})
 @Entity
-public class PipelineDeployment {
+public class AppConfig {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
     @Column(nullable = false)
-    private int pipelineId;
+    private int appId;
     @Column(nullable = false)
-    private String project;
-    @Column(nullable = false)
-    private String module;
-    @Column(nullable = false)
-    private int buildNo;
-
+    private int envId;
     @Column(nullable = false, updatable = false)
     private String createBy;
     @Column(nullable = false)

@@ -26,6 +26,7 @@
         <!-- commons -->
         <lombok.version>1.16.18</lombok.version>
         <commons-lang3.version>3.6</commons-lang3.version>
+        <problem.version>0.22.1</problem.version>
 
         <!-- database -->
         <mysql-connector-java.version>5.1.43</mysql-connector-java.version>
@@ -71,6 +72,11 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>${commons-lang3.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.zalando</groupId>
+                <artifactId>problem-spring-web</artifactId>
+                <version>${problem.version}</version>
             </dependency>
 
             <!-- database -->

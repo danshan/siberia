@@ -19,6 +19,10 @@
             <artifactId>siberia-core</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.zalando</groupId>
+            <artifactId>problem-spring-web</artifactId>
+        </dependency>
 
         <!-- database -->
         <dependency>

@@ -1,4 +1,4 @@
-package com.shanhh.siberia.client.dto.User;
+package com.shanhh.siberia.client.dto.user;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

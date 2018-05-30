@@ -3,6 +3,8 @@ package com.shanhh.siberia.web.service.impl;
 import com.google.common.collect.Lists;
 import com.shanhh.siberia.client.dto.task.TaskDTO;
 import com.shanhh.siberia.client.dto.task.TaskStatus;
+import com.shanhh.siberia.client.dto.task.TaskStepDTO;
+import com.shanhh.siberia.client.dto.task.TaskStepResult;
 import com.shanhh.siberia.web.repo.TaskRepo;
 import com.shanhh.siberia.web.repo.entity.Task;
 import com.shanhh.siberia.web.service.TaskService;
@@ -54,6 +56,26 @@ public class TaskServiceImpl implements TaskService {
             log.info("task status has been changed, {}", task);
             return Optional.empty();
         }
+    }
+
+    @Override
+    public List<TaskStepDTO> findTaskStepsByTaskId(int taskId) {
+        return null;
+    }
+
+    @Override
+    public Optional<TaskStepDTO> createTaskStep(int taskId, String step, TaskStepResult result, String detail, String operator) {
+        return Optional.empty();
+    }
+
+    @Override
+    public int startTaskById(int taskId, TaskStatus taskStatus) {
+        return 0;
+    }
+
+    @Override
+    public int endTaskById(int taskId, TaskStatus taskStatus) {
+        return 0;
     }
 
     private TaskDTO convert(Task task) {

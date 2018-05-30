@@ -2,7 +2,7 @@ package com.shanhh.siberia.web.resource;
 
 import com.codahale.metrics.annotation.Timed;
 import com.shanhh.siberia.client.base.BaseResponse;
-import com.shanhh.siberia.client.dto.User.CurrentUserDTO;
+import com.shanhh.siberia.client.dto.user.CurrentUserDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;

@@ -1,5 +1,6 @@
 package com.shanhh.siberia.web.repo.entity;
 
+import com.shanhh.siberia.client.dto.app.AppType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -9,24 +10,24 @@ import java.util.Date;
 
 /**
  * @author shanhonghao
- * @since 2018-05-23 14:39
+ * @since 2018-05-30 11:46
  */
 @Data
 @NoArgsConstructor
 @ToString(exclude = {"createTime", "updateTime"})
 @Entity
-public class PipelineDeployment {
+public class App {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
-    @Column(nullable = false)
-    private int pipelineId;
     @Column(nullable = false)
     private String project;
     @Column(nullable = false)
     private String module;
     @Column(nullable = false)
-    private int buildNo;
+    @Enumerated(EnumType.STRING)
+    private AppType appType;
 
     @Column(nullable = false, updatable = false)
     private String createBy;
@@ -37,4 +38,5 @@ public class PipelineDeployment {
     private Date createTime;
     @Column(insertable = false, columnDefinition = "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP")
     private Date updateTime;
+
 }
