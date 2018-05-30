@@ -1,8 +1,13 @@
 package com.shanhh.siberia.web.repo;
 
+import com.shanhh.siberia.client.dto.task.TaskStatus;
 import com.shanhh.siberia.web.repo.entity.Task;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.repository.query.Param;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -11,6 +16,16 @@ import java.util.List;
  */
 public interface TaskRepo extends PagingAndSortingRepository<Task, Integer> {
 
-    List<Task> findByStatus(String status);
+    List<Task> findByStatus(TaskStatus status);
+
+    @Modifying
+    @Query("update Task set status=:taskStatus, startTime=current_time, updateTime=current_time where id = :taskId")
+    int updateTaskStatusForStartById(@Param("taskId") int taskId,
+                                     @Param("taskStatus") TaskStatus taskStatus);
+
+    @Modifying
+    @Query("update Task set status=:taskStatus, endTime=current_time, updateTime=current_time where id = :taskId")
+    int updateTaskStatusForEndById(@Param("taskId") int taskId,
+                                   @Param("taskStatus") TaskStatus taskStatus);
 
 }

@@ -27,6 +27,11 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class ExceptionTranslator implements ProblemHandling {
 
+    @Override
+    public boolean isCausalChainsEnabled() {
+        return false;
+    }
+
     /**
      * Post-process Problem payload to add the message key for front-end if needed
      */

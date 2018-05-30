@@ -1,46 +1,38 @@
 package com.shanhh.siberia.web.repo.entity;
 
-import com.shanhh.siberia.client.dto.task.TaskStatus;
+import com.shanhh.siberia.client.dto.task.TaskStepResult;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
 /**
- * @author shanhonghao
- * @since 2018-05-28 15:21
+ * @author Dan
+ * @since 2016-06-04 15:06
  */
 @Data
 @NoArgsConstructor
 @ToString(exclude = {"createTime", "updateTime"})
 @Entity
-public class Task {
+public class TaskStep implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
     @Column(nullable = false)
-    private int pipelineId;
+    private int taskId;
     @Column(nullable = false)
-    private String nodes = "";
-    @OneToOne
-    private Env env;
+    private String step = "";
     @Column(nullable = false)
-    private String project;
-    @Column(nullable = false)
-    private String module;
-    @Column(nullable = false)
-    private int buildNo;
-    private Date startTime;
-    private Date endTime;
+    private String detail = "";
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private TaskStatus status;
-
-    @Version
-    private int version;
+    private TaskStepResult result;
+    private Date beginTime;
+    private Date endTime;
 
     @Column(nullable = false, updatable = false)
     private String createBy;
@@ -51,4 +43,5 @@ public class Task {
     private Date createTime;
     @Column(insertable = false, columnDefinition = "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP")
     private Date updateTime;
+
 }

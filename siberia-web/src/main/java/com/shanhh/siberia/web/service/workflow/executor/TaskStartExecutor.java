@@ -42,7 +42,7 @@ public class TaskStartExecutor implements StepExecutor {
         TaskDTO task = workflow.getTask();
 
         Preconditions.checkState(taskService.startTaskById(task.getId(), taskStatus) > 0,
-                "update task status failed: %s, %s" + task.getBuildNo(), task.getEnv());
+                "update task status failed: %s, %s", task.getBuildNo(), task.getEnv());
         task.setStatus(taskStatus);
     }
 

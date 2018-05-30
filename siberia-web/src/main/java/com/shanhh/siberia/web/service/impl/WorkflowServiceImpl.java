@@ -15,6 +15,7 @@ import com.shanhh.siberia.web.service.workflow.executor.AppLockExecutor;
 import com.shanhh.siberia.web.service.workflow.executor.TaskStartExecutor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
@@ -32,6 +33,7 @@ public class WorkflowServiceImpl implements WorkflowService {
     private AppService appService;
 
     @Override
+    @Transactional
     public void startTaskWorkflow(TaskDTO task) {
         List<String> relatedUsers = Lists.newArrayList(task.getCreateBy());
 

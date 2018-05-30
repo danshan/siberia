@@ -1,9 +1,6 @@
 package com.shanhh.siberia.web.service;
 
-import com.shanhh.siberia.client.dto.task.TaskDTO;
-import com.shanhh.siberia.client.dto.task.TaskStatus;
-import com.shanhh.siberia.client.dto.task.TaskStepDTO;
-import com.shanhh.siberia.client.dto.task.TaskStepResult;
+import com.shanhh.siberia.client.dto.task.*;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -14,6 +11,8 @@ import java.util.Optional;
  * @since 2018-05-23 10:39
  */
 public interface TaskService {
+
+    Optional<TaskDTO> createTask(TaskCreateRequest task);
 
     Page<TaskDTO> paginateTasks(int pageNum, int pageSize);
 

@@ -1,17 +1,19 @@
 package com.shanhh.siberia.web.service.impl;
 
+import com.google.common.base.Preconditions;
 import com.shanhh.siberia.client.dto.app.AppDTO;
 import com.shanhh.siberia.client.dto.app.AppLockDTO;
 import com.shanhh.siberia.client.dto.app.LockStatus;
 import com.shanhh.siberia.client.dto.settings.EnvDTO;
 import com.shanhh.siberia.web.repo.AppLockRepo;
 import com.shanhh.siberia.web.repo.AppRepo;
+import com.shanhh.siberia.web.repo.convertor.AppConvertor;
 import com.shanhh.siberia.web.repo.entity.App;
 import com.shanhh.siberia.web.repo.entity.AppLock;
+import com.shanhh.siberia.web.repo.entity.Env;
 import com.shanhh.siberia.web.service.AppService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -35,42 +37,42 @@ public class AppServiceImpl implements AppService {
     @Override
     public Optional<AppDTO> loadAppByModule(String project, String module) {
         App app = appRepo.findByProjectAndModule(StringUtils.trimToEmpty(project), module);
-        return Optional.ofNullable(convert(app));
+        return Optional.ofNullable(AppConvertor.toDTO(app));
     }
 
     @Override
     public Page<AppDTO> paginateApps(int pageNum, int pageSize) {
-        Page<AppDTO> apps = appRepo.findAll(new PageRequest(pageNum, pageSize)).map(this::convert);
+        Page<AppDTO> apps = appRepo.findAll(new PageRequest(pageNum, pageSize)).map(AppConvertor::toDTO);
         return apps;
     }
 
     @Override
     public Page<AppLockDTO> paginateAppLocks(int pageNum, int pageSize) {
-        Page<AppLockDTO> appLocks = appLockRepo.findAll(new PageRequest(pageNum, pageSize)).map(this::convert);
+        Page<AppLockDTO> appLocks = appLockRepo.findAll(new PageRequest(pageNum, pageSize)).map(AppConvertor::toDTO);
         return appLocks;
     }
 
     @Override
     public int updateLockStatus(String project, String module, EnvDTO env, LockStatus lockStatus, String operator) {
-        return 0;
-    }
+        Preconditions.checkArgument(StringUtils.isNotBlank(project), "app should not be empty");
+        Preconditions.checkArgument(env != null, "env should not be empty");
 
-    private AppDTO convert(App app) {
-        if (app == null) {
-            return null;
-        }
-        AppDTO dto = new AppDTO();
-        BeanUtils.copyProperties(app, dto);
-        return dto;
-    }
+        Env envPo = new Env();
+        envPo.setId(env.getId());
+        if (appLockRepo.findByProjectAndModuleAndEnv(project, module, envPo) != null) {
+            return appLockRepo.updateAppLockStatus(project, module, envPo, lockStatus, operator);
+        } else {
+            AppLock appLock = new AppLock();
+            appLock.setProject(StringUtils.trimToEmpty(project));
+            appLock.setModule(StringUtils.trimToEmpty(module));
+            appLock.setEnv(envPo);
+            appLock.setLockStatus(lockStatus);
+            appLock.setCreateBy(operator);
+            appLock.setUpdateBy(operator);
 
-    private AppLockDTO convert(AppLock lock) {
-        if (lock == null) {
-            return null;
+            AppLock result = appLockRepo.save(appLock);
+            return result != null ? 1 : 0;
         }
-        AppLockDTO dto = new AppLockDTO();
-        BeanUtils.copyProperties(lock, dto);
-        return dto;
     }
 
 }
