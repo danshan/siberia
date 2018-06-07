@@ -41,4 +41,22 @@ public class TaskConvertor {
         return dto;
     }
 
+    public static TaskDTO.Memo toDTO(Task.Memo memo) {
+        if (memo == null) {
+            return null;
+        }
+        TaskDTO.Memo dto = new TaskDTO.Memo();
+        BeanUtils.copyProperties(memo, dto);
+        return dto;
+    }
+
+    public static Task.Memo toPO(TaskDTO.Memo memo) {
+        if (memo == null) {
+            return null;
+        }
+        Task.Memo po = new Task.Memo();
+        BeanUtils.copyProperties(memo, po);
+        return po;
+    }
+
 }

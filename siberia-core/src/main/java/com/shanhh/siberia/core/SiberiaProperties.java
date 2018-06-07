@@ -14,14 +14,13 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @since 2018-05-24 09:26
  */
 @ConfigurationProperties(prefix = "siberia", ignoreUnknownFields = false)
+@Getter
 public class SiberiaProperties {
 
-    @Getter
     private final Async async = new Async();
-    @Getter
     private final Metrics metrics = new Metrics();
-    @Getter
     private final Schedule schedule = new Schedule();
+    private final Ansible ansible = new Ansible();
 
     @NoArgsConstructor
     @Getter
@@ -76,5 +75,15 @@ public class SiberiaProperties {
     @Setter
     public static class Schedule {
         private int poolSize = SiberiaDefaults.Schedule.poolSize;
+    }
+
+    @NoArgsConstructor
+    @Getter
+    @Setter
+    public static class Ansible {
+        private String ansibleHome;
+        private String playbookPath;
+        private String privateKey;
+        private String logPath;
     }
 }

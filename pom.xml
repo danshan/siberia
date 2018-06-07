@@ -26,6 +26,7 @@
         <!-- commons -->
         <lombok.version>1.16.18</lombok.version>
         <commons-lang3.version>3.6</commons-lang3.version>
+        <commons-exec.verision>1.3</commons-exec.verision>
         <problem.version>0.22.1</problem.version>
 
         <!-- database -->
@@ -72,6 +73,11 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>${commons-lang3.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-exec</artifactId>
+                <version>${commons-exec.verision}</version>
             </dependency>
             <dependency>
                 <groupId>org.zalando</groupId>

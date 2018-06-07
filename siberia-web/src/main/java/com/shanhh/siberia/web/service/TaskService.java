@@ -27,4 +27,8 @@ public interface TaskService {
     int startTaskById(int taskId, TaskStatus taskStatus);
 
     int endTaskById(int taskId, TaskStatus taskStatus);
+
+    int updateTaskNodesById(int taskId, List<String> nodes);
+
+    int updateTaskStatusAndMemoById(int id, TaskStatus running, TaskDTO.Memo memo);
 }

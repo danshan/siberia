@@ -1,5 +1,6 @@
 package com.shanhh.siberia.web.service.impl;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.shanhh.siberia.client.dto.task.*;
@@ -114,6 +115,16 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public int endTaskById(int taskId, TaskStatus taskStatus) {
         return taskRepo.updateTaskStatusForEndById(taskId, taskStatus);
+    }
+
+    @Override
+    public int updateTaskNodesById(int taskId, List<String> nodes) {
+        return taskRepo.updateTaskNodesById(taskId, Joiner.on(",").join(nodes));
+    }
+
+    @Override
+    public int updateTaskStatusAndMemoById(int taskId, TaskStatus status, TaskDTO.Memo memo) {
+        return taskRepo.updateTaskStatusAndMemoById(taskId, status, TaskConvertor.toPO(memo));
     }
 
 }

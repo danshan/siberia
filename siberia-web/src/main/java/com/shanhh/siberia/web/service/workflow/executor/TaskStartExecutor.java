@@ -23,7 +23,7 @@ public class TaskStartExecutor implements StepExecutor {
 
     private final TaskStatus taskStatus;
 
-    private final String step = "start_task_job";
+    private final String step = "start_task";
     private final TaskService taskService;
 
     public TaskStartExecutor(TaskStatus taskStatus) {

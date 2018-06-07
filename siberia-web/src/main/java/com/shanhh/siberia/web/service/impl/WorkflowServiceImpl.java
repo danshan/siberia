@@ -10,9 +10,12 @@ import com.shanhh.siberia.client.dto.workflow.WorkflowDTO;
 import com.shanhh.siberia.web.resource.errors.CustomParameterizedException;
 import com.shanhh.siberia.web.service.AppService;
 import com.shanhh.siberia.web.service.WorkflowService;
+import com.shanhh.siberia.web.service.workflow.TaskStepRegisterFactory;
 import com.shanhh.siberia.web.service.workflow.WorkflowBuilder;
 import com.shanhh.siberia.web.service.workflow.executor.AppLockExecutor;
+import com.shanhh.siberia.web.service.workflow.executor.TaskEndExecutor;
 import com.shanhh.siberia.web.service.workflow.executor.TaskStartExecutor;
+import com.shanhh.siberia.web.service.workflow.register.TaskStepRegister;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,18 +51,18 @@ public class WorkflowServiceImpl implements WorkflowService {
                 // 锁定task环境
                 .register(new AppLockExecutor(LockStatus.LOCKED));
 
-//        TaskStepRegisterFactory factory = new TaskStepRegisterFactory(context);
-//        TaskStepRegister register = factory.getRegister(app.getAppType(), task.getEnv());
-//        register.registerDeploySteps(workflowBuilder, task);
+        TaskStepRegisterFactory factory = new TaskStepRegisterFactory();
+        TaskStepRegister register = factory.getRegister(app.getAppType());
+        register.registerDeploySteps(workflowBuilder, task);
 
-//        workflowBuilder
-//                .register(new TaskEndExecutor(context, TaskStatus.OK, sibTaskStepService))
+        workflowBuilder
+                .register(new TaskEndExecutor(TaskStatus.OK))
 //                // 解锁task环境
-//                .register(new AppLockExecutor(context, LockStatus.UNLOCKED, sibTaskStepService))
+                .register(new AppLockExecutor(LockStatus.UNLOCKED))
 //                // 通知相关人员发布完成
 //                .register(new WechatMsgExecutor(context, relatedUsers, buildWxMsgTitle("发布完成", task), buildWxMsgContent(task), sibTaskStepService))
 //                // 通知相关人员发布失败
-//                .registerFailed(new TaskEndExecutor(context, TaskStatus.FAIL, sibTaskStepService))
+                .registerFailed(new TaskEndExecutor(TaskStatus.FAIL));
 //                .registerFailed(new WechatMsgExecutor(context, relatedUsers,
 //                        buildWxMsgTitle("发布失败", task),
 //                        buildWxMsgContent(task), sibTaskStepService));

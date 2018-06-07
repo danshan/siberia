@@ -29,12 +29,21 @@ public class TaskDTO implements Serializable {
     private Date startTime;
     private Date endTime;
     private TaskStatus status;
+    private Memo memo;
 
     private int version;
     private String createBy;
     private String updateBy;
     private Date createTime;
     private Date updateTime;
+
+    @Data
+    @NoArgsConstructor
+    @ToString
+    public static class Memo implements Serializable {
+        private int percent;
+        private int rollbackVersion;
+    }
 
     public static TaskDTO mock() {
         String[] project = {

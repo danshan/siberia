@@ -2,13 +2,17 @@ package com.shanhh.siberia.web.service.impl;
 
 import com.google.common.base.Preconditions;
 import com.shanhh.siberia.client.dto.app.AppDTO;
+import com.shanhh.siberia.client.dto.app.AppHostDTO;
 import com.shanhh.siberia.client.dto.app.AppLockDTO;
 import com.shanhh.siberia.client.dto.app.LockStatus;
 import com.shanhh.siberia.client.dto.settings.EnvDTO;
+import com.shanhh.siberia.web.repo.AppHostRepo;
 import com.shanhh.siberia.web.repo.AppLockRepo;
 import com.shanhh.siberia.web.repo.AppRepo;
 import com.shanhh.siberia.web.repo.convertor.AppConvertor;
+import com.shanhh.siberia.web.repo.convertor.EnvConvertor;
 import com.shanhh.siberia.web.repo.entity.App;
+import com.shanhh.siberia.web.repo.entity.AppHost;
 import com.shanhh.siberia.web.repo.entity.AppLock;
 import com.shanhh.siberia.web.repo.entity.Env;
 import com.shanhh.siberia.web.service.AppService;
@@ -33,8 +37,9 @@ public class AppServiceImpl implements AppService {
     private AppRepo appRepo;
     @Resource
     private AppLockRepo appLockRepo;
-
-    @Override
+    @Resource
+    private AppHostRepo appHostRepo;
+@Override
     public Optional<AppDTO> loadAppByModule(String project, String module) {
         App app = appRepo.findByProjectAndModule(StringUtils.trimToEmpty(project), module);
         return Optional.ofNullable(AppConvertor.toDTO(app));
@@ -73,6 +78,12 @@ public class AppServiceImpl implements AppService {
             AppLock result = appLockRepo.save(appLock);
             return result != null ? 1 : 0;
         }
+    }
+
+    @Override
+    public Optional<AppHostDTO> loadAppHostByEnv(String project, String module, EnvDTO env) {
+        AppHost appHost = appHostRepo.findByProjectAndModuleAndEnv(project, module, EnvConvertor.toPO(env));
+        return Optional.ofNullable(AppConvertor.toDTO(appHost));
     }
 
 }

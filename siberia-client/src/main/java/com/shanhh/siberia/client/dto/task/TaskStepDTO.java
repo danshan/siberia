@@ -27,8 +27,6 @@ public class TaskStepDTO implements Serializable {
     private TaskStepResult result;
     private String createBy;
     private String updateBy;
-    private Date beginTime;
-    private Date endTime;
     private Date createTime;
     private Date updateTime;
 

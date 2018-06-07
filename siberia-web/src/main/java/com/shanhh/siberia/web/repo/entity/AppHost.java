@@ -1,12 +1,10 @@
 package com.shanhh.siberia.web.repo.entity;
 
-import com.shanhh.siberia.client.dto.task.TaskStatus;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -17,34 +15,19 @@ import java.util.Date;
 @NoArgsConstructor
 @ToString(exclude = {"createTime", "updateTime"})
 @Entity
-public class Task {
+public class AppHost {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
     @Column(nullable = false)
-    private int pipelineId;
-    @Column(nullable = false)
-    private String nodes = "";
+    private String hosts = "";
     @OneToOne
     private Env env;
     @Column(nullable = false)
     private String project;
     @Column(nullable = false)
     private String module;
-    @Column(nullable = false)
-    private int buildNo;
-    private Date startTime;
-    private Date endTime;
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private TaskStatus status;
-    @Column(nullable = false)
-    @Convert(converter = JpaConverterJson.class)
-    private Memo memo;
-
-    @Version
-    private int version;
 
     @Column(nullable = false, updatable = false)
     private String createBy;
@@ -55,12 +38,4 @@ public class Task {
     private Date createTime;
     @Column(insertable = false, columnDefinition = "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP")
     private Date updateTime;
-
-    @Data
-    @NoArgsConstructor
-    @ToString
-    public static class Memo implements Serializable {
-        private int percent;
-        private int rollbackVersion;
-    }
 }

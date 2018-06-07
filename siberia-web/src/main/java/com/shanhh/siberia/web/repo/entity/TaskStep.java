@@ -31,8 +31,6 @@ public class TaskStep implements Serializable {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private TaskStepResult result;
-    private Date beginTime;
-    private Date endTime;
 
     @Column(nullable = false, updatable = false)
     private String createBy;
