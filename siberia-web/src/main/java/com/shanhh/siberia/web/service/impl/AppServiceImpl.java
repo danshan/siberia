@@ -1,7 +1,6 @@
 package com.shanhh.siberia.web.service.impl;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 import com.shanhh.siberia.client.dto.app.*;
 import com.shanhh.siberia.client.dto.settings.EnvDTO;
 import com.shanhh.siberia.web.repo.AppConfigRepo;
@@ -91,6 +90,15 @@ public class AppServiceImpl implements AppService {
     public List<AppConfigDTO> findConfigsByAppId(int appId) {
         List<AppConfig> configs = appConfigRepo.findByAppId(appId);
         return configs.stream().map(AppConvertor::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<AppConfigDTO> loadConfigById(int appId, int configId) {
+        if (appId > 0) {
+            return Optional.ofNullable(AppConvertor.toDTO(appConfigRepo.findByAppIdAndId(appId, configId)));
+        } else {
+            return Optional.ofNullable(AppConvertor.toDTO(appConfigRepo.findOne(configId)));
+        }
     }
 
 }

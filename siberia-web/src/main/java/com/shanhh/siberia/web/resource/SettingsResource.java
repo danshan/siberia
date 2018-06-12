@@ -61,7 +61,7 @@ public class SettingsResource {
 
     @Timed
     @RequestMapping(value = "envs", method = RequestMethod.POST)
-    @ApiOperation(value = "update environment by id", response = BaseResponse.class)
+    @ApiOperation(value = "create environment", response = BaseResponse.class)
     public BaseResponse<EnvDTO> createEnv(
             @RequestBody EnvDTO env
     ) {

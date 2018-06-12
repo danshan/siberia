@@ -7,6 +7,7 @@ import lombok.ToString;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * @author shanhonghao
@@ -18,6 +19,7 @@ import java.util.Date;
 public class AppConfigDTO implements Serializable {
     private int id;
     private EnvDTO env;
+    private Map<String, Object> content;
     private String createBy;
     private String updateBy;
 

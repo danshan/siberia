@@ -12,4 +12,6 @@ import java.util.List;
 public interface AppConfigRepo extends PagingAndSortingRepository<AppConfig, Integer> {
 
     List<AppConfig> findByAppId(int appId);
+
+    AppConfig findByAppIdAndId(int appId, int id);
 }

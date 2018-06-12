@@ -24,4 +24,6 @@ public interface AppService {
     Optional<AppHostDTO> loadAppHostByEnv(String project, String module, EnvDTO env);
 
     List<AppConfigDTO> findConfigsByAppId(int appId);
+
+    Optional<AppConfigDTO> loadConfigById(int appId, int configId);
 }

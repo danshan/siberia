@@ -6,6 +6,7 @@ import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * @author shanhonghao
@@ -23,6 +24,8 @@ public class AppConfig {
     private App app;
     @ManyToOne
     private Env env;
+    @Convert(converter = JpaConverterJson.class)
+    private Map<String, Object> content;
     @Column(nullable = false, updatable = false)
     private String createBy;
     @Column(nullable = false)
