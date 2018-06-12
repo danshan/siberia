@@ -1,6 +1,6 @@
 import { routerRedux } from 'dva/router';
 import { message } from 'antd';
-import { fakeSubmitForm, findEnvList } from '../services/api';
+import { fakeSubmitForm, findEnvList, createEnv } from '../services/api';
 
 export default {
   namespace: 'settings',
@@ -22,6 +22,12 @@ export default {
         type: 'envList',
         payload: response,
       });
+    },
+
+    *createEnv({ payload }, { call }) {
+      const response = yield call(createEnv, payload);
+      this.state.envList.push(response.data);
+      this.setState({ envList: this.state.envList });
     },
 
     *submitRegularForm({ payload }, { call }) {

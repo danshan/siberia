@@ -23,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.StrSubstitutor;
+import org.apache.commons.text.StringSubstitutor;
 
 import java.io.File;
 import java.util.List;
@@ -119,7 +120,7 @@ public class SpringCloudRegister implements TaskStepRegister {
                 .put("CMD", cmd)
                 .build();
         String file = Resources.toString(Resources.getResource("spring-boot.template.service"), Charsets.UTF_8);
-        String service = new StrSubstitutor(values).replace(file);
+        String service = new StringSubstitutor(values).replace(file);
         File tempFile = File.createTempFile(appName, ".service");
         Files.write(service, tempFile, Charsets.UTF_8);
         log.info("write service to {}", tempFile.getAbsoluteFile());

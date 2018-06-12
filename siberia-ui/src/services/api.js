@@ -110,3 +110,10 @@ export async function paginateTaskList() {
 export async function findEnvList() {
   return request('/api/settings/envs');
 }
+
+export async function createEnv(params) {
+  return request('/api/settings/envs', {
+    method: 'POST',
+    body: params,
+  });
+}
