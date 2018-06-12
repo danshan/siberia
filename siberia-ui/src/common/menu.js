@@ -35,6 +35,10 @@ const menuData = [
         name: '发布记录',
         path: 'tasklist',
       },
+      {
+        name: '发布环境',
+        path: 'applocklist',
+      },
     ],
   },
   {

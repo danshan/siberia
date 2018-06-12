@@ -95,6 +95,12 @@ export async function createPipeline(params) {
   });
 }
 
+// apps
+
+export async function paginateAppLockList() {
+  return request('/api/apps/locks');
+}
+
 export async function paginatePipelineDeploymentList(params) {
   return request(`/api/pipelines/${params.pipelineId}/deployments`);
 }

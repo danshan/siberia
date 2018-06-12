@@ -98,6 +98,9 @@ export const getRouterData = app => {
     '/deployment/tasklist': {
       component: dynamicWrapper(app, ['task'], () => import('../routes/Deployment/TaskList')),
     },
+    '/deployment/applocklist': {
+      component: dynamicWrapper(app, ['app'], () => import('../routes/Deployment/AppConfigList')),
+    },
 
     '/settings': {
       component: dynamicWrapper(app, ['settings'], () => import('../routes/Settings/Settings')),

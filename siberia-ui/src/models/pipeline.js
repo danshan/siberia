@@ -1,9 +1,9 @@
 import { routerRedux } from 'dva/router';
 import {
-  paginatePipelineList,
-  loadPipeline,
   createPipeline,
+  loadPipeline,
   paginatePipelineDeploymentList,
+  paginatePipelineList,
 } from '../services/api';
 
 export default {
