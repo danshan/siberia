@@ -1,9 +1,11 @@
 package com.shanhh.siberia.web.repo.convertor;
 
+import com.shanhh.siberia.client.dto.app.AppConfigDTO;
 import com.shanhh.siberia.client.dto.app.AppDTO;
 import com.shanhh.siberia.client.dto.app.AppHostDTO;
 import com.shanhh.siberia.client.dto.app.AppLockDTO;
 import com.shanhh.siberia.web.repo.entity.App;
+import com.shanhh.siberia.web.repo.entity.AppConfig;
 import com.shanhh.siberia.web.repo.entity.AppHost;
 import com.shanhh.siberia.web.repo.entity.AppLock;
 import org.springframework.beans.BeanUtils;
@@ -34,7 +36,7 @@ public class AppConvertor {
     }
 
     public static AppHostDTO toDTO(AppHost host) {
-        if (host== null) {
+        if (host == null) {
             return null;
         }
         AppHostDTO dto = new AppHostDTO();
@@ -43,4 +45,13 @@ public class AppConvertor {
         return dto;
     }
 
+    public static AppConfigDTO toDTO(AppConfig config) {
+        if (config == null) {
+            return null;
+        }
+        AppConfigDTO dto = new AppConfigDTO();
+        BeanUtils.copyProperties(config, dto);
+        dto.setEnv(EnvConvertor.toDTO(config.getEnv()));
+        return dto;
+    }
 }

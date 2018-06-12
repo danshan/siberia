@@ -10,10 +10,7 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -36,7 +33,7 @@ public class AppResource {
     @Timed
     @RequestMapping(method = RequestMethod.GET)
     @ApiOperation(value = "paginate apps", response = BaseResponse.class)
-    public BaseResponse paginatePipelines(
+    public BaseResponse paginateApps(
             @ApiParam(value = "start page index", required = false, defaultValue = "0")
             @RequestParam(value = "pageNum", required = false, defaultValue = "0") int pageNum,
 
@@ -46,5 +43,14 @@ public class AppResource {
         Page<AppDTO> pageInfo = appService.paginateApps(
                 Math.max(pageNum, 0), Math.min(pageSize, LIMIT_MAX));
         return new BaseResponse(pageInfo);
+    }
+
+    @Timed
+    @RequestMapping(value = "{appId}/configs", method = RequestMethod.GET)
+    @ApiOperation(value = "find app configs", response = BaseResponse.class)
+    public BaseResponse findConfigsByAppId(
+            @PathVariable("appId") int appId
+    ) {
+        return new BaseResponse(appService.findConfigsByAppId(appId));
     }
 }

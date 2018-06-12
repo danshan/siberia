@@ -10,4 +10,5 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 public interface AppRepo extends PagingAndSortingRepository<App, Integer> {
 
     App findByProjectAndModule(String project, String module);
+
 }

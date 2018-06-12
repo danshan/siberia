@@ -19,10 +19,10 @@ public class AppConfig {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
-    @Column(nullable = false)
-    private int appId;
-    @Column(nullable = false)
-    private int envId;
+    @ManyToOne
+    private App app;
+    @ManyToOne
+    private Env env;
     @Column(nullable = false, updatable = false)
     private String createBy;
     @Column(nullable = false)

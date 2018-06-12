@@ -1,20 +1,16 @@
 package com.shanhh.siberia.web.service.impl;
 
 import com.google.common.base.Preconditions;
-import com.shanhh.siberia.client.dto.app.AppDTO;
-import com.shanhh.siberia.client.dto.app.AppHostDTO;
-import com.shanhh.siberia.client.dto.app.AppLockDTO;
-import com.shanhh.siberia.client.dto.app.LockStatus;
+import com.google.common.collect.Lists;
+import com.shanhh.siberia.client.dto.app.*;
 import com.shanhh.siberia.client.dto.settings.EnvDTO;
+import com.shanhh.siberia.web.repo.AppConfigRepo;
 import com.shanhh.siberia.web.repo.AppHostRepo;
 import com.shanhh.siberia.web.repo.AppLockRepo;
 import com.shanhh.siberia.web.repo.AppRepo;
 import com.shanhh.siberia.web.repo.convertor.AppConvertor;
 import com.shanhh.siberia.web.repo.convertor.EnvConvertor;
-import com.shanhh.siberia.web.repo.entity.App;
-import com.shanhh.siberia.web.repo.entity.AppHost;
-import com.shanhh.siberia.web.repo.entity.AppLock;
-import com.shanhh.siberia.web.repo.entity.Env;
+import com.shanhh.siberia.web.repo.entity.*;
 import com.shanhh.siberia.web.service.AppService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -23,7 +19,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author shanhonghao
@@ -39,7 +37,10 @@ public class AppServiceImpl implements AppService {
     private AppLockRepo appLockRepo;
     @Resource
     private AppHostRepo appHostRepo;
-@Override
+    @Resource
+    private AppConfigRepo appConfigRepo;
+
+    @Override
     public Optional<AppDTO> loadAppByModule(String project, String module) {
         App app = appRepo.findByProjectAndModule(StringUtils.trimToEmpty(project), module);
         return Optional.ofNullable(AppConvertor.toDTO(app));
@@ -84,6 +85,12 @@ public class AppServiceImpl implements AppService {
     public Optional<AppHostDTO> loadAppHostByEnv(String project, String module, EnvDTO env) {
         AppHost appHost = appHostRepo.findByProjectAndModuleAndEnv(project, module, EnvConvertor.toPO(env));
         return Optional.ofNullable(AppConvertor.toDTO(appHost));
+    }
+
+    @Override
+    public List<AppConfigDTO> findConfigsByAppId(int appId) {
+        List<AppConfig> configs = appConfigRepo.findByAppId(appId);
+        return configs.stream().map(AppConvertor::toDTO).collect(Collectors.toList());
     }
 
 }
