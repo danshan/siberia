@@ -14,7 +14,7 @@ import {
   paginatePipelineDeploymentList,
 } from './mock/pipeline';
 import { paginateTaskList } from './mock/task';
-import { findEnvList } from './mock/settings';
+import { findEnvList, createEnv } from './mock/settings';
 import { paginateAppLockList } from './mock/app';
 
 // 是否禁用代理
@@ -164,6 +164,7 @@ const proxy = {
   // settings
 
   'GET /api/settings/envs': findEnvList,
+  'POST /api/settings/envs': createEnv,
 };
 
 const localhost = {

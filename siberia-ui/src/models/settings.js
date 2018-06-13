@@ -24,10 +24,12 @@ export default {
       });
     },
 
-    *createEnv({ payload }, { call }) {
+    *createEnv({ payload }, { call, put }) {
       const response = yield call(createEnv, payload);
-      this.state.envList.push(response.data);
-      this.setState({ envList: this.state.envList });
+      yield put({
+        type: 'createdEnv',
+        payload: response,
+      });
     },
 
     *submitRegularForm({ payload }, { call }) {
@@ -53,6 +55,13 @@ export default {
       return {
         ...state,
         envList: action.payload.data,
+      };
+    },
+
+    createdEnv(state, action) {
+      return {
+        ...state,
+        env: action.payload.data,
       };
     },
 

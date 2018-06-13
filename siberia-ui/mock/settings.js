@@ -39,6 +39,11 @@ export function findEnvList(req, res) {
   res.json(envList);
 }
 
+export function createEnv(req, res) {
+  res.json(req.body);
+}
+
 export default {
   findEnvList,
+  createEnv,
 };

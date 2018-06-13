@@ -7,15 +7,16 @@ export default class EnvironmentForm extends PureComponent {
     super(props);
 
     this.state = {
-      data: props.value,
       loading: false,
+      data: props.envList,
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    if ('value' in nextProps) {
+    console.log(nextProps);
+    if ('envList' in nextProps) {
       this.setState({
-        data: nextProps.value,
+        data: nextProps.envList,
       });
     }
   }
@@ -74,27 +75,25 @@ export default class EnvironmentForm extends PureComponent {
     this.setState({
       loading: true,
     });
-    setTimeout(() => {
-      if (this.clickedCancel) {
-        this.clickedCancel = false;
-        return;
-      }
-      const target = this.getRowByKey(key) || {};
-      if (!target.name || !target.description) {
-        message.error('请填写完整环境信息');
-        e.target.focus();
-        this.setState({
-          loading: false,
-        });
-        return;
-      }
-      delete target.isNew;
-      this.toggleEditable(e, key);
-      this.props.onChange(this.state.data);
+    if (this.clickedCancel) {
+      this.clickedCancel = false;
+      return;
+    }
+    const target = this.getRowByKey(key) || {};
+    if (!target.name || !target.description) {
+      message.error('请填写完整环境信息');
+      e.target.focus();
       this.setState({
         loading: false,
       });
-    }, 500);
+      return;
+    }
+    delete target.isNew;
+    this.toggleEditable(e, key);
+    this.props.createEnv(target);
+    this.setState({
+      loading: false,
+    });
   }
   cancel(e, key) {
     this.clickedCancel = true;

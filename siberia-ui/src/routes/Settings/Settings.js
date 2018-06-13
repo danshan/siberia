@@ -47,9 +47,16 @@ class Settings extends PureComponent {
     }
   };
 
+  createEnv = env => {
+    this.props.dispatch({
+      type: 'settings/createEnv',
+      payload: env,
+    });
+  };
+
   render() {
     const { settings: { envList }, form, dispatch, submitting } = this.props;
-    const { getFieldDecorator, validateFieldsAndScroll, getFieldsError } = form;
+    const { validateFieldsAndScroll, getFieldsError } = form;
     const validate = () => {
       validateFieldsAndScroll((error, values) => {
         if (!error) {
@@ -103,9 +110,7 @@ class Settings extends PureComponent {
     return (
       <PageHeaderLayout title="管理后台" content="管理后台" wrapperClassName={styles.advancedForm}>
         <Card title="环境管理" bordered={false}>
-          {getFieldDecorator('envList', {
-            initialValue: envList,
-          })(<EnvironmentForm />)}
+          <EnvironmentForm envList={envList} createEnv={this.createEnv} />
         </Card>
 
         <FooterToolbar style={{ width: this.state.width }}>
