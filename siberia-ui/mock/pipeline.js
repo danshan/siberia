@@ -262,6 +262,16 @@ const pipelineDeploymentList = {
   },
 };
 
+const createdDeployment = payload => {
+  return {
+    respCode: {
+      code: '200',
+      message: 'success',
+    },
+    data: payload,
+  };
+};
+
 export function paginatePipelineList(req, res) {
   const result = pipelineList;
 
@@ -302,9 +312,14 @@ export function paginatePipelineDeploymentList(req, res) {
   }
 }
 
+export function createPipelineDeployment(req, res) {
+  res.json(createdDeployment(req.body));
+}
+
 export default {
   paginatePipelineList,
   loadPipeline,
   createPipeline,
   paginatePipelineDeploymentList,
+  createPipelineDeployment,
 };

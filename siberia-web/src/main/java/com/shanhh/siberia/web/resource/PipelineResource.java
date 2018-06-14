@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 
 /**
  * @author shanhonghao
@@ -85,6 +86,18 @@ public class PipelineResource {
             @Valid @RequestBody PipelineDTO pipeline
     ) {
         return new BaseResponse<>(pipelineService.createPipeline(pipeline.getTitle(), pipeline.getDescription(), null));
+    }
+
+    @Timed
+    @RequestMapping(value = "{pipelineId}/deployments", method = RequestMethod.POST)
+    @ApiOperation(value = "create pipeline deployment", response = BaseResponse.class)
+    @ResponseStatus(HttpStatus.CREATED)
+    public BaseResponse<PipelineDeploymentDTO> createPipelineDeployment(
+            @Valid @Min(1) @PathVariable int pipelineId,
+            @Valid @RequestBody PipelineDeploymentDTO deployment
+    ) {
+        return new BaseResponse<>(pipelineService.createPipelineDeployment(
+                pipelineId, deployment.getProject(), deployment.getModule(), deployment.getBuildNo(), null));
     }
 
 }

@@ -26,4 +26,8 @@ public interface AppService {
     List<AppConfigDTO> findConfigsByAppId(int appId);
 
     Optional<AppConfigDTO> loadConfigById(int appId, int configId);
+
+    Optional<AppConfigDTO> createConfig(AppConfigDTO config);
+
+    Optional<AppConfigDTO> updateConfigById(AppConfigDTO config);
 }

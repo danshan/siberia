@@ -4,6 +4,7 @@ import {
   loadPipeline,
   paginatePipelineDeploymentList,
   paginatePipelineList,
+  createPipelineDeployment,
 } from '../services/api';
 
 export default {
@@ -17,10 +18,10 @@ export default {
     },
     pipeline: {},
     pipelineDeploymentList: {
-      total: 0,
-      size: 0,
+      pagination: {},
       list: [],
     },
+    createdPipelineDeployment: {},
   },
 
   effects: {
@@ -43,7 +44,7 @@ export default {
     *createPipeline({ payload }, { call, put }) {
       const response = yield call(createPipeline, payload);
       yield put({
-        type: 'created',
+        type: 'createdPipeline',
         payload: response,
       });
       if (response.data.id) {
@@ -55,6 +56,14 @@ export default {
       const response = yield call(paginatePipelineDeploymentList, payload);
       yield put({
         type: 'pipelineDeploymentList',
+        payload: response,
+      });
+    },
+
+    *createPipelineDeployment({ payload }, { call, put }) {
+      const response = yield call(createPipelineDeployment, payload);
+      yield put({
+        type: 'createdPipelineDeployment',
         payload: response,
       });
     },
@@ -78,14 +87,28 @@ export default {
     pipelineDeploymentList(state, action) {
       return {
         ...state,
-        pipelineDeploymentList: action.payload.data,
+        pipelineDeploymentList: {
+          list: action.payload.data.content,
+          pagination: {
+            current: action.payload.data.number,
+            pageSize: action.payload.data.size,
+            total: action.payload.data.totalElements,
+          },
+        },
       };
     },
 
-    created(state, action) {
+    createdPipeline(state, action) {
       return {
         ...state,
         pipeline: action.payload.data,
+      };
+    },
+
+    createdPipelineDeployment(state, action) {
+      return {
+        ...state,
+        createdPipelineDeployment: action.payload.data,
       };
     },
   },

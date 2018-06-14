@@ -101,4 +101,19 @@ public class AppServiceImpl implements AppService {
         }
     }
 
+    @Override
+    public Optional<AppConfigDTO> createConfig(AppConfigDTO config) {
+        if (config.getId() > 0) {
+            return this.updateConfigById(config);
+        }
+        AppConfig saved = appConfigRepo.save(AppConvertor.toPO(config));
+        return Optional.ofNullable(AppConvertor.toDTO(saved));
+    }
+
+    @Override
+    public Optional<AppConfigDTO> updateConfigById(AppConfigDTO config) {
+        AppConfig saved = appConfigRepo.save(AppConvertor.toPO(config));
+        return Optional.ofNullable(AppConvertor.toDTO(saved));
+    }
+
 }

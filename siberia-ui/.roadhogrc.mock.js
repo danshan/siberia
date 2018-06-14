@@ -12,6 +12,7 @@ import {
   loadPipeline,
   createPipeline,
   paginatePipelineDeploymentList,
+  createPipelineDeployment,
 } from './mock/pipeline';
 import { paginateTaskList } from './mock/task';
 import { findEnvList, createEnv } from './mock/settings';
@@ -152,6 +153,7 @@ const proxy = {
   'GET /api/pipelines': paginatePipelineList,
   'POST /api/pipelines': createPipeline,
   'GET /api/pipelines/:pipelineId/deployments': paginatePipelineDeploymentList,
+  'POST /api/pipelines/:pipelineId/deployments': createPipelineDeployment,
 
   // tasks
 

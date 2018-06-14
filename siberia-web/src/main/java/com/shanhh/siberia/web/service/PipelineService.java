@@ -18,4 +18,6 @@ public interface PipelineService {
     Optional<PipelineDTO> loadPipeline(int pipelineId);
 
     PipelineDTO createPipeline(String title, String description, String createBy);
+
+    PipelineDeploymentDTO createPipelineDeployment(int pipelineId, String project, String module, int buildNo, String createBy);
 }

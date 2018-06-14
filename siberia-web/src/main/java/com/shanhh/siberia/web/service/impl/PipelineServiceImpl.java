@@ -3,8 +3,11 @@ package com.shanhh.siberia.web.service.impl;
 import com.google.common.collect.Lists;
 import com.shanhh.siberia.client.dto.pipeline.PipelineDTO;
 import com.shanhh.siberia.client.dto.pipeline.PipelineDeploymentDTO;
+import com.shanhh.siberia.web.repo.PipelineDeploymentRepo;
 import com.shanhh.siberia.web.repo.PipelineRepo;
+import com.shanhh.siberia.web.repo.convertor.PipelineConvertor;
 import com.shanhh.siberia.web.repo.entity.Pipeline;
+import com.shanhh.siberia.web.repo.entity.PipelineDeployment;
 import com.shanhh.siberia.web.service.PipelineService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -28,10 +31,12 @@ public class PipelineServiceImpl implements PipelineService {
 
     @Resource
     private PipelineRepo pipelineRepo;
+    @Resource
+    private PipelineDeploymentRepo pipelineDeploymentRepo;
 
     @Override
     public Page<PipelineDTO> paginatePipelines(int pageNum, int pageSize) {
-        Page<PipelineDTO> pipelines = pipelineRepo.findAll(new PageRequest(pageNum, pageSize)).map(this::convert);
+        Page<PipelineDTO> pipelines = pipelineRepo.findAll(new PageRequest(pageNum, pageSize)).map(PipelineConvertor::toDTO);
         return pipelines;
     }
 
@@ -65,13 +70,23 @@ public class PipelineServiceImpl implements PipelineService {
         pipeline.setUpdateBy(StringUtils.trimToEmpty(createBy));
         Pipeline saved = pipelineRepo.save(pipeline);
 
-        return convert(saved);
+        return PipelineConvertor.toDTO(saved);
     }
 
-    private PipelineDTO convert(Pipeline po) {
-        PipelineDTO dto = new PipelineDTO();
-        BeanUtils.copyProperties(po, dto);
-        return dto;
+    @Override
+    public PipelineDeploymentDTO createPipelineDeployment(int pipelineId, String project, String module, int buildNo, String createBy) {
+        PipelineDeploymentDTO deployment = new PipelineDeploymentDTO();
+        deployment.setPipelineId(pipelineId);
+        deployment.setProject(StringUtils.trimToEmpty(project));
+        deployment.setModule(StringUtils.trimToEmpty(module));
+        deployment.setBuildNo(buildNo);
+        deployment.setCreateBy(createBy);
+        deployment.setCreateBy(StringUtils.trimToEmpty(createBy));
+        deployment.setUpdateBy(StringUtils.trimToEmpty(createBy));
+        PipelineDeployment saved = pipelineDeploymentRepo.save(PipelineConvertor.toPO(deployment));
+
+        return PipelineConvertor.toDTO(saved);
     }
+
 
 }

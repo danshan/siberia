@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.shanhh.siberia.client.dto.settings.EnvDTO;
 import com.shanhh.siberia.web.repo.EnvRepo;
+import com.shanhh.siberia.web.repo.convertor.SettingsConvertor;
 import com.shanhh.siberia.web.repo.entity.Env;
 import com.shanhh.siberia.web.service.SettingsService;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +31,7 @@ public class SettingsServiceImpl implements SettingsService {
         List<EnvDTO> result = Lists.newLinkedList();
 
         Iterable<Env> envs = envRepo.findAll();
-        envs.forEach(env -> result.add(convert(env)));
+        envs.forEach(env -> result.add(SettingsConvertor.toDTO(env)));
         return result;
     }
 
@@ -42,36 +43,24 @@ public class SettingsServiceImpl implements SettingsService {
         } else {
             envRepo.delete(envId);
             log.info("env deleted, {}", exists);
-            return Optional.of(convert(exists));
+            return Optional.of(SettingsConvertor.toDTO(exists));
         }
     }
 
     @Override
     public Optional<EnvDTO> updateEnvById(EnvDTO env) {
         Preconditions.checkArgument(env.getId() > 0);
-        Env saved = envRepo.save(convert(env));
+        Env saved = envRepo.save(SettingsConvertor.toPO(env));
         log.info("env updated, {}", saved);
-        return Optional.ofNullable(convert(saved));
+        return Optional.ofNullable(SettingsConvertor.toDTO(saved));
     }
 
     @Override
     public Optional<EnvDTO> createEnv(EnvDTO env) {
         Preconditions.checkArgument(env.getId() == 0);
-        Env saved = envRepo.save(convert(env));
+        Env saved = envRepo.save(SettingsConvertor.toPO(env));
         log.info("env created, {}", saved);
-        return Optional.ofNullable(convert(saved));
-    }
-
-    private EnvDTO convert(Env env) {
-        EnvDTO dto = new EnvDTO();
-        BeanUtils.copyProperties(env, dto);
-        return dto;
-    }
-
-    private Env convert(EnvDTO env) {
-        Env po = new Env();
-        BeanUtils.copyProperties(env, po);
-        return po;
+        return Optional.ofNullable(SettingsConvertor.toDTO(saved));
     }
 
 }

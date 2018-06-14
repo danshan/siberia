@@ -1,29 +1,28 @@
-import React, { PureComponent, Fragment } from 'react';
+import React, { Fragment, PureComponent } from 'react';
 import { connect } from 'dva';
 import {
-  Row,
-  Col,
-  Card,
-  Form,
-  Input,
-  Select,
-  Icon,
-  Button,
-  Dropdown,
-  Menu,
-  InputNumber,
-  DatePicker,
-  Modal,
-  message,
   Badge,
+  Button,
+  Card,
+  Col,
+  DatePicker,
   Divider,
+  Dropdown,
+  Form,
+  Icon,
+  Input,
+  InputNumber,
+  Menu,
+  message,
+  Modal,
+  Row,
+  Select,
 } from 'antd';
 import StandardTable from 'components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
 import styles from './Pipeline.less';
 
-const FormItem = Form.Item;
 const { Option } = Select;
 const getValue = obj =>
   Object.keys(obj)
@@ -43,16 +42,26 @@ const CreateForm = Form.create()(props => {
   };
   return (
     <Modal
-      title="新建规则"
+      title="Create Deployment"
       visible={modalVisible}
       onOk={okHandle}
       onCancel={() => handleModalVisible()}
     >
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="描述">
-        {form.getFieldDecorator('desc', {
-          rules: [{ required: true, message: 'Please input some description...' }],
-        })(<Input placeholder="请输入" />)}
-      </FormItem>
+      <Form.Item labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="Project">
+        {form.getFieldDecorator('project', {
+          rules: [{ required: true, message: 'Please input project name...' }],
+        })(<Input placeholder="project name" />)}
+      </Form.Item>
+      <Form.Item labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="Module">
+        {form.getFieldDecorator('module', {
+          rules: [{ required: true, message: 'Please input module name...' }],
+        })(<Input placeholder="module name" />)}
+      </Form.Item>
+      <Form.Item labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="Build No.">
+        {form.getFieldDecorator('buildNo', {
+          rules: [{ required: true, message: 'Please input build NO.' }],
+        })(<Input placeholder="build number" />)}
+      </Form.Item>
     </Modal>
   );
 });
@@ -71,6 +80,11 @@ export default class TableList extends PureComponent {
   };
 
   componentDidMount() {
+    this.loadPipeline();
+    this.paginatePipelineDeploymentList();
+  }
+
+  loadPipeline = () => {
     const { dispatch } = this.props;
     dispatch({
       type: 'pipeline/loadPipeline',
@@ -78,16 +92,32 @@ export default class TableList extends PureComponent {
         pipelineId: this.props.match.params.pipelineId,
       },
     });
+  };
+
+  paginatePipelineDeploymentList = () => {
+    const { dispatch } = this.props;
     dispatch({
       type: 'pipeline/paginatePipelineDeploymentList',
       payload: {
         pipelineId: this.props.match.params.pipelineId,
       },
     });
-  }
+  };
+
+  createPipelineDeployment = fields => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'pipeline/createPipelineDeployment',
+      payload: {
+        pipelineId: this.props.match.params.pipelineId,
+        project: fields.project,
+        module: fields.module,
+        buildNo: fields.buildNo,
+      },
+    });
+  };
 
   handleStandardTableChange = (pagination, filtersArg, sorter) => {
-    const { dispatch } = this.props;
     const { formValues } = this.state;
 
     const filters = Object.keys(filtersArg).reduce((obj, key) => {
@@ -106,22 +136,16 @@ export default class TableList extends PureComponent {
       params.sorter = `${sorter.field}_${sorter.order}`;
     }
 
-    dispatch({
-      type: 'rule/fetch',
-      payload: params,
-    });
+    this.paginatePipelineDeploymentList();
   };
 
   handleFormReset = () => {
-    const { form, dispatch } = this.props;
+    const { form } = this.props;
     form.resetFields();
     this.setState({
       formValues: {},
     });
-    dispatch({
-      type: 'rule/fetch',
-      payload: {},
-    });
+    this.paginatePipelineDeploymentList();
   };
 
   toggleForm = () => {
@@ -192,17 +216,14 @@ export default class TableList extends PureComponent {
   };
 
   handleAdd = fields => {
-    this.props.dispatch({
-      type: 'rule/add',
-      payload: {
-        description: fields.desc,
-      },
-    });
+    this.createPipelineDeployment(fields);
 
     message.success('添加成功');
     this.setState({
       modalVisible: false,
     });
+
+    this.paginatePipelineDeploymentList();
   };
 
   renderSimpleForm() {
@@ -211,19 +232,19 @@ export default class TableList extends PureComponent {
       <Form onSubmit={this.handleSearch} layout="inline">
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={8} sm={24}>
-            <FormItem label="规则编号">
+            <Form.Item label="规则编号">
               {getFieldDecorator('no')(<Input placeholder="请输入" />)}
-            </FormItem>
+            </Form.Item>
           </Col>
           <Col md={8} sm={24}>
-            <FormItem label="使用状态">
+            <Form.Item label="使用状态">
               {getFieldDecorator('status')(
                 <Select placeholder="请选择" style={{ width: '100%' }}>
                   <Option value="0">关闭</Option>
                   <Option value="1">运行中</Option>
                 </Select>
               )}
-            </FormItem>
+            </Form.Item>
           </Col>
           <Col md={8} sm={24}>
             <span className={styles.submitButtons}>
@@ -249,53 +270,53 @@ export default class TableList extends PureComponent {
       <Form onSubmit={this.handleSearch} layout="inline">
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={8} sm={24}>
-            <FormItem label="规则编号">
+            <Form.Item label="规则编号">
               {getFieldDecorator('no')(<Input placeholder="请输入" />)}
-            </FormItem>
+            </Form.Item>
           </Col>
           <Col md={8} sm={24}>
-            <FormItem label="使用状态">
+            <Form.Item label="使用状态">
               {getFieldDecorator('status')(
                 <Select placeholder="请选择" style={{ width: '100%' }}>
                   <Option value="0">关闭</Option>
                   <Option value="1">运行中</Option>
                 </Select>
               )}
-            </FormItem>
+            </Form.Item>
           </Col>
           <Col md={8} sm={24}>
-            <FormItem label="调用次数">
+            <Form.Item label="调用次数">
               {getFieldDecorator('number')(<InputNumber style={{ width: '100%' }} />)}
-            </FormItem>
+            </Form.Item>
           </Col>
         </Row>
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={8} sm={24}>
-            <FormItem label="更新日期">
+            <Form.Item label="更新日期">
               {getFieldDecorator('date')(
                 <DatePicker style={{ width: '100%' }} placeholder="请输入更新日期" />
               )}
-            </FormItem>
+            </Form.Item>
           </Col>
           <Col md={8} sm={24}>
-            <FormItem label="使用状态">
+            <Form.Item label="使用状态">
               {getFieldDecorator('status3')(
                 <Select placeholder="请选择" style={{ width: '100%' }}>
                   <Option value="0">关闭</Option>
                   <Option value="1">运行中</Option>
                 </Select>
               )}
-            </FormItem>
+            </Form.Item>
           </Col>
           <Col md={8} sm={24}>
-            <FormItem label="使用状态">
+            <Form.Item label="使用状态">
               {getFieldDecorator('status4')(
                 <Select placeholder="请选择" style={{ width: '100%' }}>
                   <Option value="0">关闭</Option>
                   <Option value="1">运行中</Option>
                 </Select>
               )}
-            </FormItem>
+            </Form.Item>
           </Col>
         </Row>
         <div style={{ overflow: 'hidden' }}>
@@ -333,19 +354,18 @@ export default class TableList extends PureComponent {
       {
         title: 'Project',
         dataIndex: 'project',
+        sorter: true,
       },
       {
         title: 'Module',
         dataIndex: 'module',
+        sorter: true,
       },
       {
         title: 'Build No.',
         dataIndex: 'buildNo',
         sorter: true,
         align: 'right',
-        render: val => `${val} 万`,
-        // mark to display a total number
-        needTotal: true,
       },
       {
         title: '状态',
@@ -382,9 +402,15 @@ export default class TableList extends PureComponent {
         title: '操作',
         render: () => (
           <Fragment>
-            <a href="">配置</a>
+            <a href="">Log</a>
             <Divider type="vertical" />
-            <a href="">订阅警报</a>
+            <a href="">Config</a>
+            <Divider type="vertical" />
+            <Dropdown overlay={menu}>
+              <Button>
+                Deploy <Icon type="down" />
+              </Button>
+            </Dropdown>
           </Fragment>
         ),
       },

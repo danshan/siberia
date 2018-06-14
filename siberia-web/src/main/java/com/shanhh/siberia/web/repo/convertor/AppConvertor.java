@@ -54,4 +54,15 @@ public class AppConvertor {
         dto.setEnv(EnvConvertor.toDTO(config.getEnv()));
         return dto;
     }
+
+    public static AppConfig toPO(AppConfigDTO config) {
+        if (config == null) {
+            return null;
+        }
+        AppConfig po = new AppConfig();
+        BeanUtils.copyProperties(config, po);
+        po.setEnv(EnvConvertor.toPO(config.getEnv()));
+        return po;
+    }
+
 }
