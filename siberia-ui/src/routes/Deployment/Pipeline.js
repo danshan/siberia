@@ -226,6 +226,10 @@ export default class TableList extends PureComponent {
     this.paginatePipelineDeploymentList();
   };
 
+  handleConfig = record => {
+    console.log(record);
+  };
+
   renderSimpleForm() {
     const { getFieldDecorator } = this.props.form;
     return (
@@ -400,11 +404,11 @@ export default class TableList extends PureComponent {
       },
       {
         title: '操作',
-        render: () => (
+        render: (text, record) => (
           <Fragment>
             <a href="">Log</a>
             <Divider type="vertical" />
-            <a href="">Config</a>
+            <a onClick={() => this.handleConfig(record)}>Config</a>
             <Divider type="vertical" />
             <Dropdown overlay={menu}>
               <Button>
