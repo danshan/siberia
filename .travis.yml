@@ -5,6 +5,7 @@ matrix:
 
     - language: node_js
       node_js: 8.11.1
+      before_install: cd siberia-ui
       before_script: cd siberia-ui
 
 notifications:
