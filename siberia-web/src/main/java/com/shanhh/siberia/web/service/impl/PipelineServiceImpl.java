@@ -3,6 +3,9 @@ package com.shanhh.siberia.web.service.impl;
 import com.shanhh.siberia.client.dto.pipeline.PipelineDTO;
 import com.shanhh.siberia.client.dto.pipeline.PipelineDeploymentDTO;
 import com.shanhh.siberia.client.dto.pipeline.PipelineTaskDTO;
+import com.shanhh.siberia.client.dto.pipeline.PipelineTaskReq;
+import com.shanhh.siberia.client.dto.settings.EnvDTO;
+import com.shanhh.siberia.client.dto.task.TaskCreateReq;
 import com.shanhh.siberia.web.repo.PipelineDeploymentRepo;
 import com.shanhh.siberia.web.repo.PipelineRepo;
 import com.shanhh.siberia.web.repo.PipelineTaskRepo;
@@ -14,6 +17,7 @@ import com.shanhh.siberia.web.resource.errors.BadRequestAlertException;
 import com.shanhh.siberia.web.service.AppService;
 import com.shanhh.siberia.web.service.PipelineService;
 import com.shanhh.siberia.web.service.SettingsService;
+import com.shanhh.siberia.web.service.TaskService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -42,6 +46,8 @@ public class PipelineServiceImpl implements PipelineService {
     private AppService appService;
     @Resource
     private SettingsService settingsService;
+    @Resource
+    private TaskService taskService;
 
     @Override
     public Page<PipelineDTO> paginatePipelines(int pageNum, int pageSize) {
@@ -103,11 +109,26 @@ public class PipelineServiceImpl implements PipelineService {
     }
 
     @Override
-    public Optional<PipelineTaskDTO> createPipelineTask(int deploymentId, int envId) {
+    public Optional<PipelineTaskDTO> createPipelineTask(PipelineTaskReq req) {
+        EnvDTO env = settingsService.loadEnvById(req.getEnvId()).orElseThrow(() -> new BadRequestAlertException("env not exists", "envId", "envId"));
+        PipelineDeploymentDTO deployment = loadPipelineDeploymentById(req.getDeploymentId()).orElseThrow(() -> new BadRequestAlertException("deployment not exists", "deploymentId", "deploymentId"));
+
         PipelineTaskDTO task = new PipelineTaskDTO();
-        task.setEnv(settingsService.loadEnvById(envId).orElseThrow(() -> new BadRequestAlertException("env not exists", "envId", "envId")));
-        task.setDeployment(loadPipelineDeploymentById(deploymentId).orElseThrow(() -> new BadRequestAlertException("deployment not exists", "deploymentId", "deploymentId")));
+        task.setEnv(env);
+        task.setDeployment(deployment);
+        task.setCreateBy(req.getCreateBy());
+        task.setUpdateBy(req.getCreateBy());
         PipelineTask saved = pipelineTaskRepo.save(PipelineConvertor.toPO(task));
+
+        TaskCreateReq taskReq = new TaskCreateReq();
+        taskReq.setEnvId(env.getId());
+        taskReq.setPipelineId(deployment.getPipelineId());
+        taskReq.setProject(deployment.getProject());
+        taskReq.setModule(deployment.getModule());
+        taskReq.setBuildNo(deployment.getBuildNo());
+        taskReq.setCreateBy(req.getCreateBy());
+        taskService.createTask(taskReq);
+
         return Optional.ofNullable(PipelineConvertor.toDTO(saved));
     }
 

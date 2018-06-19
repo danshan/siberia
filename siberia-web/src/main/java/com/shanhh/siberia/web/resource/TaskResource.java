@@ -2,7 +2,7 @@ package com.shanhh.siberia.web.resource;
 
 import com.codahale.metrics.annotation.Timed;
 import com.shanhh.siberia.client.base.BaseResponse;
-import com.shanhh.siberia.client.dto.task.TaskCreateRequest;
+import com.shanhh.siberia.client.dto.task.TaskCreateReq;
 import com.shanhh.siberia.client.dto.task.TaskDTO;
 import com.shanhh.siberia.web.resource.errors.InternalServerErrorException;
 import com.shanhh.siberia.web.service.TaskService;
@@ -36,7 +36,7 @@ public class TaskResource {
     @RequestMapping(method = RequestMethod.POST)
     @ApiOperation(value = "create task", response = BaseResponse.class)
     public BaseResponse<TaskDTO> createTask(
-            @RequestBody TaskCreateRequest task
+            @RequestBody TaskCreateReq task
     ) {
         task.setCreateBy("sys");
         return new BaseResponse<>(taskService.createTask(task)

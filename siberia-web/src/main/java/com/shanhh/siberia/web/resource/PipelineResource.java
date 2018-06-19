@@ -110,8 +110,9 @@ public class PipelineResource {
             @Valid @Min(1) @PathVariable int pipelineId,
             @Valid @RequestBody PipelineTaskReq task
     ) {
-        return new BaseResponse<>(pipelineService.createPipelineTask(
-                task.getDeploymentId(), task.getEnvId()).orElseThrow(ResourceNotFoundException::new));
+        task.setCreateBy("demo");
+        return new BaseResponse<>(pipelineService.createPipelineTask(task)
+                .orElseThrow(ResourceNotFoundException::new));
     }
 
 }

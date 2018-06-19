@@ -14,4 +14,5 @@ import java.io.Serializable;
 public class PipelineTaskReq implements Serializable {
     private int deploymentId;
     private int envId;
+    private String createBy;
 }

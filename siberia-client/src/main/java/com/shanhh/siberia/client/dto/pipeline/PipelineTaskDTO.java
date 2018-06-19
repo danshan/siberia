@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * @author shanhonghao
@@ -18,4 +19,9 @@ public class PipelineTaskDTO implements Serializable {
     private int id;
     private PipelineDeploymentDTO deployment;
     private EnvDTO env;
+
+    private String createBy;
+    private String updateBy;
+    private Date createTime;
+    private Date updateTime;
 }

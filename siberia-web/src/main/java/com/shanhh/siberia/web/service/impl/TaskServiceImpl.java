@@ -39,7 +39,7 @@ public class TaskServiceImpl implements TaskService {
     private EnvRepo envRepo;
 
     @Override
-    public Optional<TaskDTO> createTask(TaskCreateRequest taskReq) {
+    public Optional<TaskDTO> createTask(TaskCreateReq taskReq) {
         Task task = new Task();
         task.setPipelineId(taskReq.getPipelineId());
         task.setEnv(envRepo.findOne(taskReq.getEnvId()));

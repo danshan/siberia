@@ -3,6 +3,7 @@ package com.shanhh.siberia.web.service;
 import com.shanhh.siberia.client.dto.pipeline.PipelineDTO;
 import com.shanhh.siberia.client.dto.pipeline.PipelineDeploymentDTO;
 import com.shanhh.siberia.client.dto.pipeline.PipelineTaskDTO;
+import com.shanhh.siberia.client.dto.pipeline.PipelineTaskReq;
 import org.springframework.data.domain.Page;
 
 import java.util.Optional;
@@ -31,5 +32,5 @@ public interface PipelineService {
 
     // task
 
-    Optional<PipelineTaskDTO> createPipelineTask(int deploymentId, int envId);
+    Optional<PipelineTaskDTO> createPipelineTask(PipelineTaskReq task);
 }

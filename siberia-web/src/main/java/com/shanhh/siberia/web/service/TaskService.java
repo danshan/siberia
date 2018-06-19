@@ -12,7 +12,7 @@ import java.util.Optional;
  */
 public interface TaskService {
 
-    Optional<TaskDTO> createTask(TaskCreateRequest task);
+    Optional<TaskDTO> createTask(TaskCreateReq task);
 
     Page<TaskDTO> paginateTasks(int pageNum, int pageSize);
 

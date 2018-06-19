@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.util.Date;
 
 /**
  * @author shanhonghao
@@ -22,4 +23,14 @@ public class PipelineTask {
     private PipelineDeployment deployment;
     @OneToOne
     private Env env;
+
+    @Column(nullable = false, updatable = false)
+    private String createBy;
+    @Column(nullable = false)
+    private String updateBy;
+
+    @Column(insertable = false, updatable = false, columnDefinition = "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP")
+    private Date createTime;
+    @Column(insertable = false, columnDefinition = "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP")
+    private Date updateTime;
 }

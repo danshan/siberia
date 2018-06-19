@@ -11,7 +11,7 @@ import java.io.Serializable;
  */
 @Data
 @NoArgsConstructor
-public class TaskCreateRequest implements Serializable {
+public class TaskCreateReq implements Serializable {
 
     private int pipelineId;
     private int envId;
