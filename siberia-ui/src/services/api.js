@@ -102,6 +102,13 @@ export async function createPipelineDeployment(params) {
   });
 }
 
+export async function createPipelineTask(params) {
+  return request(`/api/pipelines/${params.pipelineId}/tasks`, {
+    method: 'POST',
+    body: params,
+  });
+}
+
 // apps
 
 export async function paginateAppLockList() {

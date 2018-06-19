@@ -17,4 +17,6 @@ public interface SettingsService {
     Optional<EnvDTO> updateEnvById(EnvDTO envDTO);
 
     Optional<EnvDTO> createEnv(EnvDTO env);
+
+    Optional<EnvDTO> loadEnvById(int envId);
 }

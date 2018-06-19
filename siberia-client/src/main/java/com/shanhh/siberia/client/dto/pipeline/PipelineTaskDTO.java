@@ -1,5 +1,6 @@
 package com.shanhh.siberia.client.dto.pipeline;
 
+import com.shanhh.siberia.client.dto.settings.EnvDTO;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -14,5 +15,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @ToString(exclude = {"createTime", "updateTime"})
 public class PipelineTaskDTO implements Serializable {
-
+    private int id;
+    private PipelineDeploymentDTO deployment;
+    private EnvDTO env;
 }

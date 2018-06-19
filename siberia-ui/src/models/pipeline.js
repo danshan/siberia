@@ -5,6 +5,7 @@ import {
   paginatePipelineDeploymentList,
   paginatePipelineList,
   createPipelineDeployment,
+  createPipelineTask,
 } from '../services/api';
 
 export default {
@@ -67,6 +68,14 @@ export default {
         payload: response,
       });
       return response.data;
+    },
+
+    *createPipelineTask({ payload }, { call, put }) {
+      const response = yield call(createPipelineTask, payload);
+      yield put({
+        type: 'createdPipelineTask',
+        payload: response,
+      });
     },
   },
 

@@ -164,29 +164,19 @@ export default class Pipeline extends PureComponent {
     });
   };
 
-  handleMenuClick = e => {
+  handleMenuClick = (e, record) => {
     const { dispatch } = this.props;
-    const { selectedRows } = this.state;
 
-    if (!selectedRows) return;
-
-    switch (e.key) {
-      case 'remove':
-        dispatch({
-          type: 'rule/remove',
-          payload: {
-            no: selectedRows.map(row => row.no).join(','),
-          },
-          callback: () => {
-            this.setState({
-              selectedRows: [],
-            });
-          },
-        });
-        break;
-      default:
-        break;
-    }
+    console.log(e);
+    console.log(record);
+    dispatch({
+      type: 'pipeline/createPipelineTask',
+      payload: {
+        pipelineId: record.pipelineId,
+        deploymentId: record.id,
+        envId: e.key,
+      },
+    });
   };
 
   handleSelectRows = rows => {
@@ -235,9 +225,9 @@ export default class Pipeline extends PureComponent {
 
   deploymentMenu = record => {
     return (
-      <Menu onClick={this.handleMenuClick} selectedKeys={[]}>
+      <Menu onClick={e => this.handleMenuClick(e, record)} selectedKeys={[]}>
         {(record.app.configs || []).map(config => {
-          return <Menu.Item key={config.env.name}>{config.env.name}</Menu.Item>;
+          return <Menu.Item key={config.env.id}>{config.env.name}</Menu.Item>;
         })}
       </Menu>
     );

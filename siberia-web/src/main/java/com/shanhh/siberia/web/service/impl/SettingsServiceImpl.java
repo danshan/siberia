@@ -60,4 +60,10 @@ public class SettingsServiceImpl implements SettingsService {
         return Optional.ofNullable(SettingsConvertor.toDTO(saved));
     }
 
+    @Override
+    public Optional<EnvDTO> loadEnvById(int envId) {
+        Env env = envRepo.findOne(envId);
+        return Optional.ofNullable(SettingsConvertor.toDTO(env));
+    }
+
 }

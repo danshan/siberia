@@ -4,6 +4,8 @@ import com.codahale.metrics.annotation.Timed;
 import com.shanhh.siberia.client.base.BaseResponse;
 import com.shanhh.siberia.client.dto.pipeline.PipelineDTO;
 import com.shanhh.siberia.client.dto.pipeline.PipelineDeploymentDTO;
+import com.shanhh.siberia.client.dto.pipeline.PipelineTaskDTO;
+import com.shanhh.siberia.client.dto.pipeline.PipelineTaskReq;
 import com.shanhh.siberia.web.service.PipelineService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -85,7 +87,7 @@ public class PipelineResource {
     public BaseResponse<PipelineDTO> createPipeline(
             @Valid @RequestBody PipelineDTO pipeline
     ) {
-        return new BaseResponse<>(pipelineService.createPipeline(pipeline.getTitle(), pipeline.getDescription(), null));
+        return new BaseResponse<>(pipelineService.createPipeline(pipeline.getTitle(), pipeline.getDescription(), null).orElseThrow(ResourceNotFoundException::new));
     }
 
     @Timed
@@ -97,7 +99,19 @@ public class PipelineResource {
             @Valid @RequestBody PipelineDeploymentDTO deployment
     ) {
         return new BaseResponse<>(pipelineService.createPipelineDeployment(
-                pipelineId, deployment.getProject(), deployment.getModule(), deployment.getBuildNo(), null));
+                pipelineId, deployment.getProject(), deployment.getModule(), deployment.getBuildNo(), null).orElseThrow(ResourceNotFoundException::new));
+    }
+
+    @Timed
+    @RequestMapping(value = "{pipelineId}/tasks", method = RequestMethod.POST)
+    @ApiOperation(value = "create pipeline task", response = BaseResponse.class)
+    @ResponseStatus(HttpStatus.CREATED)
+    public BaseResponse<PipelineTaskDTO> createPipelineTask(
+            @Valid @Min(1) @PathVariable int pipelineId,
+            @Valid @RequestBody PipelineTaskReq task
+    ) {
+        return new BaseResponse<>(pipelineService.createPipelineTask(
+                task.getDeploymentId(), task.getEnvId()).orElseThrow(ResourceNotFoundException::new));
     }
 
 }

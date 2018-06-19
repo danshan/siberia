@@ -2,14 +2,18 @@ package com.shanhh.siberia.web.service.impl;
 
 import com.shanhh.siberia.client.dto.pipeline.PipelineDTO;
 import com.shanhh.siberia.client.dto.pipeline.PipelineDeploymentDTO;
+import com.shanhh.siberia.client.dto.pipeline.PipelineTaskDTO;
 import com.shanhh.siberia.web.repo.PipelineDeploymentRepo;
 import com.shanhh.siberia.web.repo.PipelineRepo;
+import com.shanhh.siberia.web.repo.PipelineTaskRepo;
 import com.shanhh.siberia.web.repo.convertor.PipelineConvertor;
 import com.shanhh.siberia.web.repo.entity.Pipeline;
 import com.shanhh.siberia.web.repo.entity.PipelineDeployment;
+import com.shanhh.siberia.web.repo.entity.PipelineTask;
 import com.shanhh.siberia.web.resource.errors.BadRequestAlertException;
 import com.shanhh.siberia.web.service.AppService;
 import com.shanhh.siberia.web.service.PipelineService;
+import com.shanhh.siberia.web.service.SettingsService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -33,7 +37,11 @@ public class PipelineServiceImpl implements PipelineService {
     @Resource
     private PipelineDeploymentRepo pipelineDeploymentRepo;
     @Resource
+    private PipelineTaskRepo pipelineTaskRepo;
+    @Resource
     private AppService appService;
+    @Resource
+    private SettingsService settingsService;
 
     @Override
     public Page<PipelineDTO> paginatePipelines(int pageNum, int pageSize) {
@@ -49,6 +57,12 @@ public class PipelineServiceImpl implements PipelineService {
     }
 
     @Override
+    public Optional<PipelineDeploymentDTO> loadPipelineDeploymentById(int deploymentId) {
+        PipelineDeployment deployment = pipelineDeploymentRepo.findOne(deploymentId);
+        return Optional.ofNullable(PipelineConvertor.toDTO(deployment));
+    }
+
+    @Override
     public Optional<PipelineDTO> loadPipeline(int pipelineId) {
         Pipeline exists = pipelineRepo.findOne(pipelineId);
         if (exists == null) {
@@ -61,7 +75,7 @@ public class PipelineServiceImpl implements PipelineService {
     }
 
     @Override
-    public PipelineDTO createPipeline(String title, String description, String createBy) {
+    public Optional<PipelineDTO> createPipeline(String title, String description, String createBy) {
         Pipeline pipeline = new Pipeline();
         pipeline.setTitle(StringUtils.trimToEmpty(title));
         pipeline.setDescription(StringUtils.trimToEmpty(description));
@@ -69,11 +83,11 @@ public class PipelineServiceImpl implements PipelineService {
         pipeline.setUpdateBy(StringUtils.trimToEmpty(createBy));
         Pipeline saved = pipelineRepo.save(pipeline);
 
-        return PipelineConvertor.toDTO(saved);
+        return Optional.ofNullable(PipelineConvertor.toDTO(saved));
     }
 
     @Override
-    public PipelineDeploymentDTO createPipelineDeployment(int pipelineId, String project, String module, int buildNo, String createBy) {
+    public Optional<PipelineDeploymentDTO> createPipelineDeployment(int pipelineId, String project, String module, int buildNo, String createBy) {
         PipelineDeploymentDTO deployment = new PipelineDeploymentDTO();
         deployment.setPipelineId(pipelineId);
         deployment.setProject(StringUtils.trimToEmpty(project));
@@ -85,8 +99,16 @@ public class PipelineServiceImpl implements PipelineService {
                 .orElseThrow(() -> new BadRequestAlertException("Not app exists for moulde", "module", "module")));
 
         PipelineDeployment saved = pipelineDeploymentRepo.save(PipelineConvertor.toPO(deployment));
-        return PipelineConvertor.toDTO(saved);
+        return Optional.ofNullable(PipelineConvertor.toDTO(saved));
     }
 
+    @Override
+    public Optional<PipelineTaskDTO> createPipelineTask(int deploymentId, int envId) {
+        PipelineTaskDTO task = new PipelineTaskDTO();
+        task.setEnv(settingsService.loadEnvById(envId).orElseThrow(() -> new BadRequestAlertException("env not exists", "envId", "envId")));
+        task.setDeployment(loadPipelineDeploymentById(deploymentId).orElseThrow(() -> new BadRequestAlertException("deployment not exists", "deploymentId", "deploymentId")));
+        PipelineTask saved = pipelineTaskRepo.save(PipelineConvertor.toPO(task));
+        return Optional.ofNullable(PipelineConvertor.toDTO(saved));
+    }
 
 }
