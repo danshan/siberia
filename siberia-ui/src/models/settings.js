@@ -1,12 +1,11 @@
-import { routerRedux } from 'dva/router';
-import { message } from 'antd';
-import { fakeSubmitForm, findEnvList, createEnv } from '../services/api';
+import { paginateEnvList, createEnv, paginateAppList } from '../services/api';
 
 export default {
   namespace: 'settings',
 
   state: {
-    envList: [],
+    envList: {},
+    appList: {},
     step: {
       payAccount: 'ant-design@alipay.com',
       receiverAccount: 'test@example.com',
@@ -16,8 +15,8 @@ export default {
   },
 
   effects: {
-    *findEnvList({ payload }, { call, put }) {
-      const response = yield call(findEnvList, payload);
+    *paginateEnvList({ payload }, { call, put }) {
+      const response = yield call(paginateEnvList, payload);
       yield put({
         type: 'envList',
         payload: response,
@@ -32,21 +31,12 @@ export default {
       });
     },
 
-    *submitRegularForm({ payload }, { call }) {
-      yield call(fakeSubmitForm, payload);
-      message.success('提交成功');
-    },
-    *submitStepForm({ payload }, { call, put }) {
-      yield call(fakeSubmitForm, payload);
+    *paginateAppList({ payload }, { call, put }) {
+      const response = yield call(paginateAppList, payload);
       yield put({
-        type: 'saveStepFormData',
-        payload,
+        type: 'appList',
+        payload: response,
       });
-      yield put(routerRedux.push('/form/step-form/result'));
-    },
-    *submitAdvancedForm({ payload }, { call }) {
-      yield call(fakeSubmitForm, payload);
-      message.success('提交成功');
     },
   },
 
@@ -65,13 +55,10 @@ export default {
       };
     },
 
-    saveStepFormData(state, { payload }) {
+    appList(state, action) {
       return {
         ...state,
-        step: {
-          ...state.step,
-          ...payload,
-        },
+        appList: action.payload.data,
       };
     },
   },

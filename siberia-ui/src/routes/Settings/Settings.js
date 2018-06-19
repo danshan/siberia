@@ -4,6 +4,7 @@ import { connect } from 'dva';
 import FooterToolbar from 'components/FooterToolbar';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import EnvironmentForm from './EnvironmentForm';
+import AppForm from './AppForm';
 import styles from './style.less';
 
 const fieldLabels = {
@@ -25,19 +26,49 @@ class Settings extends PureComponent {
   state = {
     width: '100%',
   };
+
   componentDidMount() {
     window.addEventListener('resize', this.resizeFooterToolbar);
-    this.props.dispatch({
-      type: 'settings/findEnvList',
-      payload: {
-        count: 5,
-      },
-    });
+
+    this.jumpToAnchor();
+
+    this.paginateEnvList();
+    this.paginateAppList();
   }
 
   componentWillUnmount() {
     window.removeEventListener('resize', this.resizeFooterToolbar);
   }
+
+  jumpToAnchor = () => {
+    const anchorName = this.props.location.hash;
+    const scrollToAnchor = () => {
+      const hash = anchorName.replace('#', '');
+      if (hash) {
+        document.getElementsByName(hash)[0].scrollIntoView();
+      }
+    };
+    scrollToAnchor();
+    window.onhashchange = scrollToAnchor;
+  };
+
+  paginateEnvList = () => {
+    this.props.dispatch({
+      type: 'settings/paginateEnvList',
+      payload: {
+        count: 5,
+      },
+    });
+  };
+
+  paginateAppList = () => {
+    this.props.dispatch({
+      type: 'settings/paginateAppList',
+      payload: {
+        count: 5,
+      },
+    });
+  };
 
   resizeFooterToolbar = () => {
     const sider = document.querySelectorAll('.ant-layout-sider')[0];
@@ -55,7 +86,7 @@ class Settings extends PureComponent {
   };
 
   render() {
-    const { settings: { envList }, form, dispatch, submitting } = this.props;
+    const { settings: { envList, appList }, form, dispatch, submitting } = this.props;
     const { validateFieldsAndScroll, getFieldsError } = form;
     const validate = () => {
       validateFieldsAndScroll((error, values) => {
@@ -109,8 +140,12 @@ class Settings extends PureComponent {
     };
     return (
       <PageHeaderLayout title="管理后台" content="管理后台" wrapperClassName={styles.advancedForm}>
-        <Card title="环境管理" bordered={false}>
+        <Card name="environment" title="环境管理" className={styles.card} bordered={false}>
           <EnvironmentForm envList={envList} createEnv={this.createEnv} />
+        </Card>
+
+        <Card name="app" title="应用配置" className={styles.card} bordered={false}>
+          <AppForm envList={appList} createEnv={this.createEnv} />
         </Card>
 
         <FooterToolbar style={{ width: this.state.width }}>

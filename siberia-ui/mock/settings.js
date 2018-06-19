@@ -35,7 +35,7 @@ const envList = {
   },
 };
 
-export function findEnvList(req, res) {
+export function paginateEnvList(req, res) {
   res.json(envList);
 }
 
@@ -43,7 +43,12 @@ export function createEnv(req, res) {
   res.json(req.body);
 }
 
+export function paginateAppList(req, res) {
+  res.json(envList);
+}
+
 export default {
-  findEnvList,
+  paginateEnvList,
   createEnv,
+  paginateAppList,
 };

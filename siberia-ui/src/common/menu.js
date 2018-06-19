@@ -50,6 +50,10 @@ const menuData = [
         name: '环境配置',
         path: 'settings#environment',
       },
+      {
+        name: '应用配置',
+        path: 'settings#app',
+      },
     ],
   },
   {

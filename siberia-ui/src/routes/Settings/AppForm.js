@@ -1,8 +1,8 @@
 import React, { PureComponent, Fragment } from 'react';
-import { Table, Button, Input, message, Popconfirm, Divider } from 'antd';
+import { Table, Button, message, Popconfirm, Divider } from 'antd';
 import styles from './style.less';
 
-export default class EnvironmentForm extends PureComponent {
+export default class AppForm extends PureComponent {
   constructor(props) {
     super(props);
 
@@ -114,43 +114,22 @@ export default class EnvironmentForm extends PureComponent {
         width: '20%',
       },
       {
-        title: '环境名称',
-        dataIndex: 'name',
-        key: 'name',
+        title: 'Project',
+        dataIndex: 'project',
+        key: 'project',
         width: '20%',
-        render: (text, record) => {
-          if (record.editable) {
-            return (
-              <Input
-                value={text}
-                autoFocus
-                onChange={e => this.handleFieldChange(e, 'name', record.id)}
-                onKeyPress={e => this.handleKeyPress(e, record.id)}
-                placeholder="环境名称"
-              />
-            );
-          }
-          return text;
-        },
       },
       {
-        title: '描述',
-        dataIndex: 'description',
-        key: 'description',
-        width: '40%',
-        render: (text, record) => {
-          if (record.editable) {
-            return (
-              <Input
-                value={text}
-                onChange={e => this.handleFieldChange(e, 'description', record.id)}
-                onKeyPress={e => this.handleKeyPress(e, record.id)}
-                placeholder="描述"
-              />
-            );
-          }
-          return text;
-        },
+        title: 'Module',
+        dataIndex: 'module',
+        key: 'module',
+        width: '20%',
+      },
+      {
+        title: '类型',
+        dataIndex: 'appType.desc',
+        key: 'appType',
+        width: '20%',
       },
       {
         title: '操作',

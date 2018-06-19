@@ -1,11 +1,9 @@
 package com.shanhh.siberia.web.service.impl;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 import com.shanhh.siberia.client.dto.settings.EnvDTO;
 import com.shanhh.siberia.web.repo.EnvRepo;
 import com.shanhh.siberia.web.repo.convertor.EnvConvertor;
-import com.shanhh.siberia.web.repo.convertor.PipelineConvertor;
 import com.shanhh.siberia.web.repo.convertor.SettingsConvertor;
 import com.shanhh.siberia.web.repo.entity.Env;
 import com.shanhh.siberia.web.service.SettingsService;
@@ -15,7 +13,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.List;
 import java.util.Optional;
 
 /**
