@@ -5,14 +5,7 @@ matrix:
 
     - language: node_js
       node_js: 8.11.1
-
-
-language: java
-
-services:
-  - docker
-script:
-  - docker build -t danshan/shanhh-hexo .
+      before_script: cd siberia-ui
 
 notifications:
   slack: shanhonghao:pdqZbe3SSqGZahgfKsddxPE5
