@@ -15,6 +15,8 @@ public interface AppService {
 
     Optional<AppDTO> loadAppByModule(String project, String module);
 
+    Optional<AppDTO> loadAppById(int appId);
+
     Page<AppDTO> paginateApps(int pageNum, int pageSize);
 
     Page<AppLockDTO> paginateAppLocks(int pageNum, int pageSize);
@@ -30,4 +32,5 @@ public interface AppService {
     Optional<AppConfigDTO> createConfig(AppConfigDTO config);
 
     Optional<AppConfigDTO> updateConfigById(AppConfigDTO config);
+
 }

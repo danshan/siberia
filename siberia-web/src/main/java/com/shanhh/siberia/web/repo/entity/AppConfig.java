@@ -20,8 +20,8 @@ public class AppConfig {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
-    @ManyToOne
-    private App app;
+    @Column(nullable = false)
+    private int appId;
     @ManyToOne
     private Env env;
     @Convert(converter = JpaConverterJson.class)

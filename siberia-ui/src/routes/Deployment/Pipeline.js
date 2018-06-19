@@ -233,6 +233,16 @@ export default class Pipeline extends PureComponent {
     console.log(record);
   };
 
+  deploymentMenu = record => {
+    return (
+      <Menu onClick={this.handleMenuClick} selectedKeys={[]}>
+        {(record.app.configs || []).map(config => {
+          return <Menu.Item key={config.env.name}>{config.env.name}</Menu.Item>;
+        })}
+      </Menu>
+    );
+  };
+
   renderSimpleForm() {
     const { getFieldDecorator } = this.props.form;
     return (
@@ -413,7 +423,7 @@ export default class Pipeline extends PureComponent {
             <Divider type="vertical" />
             <a onClick={() => this.handleConfig(record)}>Config</a>
             <Divider type="vertical" />
-            <Dropdown overlay={menu}>
+            <Dropdown overlay={this.deploymentMenu(record)}>
               <Button>
                 Deploy <Icon type="down" />
               </Button>

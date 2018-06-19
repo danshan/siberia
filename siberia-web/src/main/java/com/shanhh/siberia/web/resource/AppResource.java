@@ -10,10 +10,13 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
 
 /**
  * @author shanhonghao
@@ -44,6 +47,15 @@ public class AppResource {
         Page<AppDTO> pageInfo = appService.paginateApps(
                 Math.max(pageNum, 0), Math.min(pageSize, LIMIT_MAX));
         return new BaseResponse(pageInfo);
+    }
+
+    @Timed
+    @RequestMapping(value = "{appId}", method = RequestMethod.GET)
+    @ApiOperation(value = "load app by id", response = BaseResponse.class)
+    public BaseResponse loadAppById(
+            @Valid @Min(1) @PathVariable("appId") int appId
+    ) {
+        return new BaseResponse<>(appService.loadAppById(appId).orElseThrow(ResourceNotFoundException::new));
     }
 
     @Timed

@@ -3,6 +3,7 @@ package com.shanhh.siberia.web.service.workflow.register;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.shanhh.siberia.client.dto.app.AppConfigDTO;
 import com.shanhh.siberia.client.dto.app.AppDTO;
 import com.shanhh.siberia.client.dto.app.AppHostDTO;
 import com.shanhh.siberia.client.dto.settings.EnvDTO;
@@ -68,7 +69,7 @@ public class NodeJsRegister implements TaskStepRegister {
     }
 
     private void registerSteps(WorkflowBuilder builder, EnvDTO env, TaskDTO task, AppDTO app, List<String> hosts, int buildNo) {
-        AppDTO.Config config = app.getConfigByEnv(env);
+        AppConfigDTO config = app.getConfigByEnv(env);
         builder.register(new AnsibleExecutor("inventory",
                 "_app_nodejs_nodes_update.yml",
                 ImmutableMap.<String, Object>builder()
@@ -77,7 +78,7 @@ public class NodeJsRegister implements TaskStepRegister {
                         .put("app", task.getModule())
                         .put("project", task.getProject())
                         .put("module", task.getModule())
-                        .put("port", config.getConfigs().getOrDefault("SERVER_PORT", 80))
+                        .put("port", config.getContent().getOrDefault("SERVER_PORT", 80))
                         .build()));
     }
 

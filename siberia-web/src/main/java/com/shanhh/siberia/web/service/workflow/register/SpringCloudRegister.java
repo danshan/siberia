@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 import com.google.common.io.Resources;
+import com.shanhh.siberia.client.dto.app.AppConfigDTO;
 import com.shanhh.siberia.client.dto.app.AppDTO;
 import com.shanhh.siberia.client.dto.app.AppHostDTO;
 import com.shanhh.siberia.client.dto.settings.EnvDTO;
@@ -77,7 +78,7 @@ public class SpringCloudRegister implements TaskStepRegister {
 
     private void registerSteps(WorkflowBuilder builder, EnvDTO env, TaskDTO task, AppDTO app, List<String> toDeployHosts, int buildNo) {
         try {
-            AppDTO.Config config = app.getConfigByEnv(env);
+            AppConfigDTO config = app.getConfigByEnv(env);
             builder.register(new AnsibleExecutor("inventory",
                     "_app_springcloud_nodes_update.yml",
                     ImmutableMap.<String, Object>builder()
@@ -87,7 +88,7 @@ public class SpringCloudRegister implements TaskStepRegister {
                             .put("app_service", generateService(task))
                             .put("project", task.getProject())
                             .put("module", task.getModule())
-                            .put("port", config.getConfigs().getOrDefault("SERVER_PORT", 8080))
+                            .put("port", config.getContent().getOrDefault("SERVER_PORT", 8080))
                             .build()));
         } catch (Exception e) {
             throw new InternalServerErrorException(String.format("register spring cloud failed, %s, %s", task, e.getMessage()));
@@ -104,7 +105,7 @@ public class SpringCloudRegister implements TaskStepRegister {
         AppDTO app = SpringContextHolder.getBean(AppService.class)
                 .loadAppByModule(task.getProject(), task.getModule())
                 .orElseThrow(() -> new InternalServerErrorException(String.format("app not supported, project: %s, module: %s", task.getProject(), task.getModule())));
-        Map<String, Object> configs = app.getConfigByEnv(task.getEnv()).getConfigs();
+        Map<String, Object> configs = app.getConfigByEnv(task.getEnv()).getContent();
 
         PropertiesConfiguration defaultConfig = new PropertiesConfiguration(Resources.getResource("spring-boot.boot.properties"));
         defaultConfig.addProperty("APP_NAME", appName);

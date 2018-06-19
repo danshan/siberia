@@ -46,6 +46,12 @@ public class AppServiceImpl implements AppService {
     }
 
     @Override
+    public Optional<AppDTO> loadAppById(int appId) {
+        App app = appRepo.findOne(appId);
+        return Optional.ofNullable(AppConvertor.toDTO(app));
+    }
+
+    @Override
     public Page<AppDTO> paginateApps(int pageNum, int pageSize) {
         Page<AppDTO> apps = appRepo.findAll(new PageRequest(pageNum, pageSize)).map(AppConvertor::toDTO);
         return apps;

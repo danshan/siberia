@@ -30,7 +30,7 @@ public class App {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private AppType appType;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "appId")
     private List<AppConfig> configs = Lists.newLinkedList();
 
     @Column(nullable = false, updatable = false)
