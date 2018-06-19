@@ -4,11 +4,14 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.shanhh.siberia.client.dto.settings.EnvDTO;
 import com.shanhh.siberia.web.repo.EnvRepo;
+import com.shanhh.siberia.web.repo.convertor.EnvConvertor;
+import com.shanhh.siberia.web.repo.convertor.PipelineConvertor;
 import com.shanhh.siberia.web.repo.convertor.SettingsConvertor;
 import com.shanhh.siberia.web.repo.entity.Env;
 import com.shanhh.siberia.web.service.SettingsService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -27,12 +30,9 @@ public class SettingsServiceImpl implements SettingsService {
     private EnvRepo envRepo;
 
     @Override
-    public List<EnvDTO> findEnvs() {
-        List<EnvDTO> result = Lists.newLinkedList();
-
-        Iterable<Env> envs = envRepo.findAll();
-        envs.forEach(env -> result.add(SettingsConvertor.toDTO(env)));
-        return result;
+    public Page<EnvDTO> paginateEnvs(int pageNum, int pageSize) {
+        Page<EnvDTO> envs = envRepo.findAll(new PageRequest(pageNum, pageSize)).map(EnvConvertor::toDTO);
+        return envs;
     }
 
     @Override

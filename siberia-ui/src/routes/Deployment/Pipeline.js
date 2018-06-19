@@ -71,7 +71,7 @@ const CreateForm = Form.create()(props => {
   loading: loading.models.pipeline,
 }))
 @Form.create()
-export default class TableList extends PureComponent {
+export default class Pipeline extends PureComponent {
   state = {
     modalVisible: false,
     expandForm: false,
@@ -114,7 +114,17 @@ export default class TableList extends PureComponent {
         module: fields.module,
         buildNo: fields.buildNo,
       },
+    }).then(() => {
+      this.sendSuccessMessage('添加成功');
+      this.setState({
+        modalVisible: false,
+      });
+      this.paginatePipelineDeploymentList();
     });
+  };
+
+  sendSuccessMessage = msg => {
+    message.success(msg);
   };
 
   handleStandardTableChange = (pagination, filtersArg, sorter) => {
@@ -217,13 +227,6 @@ export default class TableList extends PureComponent {
 
   handleAdd = fields => {
     this.createPipelineDeployment(fields);
-
-    message.success('添加成功');
-    this.setState({
-      modalVisible: false,
-    });
-
-    this.paginatePipelineDeploymentList();
   };
 
   handleConfig = record => {

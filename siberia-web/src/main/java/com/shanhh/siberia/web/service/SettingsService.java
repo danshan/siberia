@@ -1,8 +1,8 @@
 package com.shanhh.siberia.web.service;
 
 import com.shanhh.siberia.client.dto.settings.EnvDTO;
+import org.springframework.data.domain.Page;
 
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -10,7 +10,7 @@ import java.util.Optional;
  * @since 2018-05-24 16:14
  */
 public interface SettingsService {
-    List<EnvDTO> findEnvs();
+    Page<EnvDTO> paginateEnvs(int pageNum, int pageSize);
 
     Optional<EnvDTO> deleteEnvById(int envId);
 

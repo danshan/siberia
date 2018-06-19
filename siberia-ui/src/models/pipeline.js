@@ -66,6 +66,7 @@ export default {
         type: 'createdPipelineDeployment',
         payload: response,
       });
+      return response.data;
     },
   },
 
