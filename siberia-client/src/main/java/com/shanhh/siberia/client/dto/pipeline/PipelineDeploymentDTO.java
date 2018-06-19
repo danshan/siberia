@@ -1,6 +1,8 @@
 package com.shanhh.siberia.client.dto.pipeline;
 
 import com.google.common.collect.Lists;
+import com.shanhh.siberia.client.dto.app.AppDTO;
+import com.shanhh.siberia.client.dto.settings.EnvDTO;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -24,8 +26,9 @@ public class PipelineDeploymentDTO implements Serializable {
     private String project;
     private String module;
     private int buildNo;
+    private AppDTO app;
 
-    private List<PipelineTaskDTO> taskList;
+    private List<PipelineTaskDTO> tasks;
 
     private String createBy;
     private String updateBy;
@@ -33,10 +36,10 @@ public class PipelineDeploymentDTO implements Serializable {
     private Date updateTime;
 
     public void addTask(PipelineTaskDTO task) {
-        if (this.taskList == null) {
-            this.taskList = Lists.newLinkedList();
+        if (this.tasks == null) {
+            this.tasks = Lists.newLinkedList();
         }
-        taskList.add(task);
+        tasks.add(task);
     }
 
     public static PipelineDeploymentDTO mock() {

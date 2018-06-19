@@ -71,10 +71,10 @@ public class PipelineResource {
             @RequestParam(value = "pageSize", required = false, defaultValue = LIMIT_DEFAULT) int pageSize,
 
             @ApiParam(value = "pipeline id", required = true)
-            @PathVariable("pipelineId") String pipelineId
+            @Valid @Min(1) @PathVariable("pipelineId") int pipelineId
     ) {
         Page<PipelineDeploymentDTO> pageInfo = pipelineService.paginatePipelineDeployments(
-                Math.max(pageNum, 0), Math.min(pageSize, LIMIT_MAX));
+                Math.max(pageNum, 0), Math.min(pageSize, LIMIT_MAX), pipelineId);
         return new BaseResponse(pageInfo);
     }
 

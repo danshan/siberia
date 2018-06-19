@@ -13,7 +13,7 @@ import java.util.Optional;
 public interface PipelineService {
     Page<PipelineDTO> paginatePipelines(int pageNum, int pageSize);
 
-    Page<PipelineDeploymentDTO> paginatePipelineDeployments(int pageNum, int pageSize);
+    Page<PipelineDeploymentDTO> paginatePipelineDeployments(int pageNum, int pageSize, int pipelineId);
 
     Optional<PipelineDTO> loadPipeline(int pipelineId);
 

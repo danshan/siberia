@@ -25,6 +25,15 @@ public class AppConvertor {
         return dto;
     }
 
+    public static App toPO(AppDTO dto) {
+        if (dto == null) {
+            return null;
+        }
+        App po = new App();
+        BeanUtils.copyProperties(dto, po);
+        return po;
+    }
+
     public static AppLockDTO toDTO(AppLock lock) {
         if (lock == null) {
             return null;

@@ -1,6 +1,5 @@
 package com.shanhh.siberia.web.service.impl;
 
-import com.google.common.collect.Lists;
 import com.shanhh.siberia.client.dto.pipeline.PipelineDTO;
 import com.shanhh.siberia.client.dto.pipeline.PipelineDeploymentDTO;
 import com.shanhh.siberia.web.repo.PipelineDeploymentRepo;
@@ -8,17 +7,17 @@ import com.shanhh.siberia.web.repo.PipelineRepo;
 import com.shanhh.siberia.web.repo.convertor.PipelineConvertor;
 import com.shanhh.siberia.web.repo.entity.Pipeline;
 import com.shanhh.siberia.web.repo.entity.PipelineDeployment;
+import com.shanhh.siberia.web.resource.errors.BadRequestAlertException;
+import com.shanhh.siberia.web.service.AppService;
 import com.shanhh.siberia.web.service.PipelineService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -33,6 +32,8 @@ public class PipelineServiceImpl implements PipelineService {
     private PipelineRepo pipelineRepo;
     @Resource
     private PipelineDeploymentRepo pipelineDeploymentRepo;
+    @Resource
+    private AppService appService;
 
     @Override
     public Page<PipelineDTO> paginatePipelines(int pageNum, int pageSize) {
@@ -41,12 +42,10 @@ public class PipelineServiceImpl implements PipelineService {
     }
 
     @Override
-    public Page<PipelineDeploymentDTO> paginatePipelineDeployments(int pageNum, int pageSize) {
-        List<PipelineDeploymentDTO> results = Lists.newLinkedList();
-        for (int i = 0; i < pageSize; i++) {
-            results.add(PipelineDeploymentDTO.mock());
-        }
-        return new PageImpl<>(results);
+    public Page<PipelineDeploymentDTO> paginatePipelineDeployments(int pageNum, int pageSize, int pipelineId) {
+        Page<PipelineDeploymentDTO> results = pipelineDeploymentRepo.findByPipelineId(pipelineId, new PageRequest(pageNum, pageSize))
+                .map(PipelineConvertor::toDTO);
+        return results;
     }
 
     @Override
@@ -80,11 +79,12 @@ public class PipelineServiceImpl implements PipelineService {
         deployment.setProject(StringUtils.trimToEmpty(project));
         deployment.setModule(StringUtils.trimToEmpty(module));
         deployment.setBuildNo(buildNo);
-        deployment.setCreateBy(createBy);
         deployment.setCreateBy(StringUtils.trimToEmpty(createBy));
         deployment.setUpdateBy(StringUtils.trimToEmpty(createBy));
-        PipelineDeployment saved = pipelineDeploymentRepo.save(PipelineConvertor.toPO(deployment));
+        deployment.setApp(appService.loadAppByModule(deployment.getProject(), deployment.getModule())
+                .orElseThrow(() -> new BadRequestAlertException("Not app exists for moulde", "module", "module")));
 
+        PipelineDeployment saved = pipelineDeploymentRepo.save(PipelineConvertor.toPO(deployment));
         return PipelineConvertor.toDTO(saved);
     }
 
