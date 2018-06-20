@@ -1,5 +1,6 @@
 package com.shanhh.siberia.web.repo.entity;
 
+import com.shanhh.siberia.client.dto.pipeline.PipelineStatus;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -23,6 +24,9 @@ public class Pipeline {
     private String title;
     @Column(nullable = false, columnDefinition = "TEXT")
     private String description;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private PipelineStatus status;
     @Column(nullable = false, updatable = false)
     private String createBy;
     @Column(nullable = false)

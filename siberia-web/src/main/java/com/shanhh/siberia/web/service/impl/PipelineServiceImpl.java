@@ -1,9 +1,6 @@
 package com.shanhh.siberia.web.service.impl;
 
-import com.shanhh.siberia.client.dto.pipeline.PipelineDTO;
-import com.shanhh.siberia.client.dto.pipeline.PipelineDeploymentDTO;
-import com.shanhh.siberia.client.dto.pipeline.PipelineTaskDTO;
-import com.shanhh.siberia.client.dto.pipeline.PipelineTaskReq;
+import com.shanhh.siberia.client.dto.pipeline.*;
 import com.shanhh.siberia.client.dto.settings.EnvDTO;
 import com.shanhh.siberia.client.dto.task.TaskCreateReq;
 import com.shanhh.siberia.web.repo.PipelineDeploymentRepo;
@@ -85,6 +82,7 @@ public class PipelineServiceImpl implements PipelineService {
         Pipeline pipeline = new Pipeline();
         pipeline.setTitle(StringUtils.trimToEmpty(title));
         pipeline.setDescription(StringUtils.trimToEmpty(description));
+        pipeline.setStatus(PipelineStatus.RUNNING);
         pipeline.setCreateBy(StringUtils.trimToEmpty(createBy));
         pipeline.setUpdateBy(StringUtils.trimToEmpty(createBy));
         Pipeline saved = pipelineRepo.save(pipeline);

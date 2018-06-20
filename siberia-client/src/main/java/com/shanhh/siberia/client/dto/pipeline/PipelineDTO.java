@@ -28,6 +28,8 @@ public class PipelineDTO implements Serializable {
     @NotNull
     @Size(min = 0, max = 65535)
     private String description;
+    private PipelineStatus status;
+
     private String createBy;
     private String updateBy;
     private Date createTime;
