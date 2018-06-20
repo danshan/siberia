@@ -71,8 +71,13 @@ public class AppServiceImpl implements AppService {
 
         Env envPo = new Env();
         envPo.setId(env.getId());
-        if (appLockRepo.findByProjectAndModuleAndEnv(project, module, envPo) != null) {
-            AppLock result = appLockRepo.updateAppLockStatus(project, module, envPo, lockStatus, operator);
+        AppLock exists = appLockRepo.findByProjectAndModuleAndEnv(project, module, envPo);
+        if (exists != null) {
+            exists.setUpdateBy(operator);
+            exists.setUpdateTime(new Date());
+            exists.setLockStatus(lockStatus);
+
+            AppLock result = appLockRepo.save(exists);
             return Optional.ofNullable(AppConvertor.toDTO(result));
         } else {
             AppLock appLock = new AppLock();
