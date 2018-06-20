@@ -18,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -64,14 +65,15 @@ public class AppServiceImpl implements AppService {
     }
 
     @Override
-    public int updateLockStatus(String project, String module, EnvDTO env, LockStatus lockStatus, String operator) {
+    public Optional<AppLockDTO> updateLockStatus(String project, String module, EnvDTO env, LockStatus lockStatus, String operator) {
         Preconditions.checkArgument(StringUtils.isNotBlank(project), "app should not be empty");
         Preconditions.checkArgument(env != null, "env should not be empty");
 
         Env envPo = new Env();
         envPo.setId(env.getId());
         if (appLockRepo.findByProjectAndModuleAndEnv(project, module, envPo) != null) {
-            return appLockRepo.updateAppLockStatus(project, module, envPo, lockStatus, operator);
+            AppLock result = appLockRepo.updateAppLockStatus(project, module, envPo, lockStatus, operator);
+            return Optional.ofNullable(AppConvertor.toDTO(result));
         } else {
             AppLock appLock = new AppLock();
             appLock.setProject(StringUtils.trimToEmpty(project));
@@ -82,8 +84,21 @@ public class AppServiceImpl implements AppService {
             appLock.setUpdateBy(operator);
 
             AppLock result = appLockRepo.save(appLock);
-            return result != null ? 1 : 0;
+            return Optional.ofNullable(AppConvertor.toDTO(result));
         }
+    }
+
+    @Override
+    public Optional<AppLockDTO> updateLockStatus(int appLockId, LockStatus lockStatus, String operator) {
+        Preconditions.checkArgument(appLockId > 0, "app lock id should not be empty");
+        AppLock exists = appLockRepo.findOne(appLockId);
+        Preconditions.checkArgument(exists != null);
+
+        exists.setLockStatus(lockStatus);
+        exists.setUpdateBy(operator);
+        exists.setUpdateTime(new Date());
+        AppLock result = appLockRepo.save(exists);
+        return Optional.ofNullable(AppConvertor.toDTO(result));
     }
 
     @Override

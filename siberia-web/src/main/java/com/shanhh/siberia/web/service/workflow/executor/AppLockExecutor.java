@@ -47,8 +47,8 @@ public class AppLockExecutor implements StepExecutor {
     public void exec(WorkflowDTO workflow) {
         TaskDTO task = workflow.getTask();
 
-        Preconditions.checkState(appService.updateLockStatus(task.getProject(), task.getModule(), task.getEnv(), lockStatus, task.getUpdateBy()) > 0,
-                "update lock status failed: %s, %s", task.getBuildNo(), task.getEnv());
+        appService.updateLockStatus(task.getProject(), task.getModule(), task.getEnv(), lockStatus, task.getUpdateBy())
+                .orElseThrow(() -> new IllegalStateException(String.format("update lock status failed: %s, %s", task.getBuildNo(), task.getEnv())));
     }
 
     @Override

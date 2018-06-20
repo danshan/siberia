@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Card, Badge } from 'antd';
+import { Card, Switch, Icon, Radio } from 'antd';
 
 import StandardTable from 'components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
@@ -17,19 +17,57 @@ export default class AppConfigList extends PureComponent {
   };
 
   componentDidMount() {
+    this.paginateAppLockList();
+    this.paginateEnvList();
+  }
+
+  paginateAppLockList = () => {
     this.props.dispatch({
       type: 'app/paginateAppLockList',
       payload: {
         count: 5,
       },
     });
-  }
+  };
+
+  paginateEnvList = () => {
+    this.props.dispatch({
+      type: 'app/paginateEnvList',
+      payload: {},
+    });
+  };
+
+  updateAppLock = (appLockId, lockStatus) => {
+    this.props
+      .dispatch({
+        type: 'app/updateAppLockStatus',
+        payload: {
+          appLockId,
+          lockStatus,
+        },
+      })
+      .then(() => {
+        this.paginateAppLockList();
+      });
+  };
+
+  updateLock = (e, text, record) => {
+    this.updateAppLock(record.id, e ? 0 : 1);
+  };
 
   render() {
-    const { app: { appLockList }, loading } = this.props;
+    const { app: { envList, appLockList }, loading } = this.props;
     const { selectedRows } = this.state;
 
-    const status = ['UNLOKCED', 'LOCKED'];
+    const lockSwitch = (text, record) => (
+      <Switch
+        checkedChildren={<Icon type="unlock" />}
+        unCheckedChildren={<Icon type="lock" />}
+        checked={text.value === 0}
+        onChange={e => this.updateLock(e, text, record)}
+      />
+    );
+
     const columns = [
       {
         title: 'Project',
@@ -42,26 +80,29 @@ export default class AppConfigList extends PureComponent {
       {
         title: '状态',
         dataIndex: 'lockStatus',
-        filters: [
-          {
-            text: status[0],
-            value: 0,
-          },
-          {
-            text: status[1],
-            value: 1,
-          },
-        ],
-        onFilter: (value, record) => record.lockStatus.value === value,
-        render(val) {
-          return <Badge status={status[val.value]} text={status[val.value]} />;
+        render: (text, record) => {
+          return lockSwitch(text, record);
         },
       },
     ];
 
+    const appFilter = (
+      <div>
+        <Radio.Group defaultValue="0">
+          {(envList || []).map(env => {
+            return (
+              <Radio.Button key={env.id} value={env.id}>
+                {env.name}
+              </Radio.Button>
+            );
+          })}
+        </Radio.Group>
+      </div>
+    );
+
     return (
       <PageHeaderLayout>
-        <Card bordered={false}>
+        <Card bordered={false} title="应用列表" extra={appFilter}>
           <div className={styles.tableList}>
             <StandardTable
               selectedRows={selectedRows}

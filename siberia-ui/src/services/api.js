@@ -109,14 +109,21 @@ export async function createPipelineTask(params) {
   });
 }
 
+export async function paginatePipelineDeploymentList(params) {
+  return request(`/api/pipelines/${params.pipelineId}/deployments`);
+}
+
 // apps
 
 export async function paginateAppLockList() {
   return request('/api/apps/locks');
 }
 
-export async function paginatePipelineDeploymentList(params) {
-  return request(`/api/pipelines/${params.pipelineId}/deployments`);
+export async function updateAppLockStatus(params) {
+  return request(`/api/apps/locks`, {
+    method: 'PUT',
+    body: params,
+  });
 }
 
 // tasks

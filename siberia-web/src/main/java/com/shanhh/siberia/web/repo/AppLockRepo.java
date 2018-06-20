@@ -18,7 +18,7 @@ public interface AppLockRepo extends PagingAndSortingRepository<AppLock, Integer
 
     @Modifying
     @Query("update AppLock set lockStatus=:lockStatus, updateBy=:updateBy, updateTime=current_time where project=:project and module=:module and env=:env")
-    int updateAppLockStatus(@Param("project") String project,
+    AppLock updateAppLockStatus(@Param("project") String project,
                                              @Param("module") String module,
                                              @Param("env") Env env,
                                              @Param("lockStatus") LockStatus lockStatus,

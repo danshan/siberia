@@ -21,7 +21,9 @@ public interface AppService {
 
     Page<AppLockDTO> paginateAppLocks(int pageNum, int pageSize);
 
-    int updateLockStatus(String project, String module, EnvDTO env, LockStatus lockStatus, String operator);
+    Optional<AppLockDTO> updateLockStatus(String project, String module, EnvDTO env, LockStatus lockStatus, String operator);
+
+    Optional<AppLockDTO> updateLockStatus(int appLockId, LockStatus lockStatus, String operator);
 
     Optional<AppHostDTO> loadAppHostByEnv(String project, String module, EnvDTO env);
 

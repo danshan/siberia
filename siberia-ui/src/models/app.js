@@ -1,9 +1,11 @@
-import { paginateAppLockList } from '../services/api';
+import { paginateAppLockList, paginateEnvList, updateAppLockStatus } from '../services/api';
 
 export default {
   namespace: 'app',
 
   state: {
+    envList: [],
+
     appLockList: {
       pagination: {},
       list: [],
@@ -17,6 +19,19 @@ export default {
         type: 'appLockList',
         payload: response,
       });
+    },
+
+    *paginateEnvList({ payload }, { call, put }) {
+      const response = yield call(paginateEnvList, payload);
+      yield put({
+        type: 'envList',
+        payload: response,
+      });
+    },
+
+    *updateAppLockStatus({ payload }, { call }) {
+      const response = yield call(updateAppLockStatus, payload);
+      return response.data;
     },
   },
 
@@ -32,6 +47,13 @@ export default {
             total: action.payload.data.totalElements,
           },
         },
+      };
+    },
+
+    envList(state, action) {
+      return {
+        ...state,
+        envList: action.payload.data.content,
       };
     },
   },

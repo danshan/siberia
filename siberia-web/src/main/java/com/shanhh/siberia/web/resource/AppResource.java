@@ -4,6 +4,7 @@ import com.codahale.metrics.annotation.Timed;
 import com.shanhh.siberia.client.base.BaseResponse;
 import com.shanhh.siberia.client.dto.app.AppDTO;
 import com.shanhh.siberia.client.dto.app.AppLockDTO;
+import com.shanhh.siberia.client.dto.app.AppLockUpdateReq;
 import com.shanhh.siberia.web.service.AppService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
+import java.util.Optional;
 
 /**
  * @author shanhonghao
@@ -71,6 +73,16 @@ public class AppResource {
         Page<AppLockDTO> pageInfo = appService.paginateAppLocks(
                 Math.max(pageNum, 0), Math.min(pageSize, LIMIT_MAX));
         return new BaseResponse(pageInfo);
+    }
+
+
+    @Timed
+    @RequestMapping(value = "locks", method = RequestMethod.PUT)
+    @ApiOperation(value = "update app lock by id", response = BaseResponse.class)
+    public BaseResponse updateLockStatus(
+            @Valid @RequestBody AppLockUpdateReq appLock
+    ) {
+        return new BaseResponse<>(appService.updateLockStatus(appLock.getAppLockId(), appLock.getLockStatus(), "sys").orElseThrow(ResourceNotFoundException::new));
     }
 
     @Timed

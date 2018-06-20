@@ -173,6 +173,8 @@ const proxy = {
 const localhost = {
   'GET /api/(.*)': 'http://127.0.0.1:8080/api/',
   'POST /api/(.*)': 'http://127.0.0.1:8080/api/',
+  'PUT /api/(.*)': 'http://127.0.0.1:8080/api/',
+  'DELETE /api/(.*)': 'http://127.0.0.1:8080/api/',
 };
 
 export default (noProxy ? localhost : delay(proxy, 1000));
