@@ -9,7 +9,6 @@ import {
   Col,
   Radio,
   Input,
-  Progress,
   Button,
   Icon,
   Dropdown,
@@ -64,6 +63,7 @@ const CreateForm = Form.create()(props => {
 export default class PipelineList extends PureComponent {
   state = {
     modalVisible: false,
+    status: 0,
   };
 
   componentDidMount() {
@@ -71,6 +71,7 @@ export default class PipelineList extends PureComponent {
       type: 'pipeline/paginatePipelineList',
       payload: {
         count: 5,
+        status: this.state.status,
       },
     });
   }
@@ -101,11 +102,11 @@ export default class PipelineList extends PureComponent {
     );
 
     const extraContent = (
-      <div className={styles.extraContent}>
-        <RadioGroup defaultValue="all">
-          <RadioButton value="all">全部</RadioButton>
-          <RadioButton value="progress">进行中</RadioButton>
-          <RadioButton value="done">已完成</RadioButton>
+      <div>
+        <RadioGroup defaultValue="0">
+          <RadioButton value="0">全部</RadioButton>
+          <RadioButton value="1">进行中</RadioButton>
+          <RadioButton value="2">已完成</RadioButton>
         </RadioGroup>
         <Search className={styles.extraContentSearch} placeholder="请输入" onSearch={() => ({})} />
       </div>
@@ -119,7 +120,7 @@ export default class PipelineList extends PureComponent {
       total: pipelineList.totalElements,
     };
 
-    const ListContent = ({ data: { createBy, createTime, percent, status } }) => (
+    const ListContent = ({ data: { createBy, createTime, status } }) => (
       <div className={styles.listContent}>
         <div className={styles.listContentItem}>
           <span>Owner</span>
@@ -130,7 +131,7 @@ export default class PipelineList extends PureComponent {
           <p>{moment(createTime).format('YYYY-MM-DD HH:mm')}</p>
         </div>
         <div className={styles.listContentItem}>
-          <Progress percent={percent} status={status} strokeWidth={6} style={{ width: 180 }} />
+          <p>{status.desc}</p>
         </div>
       </div>
     );

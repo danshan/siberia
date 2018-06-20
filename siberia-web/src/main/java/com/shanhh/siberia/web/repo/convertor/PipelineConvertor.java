@@ -23,6 +23,15 @@ public class PipelineConvertor {
         return dto;
     }
 
+    public static Pipeline toPO(PipelineDTO dto) {
+        if (dto == null) {
+            return null;
+        }
+        Pipeline po = new Pipeline();
+        BeanUtils.copyProperties(dto, po);
+        return po;
+    }
+
     public static PipelineDeploymentDTO toDTO(PipelineDeployment po) {
         if (po == null) {
             return null;

@@ -1,6 +1,5 @@
 package com.shanhh.siberia.web.repo;
 
-import com.shanhh.siberia.client.dto.app.AppLockDTO;
 import com.shanhh.siberia.client.dto.app.LockStatus;
 import com.shanhh.siberia.web.repo.entity.AppLock;
 import com.shanhh.siberia.web.repo.entity.Env;
@@ -8,8 +7,6 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
-
-import java.util.Optional;
 
 /**
  * @author shanhonghao

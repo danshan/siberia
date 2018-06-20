@@ -1,5 +1,6 @@
 package com.shanhh.siberia.web.service.impl;
 
+import com.google.common.collect.Lists;
 import com.shanhh.siberia.client.dto.pipeline.*;
 import com.shanhh.siberia.client.dto.settings.EnvDTO;
 import com.shanhh.siberia.client.dto.task.TaskCreateReq;
@@ -23,7 +24,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author shanhonghao
@@ -47,8 +51,15 @@ public class PipelineServiceImpl implements PipelineService {
     private TaskService taskService;
 
     @Override
-    public Page<PipelineDTO> paginatePipelines(int pageNum, int pageSize) {
-        Page<PipelineDTO> pipelines = pipelineRepo.findAll(new PageRequest(pageNum, pageSize)).map(PipelineConvertor::toDTO);
+    public Page<PipelineDTO> paginatePipelines(int pageNum, int pageSize, PipelineStatus status) {
+        List<PipelineStatus> statusVals = Stream.of(PipelineStatus.values())
+                .filter(s -> s != PipelineStatus.UNKNOWN)
+                .collect(Collectors.toList());
+        if (status != PipelineStatus.UNKNOWN) {
+            statusVals = Lists.newArrayList(status);
+        }
+
+        Page<PipelineDTO> pipelines = pipelineRepo.findByStatus(statusVals, new PageRequest(pageNum, pageSize)).map(PipelineConvertor::toDTO);
         return pipelines;
     }
 
@@ -88,6 +99,16 @@ public class PipelineServiceImpl implements PipelineService {
         Pipeline saved = pipelineRepo.save(pipeline);
 
         return Optional.ofNullable(PipelineConvertor.toDTO(saved));
+    }
+
+    @Override
+    public Optional<PipelineDTO> updatePipelineStatusById(int pipelineId, PipelineStatus status) {
+        PipelineDTO pipeline = loadPipeline(pipelineId).orElseThrow(() -> new BadRequestAlertException("pipeline not exists", "pipelineId", "pipelineId"));
+        pipeline.setStatus(status);
+
+        Pipeline updated = pipelineRepo.save(PipelineConvertor.toPO(pipeline));
+        log.info("pipeline status updated to {}, pipelineId={}", status, pipelineId);
+        return Optional.ofNullable(PipelineConvertor.toDTO(updated));
     }
 
     @Override

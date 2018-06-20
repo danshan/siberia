@@ -2,10 +2,7 @@ package com.shanhh.siberia.web.resource;
 
 import com.codahale.metrics.annotation.Timed;
 import com.shanhh.siberia.client.base.BaseResponse;
-import com.shanhh.siberia.client.dto.pipeline.PipelineDTO;
-import com.shanhh.siberia.client.dto.pipeline.PipelineDeploymentDTO;
-import com.shanhh.siberia.client.dto.pipeline.PipelineTaskDTO;
-import com.shanhh.siberia.client.dto.pipeline.PipelineTaskReq;
+import com.shanhh.siberia.client.dto.pipeline.*;
 import com.shanhh.siberia.web.service.PipelineService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -45,10 +42,13 @@ public class PipelineResource {
             @RequestParam(value = "pageNum", required = false, defaultValue = "0") int pageNum,
 
             @ApiParam(value = "page size", required = false, defaultValue = LIMIT_DEFAULT)
-            @RequestParam(value = "pageSize", required = false, defaultValue = LIMIT_DEFAULT) int pageSize
+            @RequestParam(value = "pageSize", required = false, defaultValue = LIMIT_DEFAULT) int pageSize,
+
+            @ApiParam(value = "pipepline status", required = false, defaultValue = "0")
+            @RequestParam(value = "status", required = false, defaultValue = "0") int status
     ) {
         Page<PipelineDTO> pageInfo = pipelineService.paginatePipelines(
-                Math.max(pageNum, 0), Math.min(pageSize, LIMIT_MAX));
+                Math.max(pageNum, 0), Math.min(pageSize, LIMIT_MAX), PipelineStatus.of(status));
         return new BaseResponse(pageInfo);
     }
 
@@ -60,6 +60,18 @@ public class PipelineResource {
             @PathVariable("pipelineId") int pipelineId
     ) {
         return new BaseResponse<>(pipelineService.loadPipeline(pipelineId).orElseThrow(ResourceNotFoundException::new));
+    }
+
+    @Timed
+    @RequestMapping(value = "{pipelineId}/status", method = RequestMethod.PUT)
+    @ApiOperation(value = "paginate pipelines", response = BaseResponse.class)
+    public BaseResponse<PipelineDTO> updatePipelineStatusById(
+            @ApiParam(value = "pipeline id", required = true)
+            @PathVariable("pipelineId") int pipelineId,
+
+            @Valid PipelineStatusUpdateReq request
+    ) {
+        return new BaseResponse<>(pipelineService.updatePipelineStatusById(pipelineId, request.getStatus()).orElseThrow(ResourceNotFoundException::new));
     }
 
     @Timed
