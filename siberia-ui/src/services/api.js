@@ -124,7 +124,7 @@ export async function paginateAppLockList() {
 
 export async function updateAppLockStatus(params) {
   return request(`/api/apps/locks`, {
-    method: '',
+    method: 'PUT',
     body: params,
   });
 }

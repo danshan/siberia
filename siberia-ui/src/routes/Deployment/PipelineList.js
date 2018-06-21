@@ -2,20 +2,7 @@ import React, { PureComponent } from 'react';
 import moment from 'moment';
 import { connect } from 'dva';
 import { Link } from 'dva/router';
-import {
-  List,
-  Card,
-  Row,
-  Col,
-  Radio,
-  Input,
-  Button,
-  Icon,
-  Dropdown,
-  Menu,
-  Modal,
-  Form,
-} from 'antd';
+import { List, Card, Row, Col, Radio, Input, Button, Modal, Form } from 'antd';
 
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
@@ -23,7 +10,6 @@ import styles from './PipelineList.less';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
-const { Search } = Input;
 
 const CreateForm = Form.create()(props => {
   const { modalVisible, form, handleAdd, handleModalVisible } = props;
@@ -108,7 +94,6 @@ export default class PipelineList extends PureComponent {
   };
 
   handleFilterStatus = e => {
-    console.log(e);
     this.setState({ status: e.target.value }, () =>
       this.pagiantePipelineList(this.state.pageNum, this.state.pageSize, this.state.status)
     );
@@ -131,9 +116,8 @@ export default class PipelineList extends PureComponent {
         <RadioGroup defaultValue="0" onChange={this.handleFilterStatus}>
           <RadioButton value="0">全部</RadioButton>
           <RadioButton value="1">进行中</RadioButton>
-          <RadioButton value="2">已完成</RadioButton>
+          <RadioButton value="2">已归档</RadioButton>
         </RadioGroup>
-        <Search className={styles.extraContentSearch} placeholder="请输入" onSearch={() => ({})} />
       </div>
     );
 
@@ -161,25 +145,6 @@ export default class PipelineList extends PureComponent {
       </div>
     );
 
-    const menu = (
-      <Menu>
-        <Menu.Item>
-          <a>编辑</a>
-        </Menu.Item>
-        <Menu.Item>
-          <a>删除</a>
-        </Menu.Item>
-      </Menu>
-    );
-
-    const MoreBtn = () => (
-      <Dropdown overlay={menu}>
-        <a>
-          更多 <Icon type="down" />
-        </a>
-      </Dropdown>
-    );
-
     const parentMethods = {
       handleAdd: this.handleAdd,
       handleModalVisible: this.handleModalVisible,
@@ -204,7 +169,7 @@ export default class PipelineList extends PureComponent {
 
           <Card
             bordered={false}
-            title="标准列表"
+            title="发布流水线"
             style={{ marginTop: 24 }}
             bodyStyle={{ padding: '0 32px 40px 32px' }}
             extra={extraContent}
@@ -224,7 +189,7 @@ export default class PipelineList extends PureComponent {
               pagination={paginationProps}
               dataSource={pipelineList.content}
               renderItem={item => (
-                <List.Item actions={[<a>编辑</a>, <MoreBtn />]}>
+                <List.Item actions={[<a>编辑</a>, <a>归档</a>]}>
                   <List.Item.Meta
                     title={<Link to={`pipelines/${item.id}`}>{item.title}</Link>}
                     description={item.description}
