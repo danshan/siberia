@@ -138,12 +138,11 @@ export default class PipelineList extends PureComponent {
     );
 
     const paginationProps = {
-      showSizeChanger: true,
-      showQuickJumper: true,
       current: pipelineList.number + 1,
       pageSize: pipelineList.size,
       total: pipelineList.totalElements,
       onChange: this.handlePage,
+      showTotal: total => `Total ${total} items`,
     };
 
     const ListContent = ({ data: { createBy, createTime, status } }) => (
