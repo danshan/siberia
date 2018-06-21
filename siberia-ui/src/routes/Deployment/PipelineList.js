@@ -63,18 +63,26 @@ const CreateForm = Form.create()(props => {
 export default class PipelineList extends PureComponent {
   state = {
     modalVisible: false,
+
     status: 0,
+    pageNum: 0,
+    pageSize: 20,
   };
 
   componentDidMount() {
+    this.pagiantePipelineList(this.state.pageNum, this.state.pageSize, this.state.status);
+  }
+
+  pagiantePipelineList = (pageNum, pageSize, status) => {
     this.props.dispatch({
       type: 'pipeline/paginatePipelineList',
       payload: {
-        count: 5,
-        status: this.state.status,
+        pageNum,
+        pageSize,
+        status,
       },
     });
-  }
+  };
 
   handleModalVisible = flag => {
     this.setState({
@@ -87,6 +95,23 @@ export default class PipelineList extends PureComponent {
       type: 'pipeline/createPipeline',
       payload: fieldValues,
     });
+  };
+
+  handlePage = (page, pageSize) => {
+    this.setState(
+      {
+        pageNum: page - 1,
+        pageSize,
+      },
+      () => this.pagiantePipelineList(this.state.pageNum, this.state.pageSize, this.state.status)
+    );
+  };
+
+  handleFilterStatus = e => {
+    console.log(e);
+    this.setState({ status: e.target.value }, () =>
+      this.pagiantePipelineList(this.state.pageNum, this.state.pageSize, this.state.status)
+    );
   };
 
   render() {
@@ -103,7 +128,7 @@ export default class PipelineList extends PureComponent {
 
     const extraContent = (
       <div>
-        <RadioGroup defaultValue="0">
+        <RadioGroup defaultValue="0" onChange={this.handleFilterStatus}>
           <RadioButton value="0">全部</RadioButton>
           <RadioButton value="1">进行中</RadioButton>
           <RadioButton value="2">已完成</RadioButton>
@@ -115,9 +140,10 @@ export default class PipelineList extends PureComponent {
     const paginationProps = {
       showSizeChanger: true,
       showQuickJumper: true,
-      current: pipelineList.number,
+      current: pipelineList.number + 1,
       pageSize: pipelineList.size,
       total: pipelineList.totalElements,
+      onChange: this.handlePage,
     };
 
     const ListContent = ({ data: { createBy, createTime, status } }) => (

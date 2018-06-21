@@ -46,6 +46,7 @@ export default function request(url, options) {
   const defaultOptions = {
     credentials: 'include',
   };
+  let finalUrl = `${url}`;
   const newOptions = { ...defaultOptions, ...options };
   if (newOptions.method === 'POST' || newOptions.method === 'PUT') {
     if (!(newOptions.body instanceof FormData)) {
@@ -62,9 +63,16 @@ export default function request(url, options) {
         ...newOptions.headers,
       };
     }
+  } else if (newOptions.method === 'GET' || newOptions.message === 'DELETE') {
+    if (newOptions.body) {
+      finalUrl = `${finalUrl}?`;
+      Object.keys(newOptions.body).forEach(val => {
+        finalUrl = `${finalUrl}${val}=${newOptions.body[val]}&`;
+      });
+    }
   }
 
-  return fetch(url, newOptions)
+  return fetch(finalUrl, newOptions)
     .then(checkStatus)
     .then(response => {
       if (newOptions.method === 'DELETE' || response.status === 204) {

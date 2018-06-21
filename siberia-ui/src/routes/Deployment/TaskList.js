@@ -77,7 +77,7 @@ export default class TaskList extends PureComponent {
       },
       {
         title: '操作',
-        render: (
+        render: () => (
           <Fragment>
             <a href="">Log</a>
             <Divider type="vertical" />

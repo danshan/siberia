@@ -26,7 +26,8 @@ INSERT INTO app_lock(id, project, module, env_id, lock_status, create_by, update
 (6, 'togather', 'togather-task', 3, 'LOCKED', 'sys', 'sys');
 
 INSERT INTO pipeline(id, title, description, status, create_by, update_by) VALUES
-(1, 'demo', 'pipeline for demo', 'RUNNING', 'sys', 'sys');
+(1, 'demo', 'pipeline for demo', 'RUNNING', 'sys', 'sys'),
+(2, 'demo', 'pipeline for demo', 'RUNNING', 'sys', 'sys');
 
 INSERT INTO pipeline_deployment(id, pipeline_id, project, module, build_no, app_id, create_by, update_by) VALUES
 (1, 1, 'togather', 'togather-edge', 1, 1, 'sys', 'sys');

@@ -80,8 +80,11 @@ export async function queryNotices() {
 
 // pipelines
 
-export async function paginatePipelineList() {
-  return request('/api/pipelines');
+export async function paginatePipelineList(params) {
+  return request('/api/pipelines', {
+    method: 'GET',
+    body: params,
+  });
 }
 
 export async function loadPipeline(params) {
@@ -121,7 +124,7 @@ export async function paginateAppLockList() {
 
 export async function updateAppLockStatus(params) {
   return request(`/api/apps/locks`, {
-    method: 'PUT',
+    method: '',
     body: params,
   });
 }
