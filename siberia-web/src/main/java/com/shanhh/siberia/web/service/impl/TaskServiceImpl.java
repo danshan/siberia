@@ -16,6 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.StaleObjectStateException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -57,11 +58,9 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public Page<TaskDTO> paginateTasks(int pageNum, int pageSize) {
-        List<TaskDTO> results = Lists.newLinkedList();
-        for (int i = 0; i < pageSize; i++) {
-            results.add(TaskDTO.mock());
-        }
-        return new PageImpl(results);
+        Page<TaskDTO> page = taskRepo.findAll(new PageRequest(pageNum, pageSize))
+                .map(TaskConvertor::toDTO);
+        return page;
     }
 
     @Override

@@ -167,8 +167,6 @@ export default class Pipeline extends PureComponent {
   handleMenuClick = (e, record) => {
     const { dispatch } = this.props;
 
-    console.log(e);
-    console.log(record);
     dispatch({
       type: 'pipeline/createPipelineTask',
       payload: {

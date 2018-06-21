@@ -1,12 +1,10 @@
-import React, { PureComponent } from 'react';
-import moment from 'moment';
+import React, { Fragment, PureComponent } from 'react';
 import { connect } from 'dva';
-import { Link } from 'dva/router';
-import { List, Card, Row, Col, Radio, Input, Progress, Icon, Dropdown, Menu } from 'antd';
-
+import { Card, Row, Col, Radio, Input, Divider } from 'antd';
+import StandardTable from 'components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
-import styles from './PipelineList.less';
+import styles from './TaskList.less';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -14,9 +12,13 @@ const { Search } = Input;
 
 @connect(({ task, loading }) => ({
   task,
-  loading: loading.models.pipeline,
+  loading: loading.models.task,
 }))
 export default class TaskList extends PureComponent {
+  state = {
+    selectedRows: [],
+  };
+
   componentDidMount() {
     this.props.dispatch({
       type: 'task/paginateTaskList',
@@ -26,8 +28,15 @@ export default class TaskList extends PureComponent {
     });
   }
 
+  handleSelectRows = rows => {
+    this.setState({
+      selectedRows: rows,
+    });
+  };
+
   render() {
     const { task: { taskList }, loading } = this.props;
+    const { selectedRows } = this.state;
 
     const Info = ({ title, value, bordered }) => (
       <div className={styles.headerInfo}>
@@ -48,48 +57,35 @@ export default class TaskList extends PureComponent {
       </div>
     );
 
-    const paginationProps = {
-      showSizeChanger: true,
-      showQuickJumper: true,
-      current: taskList.number,
-      pageSize: taskList.size,
-      total: taskList.totalElements,
-    };
-
-    const ListContent = ({ data: { createBy, createTime, percent, status } }) => (
-      <div className={styles.listContent}>
-        <div className={styles.listContentItem}>
-          <span>Owner</span>
-          <p>{createBy}</p>
-        </div>
-        <div className={styles.listContentItem}>
-          <span>开始时间</span>
-          <p>{moment(createTime).format('YYYY-MM-DD HH:mm')}</p>
-        </div>
-        <div className={styles.listContentItem}>
-          <Progress percent={percent} status={status} strokeWidth={6} style={{ width: 180 }} />
-        </div>
-      </div>
-    );
-
-    const menu = (
-      <Menu>
-        <Menu.Item>
-          <a>编辑</a>
-        </Menu.Item>
-        <Menu.Item>
-          <a>删除</a>
-        </Menu.Item>
-      </Menu>
-    );
-
-    const MoreBtn = () => (
-      <Dropdown overlay={menu}>
-        <a>
-          更多 <Icon type="down" />
-        </a>
-      </Dropdown>
-    );
+    const columns = [
+      {
+        title: 'App',
+        dataIndex: 'module',
+        sorter: true,
+        render: (text, record) => {
+          return (
+            <p>
+              {record.project || ''} : {record.module}
+            </p>
+          );
+        },
+      },
+      {
+        title: 'Build No.',
+        dataIndex: 'buildNo',
+        sorter: true,
+      },
+      {
+        title: '操作',
+        render: (
+          <Fragment>
+            <a href="">Log</a>
+            <Divider type="vertical" />
+            <a href="">重新发布</a>
+          </Fragment>
+        ),
+      },
+    ];
 
     return (
       <PageHeaderLayout>
@@ -109,32 +105,19 @@ export default class TaskList extends PureComponent {
           </Card>
 
           <Card
-            className={styles.listCard}
             bordered={false}
             title="任务列表"
             style={{ marginTop: 24 }}
             bodyStyle={{ padding: '0 32px 40px 32px' }}
             extra={extraContent}
           >
-            <List
-              size="large"
-              rowKey="id"
+            <StandardTable
+              selectedRows={selectedRows}
               loading={loading}
-              pagination={paginationProps}
-              dataSource={taskList.content}
-              renderItem={item => (
-                <List.Item actions={[<a>编辑</a>, <MoreBtn />]}>
-                  <List.Item.Meta
-                    title={
-                      <Link to={`tasks/${item.id}`}>
-                        {item.project} - {item.module}
-                      </Link>
-                    }
-                    description={item.description}
-                  />
-                  <ListContent data={item} />
-                </List.Item>
-              )}
+              data={taskList}
+              columns={columns}
+              onSelectRow={this.handleSelectRows}
+              rowKey="id"
             />
           </Card>
         </div>

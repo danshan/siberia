@@ -178,7 +178,6 @@ export default class PipelineList extends PureComponent {
           </Card>
 
           <Card
-            className={styles.listCard}
             bordered={false}
             title="标准列表"
             style={{ marginTop: 24 }}

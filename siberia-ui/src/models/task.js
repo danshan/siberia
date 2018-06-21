@@ -5,8 +5,7 @@ export default {
 
   state: {
     taskList: {
-      total: 0,
-      size: 0,
+      pagination: {},
       list: [],
     },
   },
@@ -25,7 +24,14 @@ export default {
     taskList(state, action) {
       return {
         ...state,
-        taskList: action.payload.data,
+        taskList: {
+          list: action.payload.data.content,
+          pagination: {
+            current: action.payload.data.number,
+            pageSize: action.payload.data.size,
+            total: action.payload.data.totalElements,
+          },
+        },
       };
     },
   },
