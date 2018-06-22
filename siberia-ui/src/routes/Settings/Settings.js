@@ -1,3 +1,4 @@
+import { routerRedux } from 'dva/router';
 import React, { PureComponent } from 'react';
 import { Card, Form } from 'antd';
 import { connect } from 'dva';
@@ -72,6 +73,10 @@ class Settings extends PureComponent {
       });
   };
 
+  configApp = appId => {
+    this.props.dispatch(routerRedux.push(`settings/apps/${appId}`));
+  };
+
   render() {
     const { settings: { envList, appList } } = this.props;
 
@@ -87,6 +92,7 @@ class Settings extends PureComponent {
             create={this.createApp}
             update={this.updateApp}
             remove={this.removeApp}
+            config={this.configApp}
           />
         </Card>
       </PageHeaderLayout>

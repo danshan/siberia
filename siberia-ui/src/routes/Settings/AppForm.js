@@ -1,5 +1,5 @@
-import React, { PureComponent, Fragment } from 'react';
-import { Table, Button, message, Popconfirm, Divider, Input } from 'antd';
+import React, { Fragment, PureComponent } from 'react';
+import { Button, Divider, Input, message, Popconfirm, Table } from 'antd';
 import styles from './style.less';
 
 export default class AppForm extends PureComponent {
@@ -189,6 +189,8 @@ export default class AppForm extends PureComponent {
           return (
             <span>
               <a onClick={e => this.toggleEditable(e, record.id)}>编辑</a>
+              <Divider type="vertical" />
+              <a onClick={() => this.props.config(record.id)}>配置</a>
               <Divider type="vertical" />
               <Popconfirm title="是否要删除此行？" onConfirm={() => this.removeApp(record.id)}>
                 <a>删除</a>
