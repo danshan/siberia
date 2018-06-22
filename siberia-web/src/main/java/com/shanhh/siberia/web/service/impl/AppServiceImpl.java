@@ -54,9 +54,21 @@ public class AppServiceImpl implements AppService {
     }
 
     @Override
+    public Optional<AppDTO> updateAppById(AppDTO app) {
+        AppDTO exists = this.loadAppById(app.getId()).orElseThrow(() -> new BadRequestAlertException("app not exists", "app", "appId"));
+        exists.setProject(app.getProject());
+        exists.setModule(app.getModule());
+        exists.setUpdateTime(new Date());
+        App result = appRepo.save(AppConvertor.toPO(exists));
+        log.info("app updated: {}", result);
+        return Optional.ofNullable(AppConvertor.toDTO(result));
+    }
+
+    @Override
     public Optional<AppDTO> deleteAppById(int appId) {
         AppDTO app = this.loadAppById(appId).orElseThrow(() -> new BadRequestAlertException("app not exists", "appId", "appId"));
         app.setDeleted(true);
+        app.setUpdateTime(new Date());
         App result = appRepo.save(AppConvertor.toPO(app));
         return Optional.ofNullable(AppConvertor.toDTO(result));
     }

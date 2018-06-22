@@ -79,7 +79,7 @@ export default class AppForm extends PureComponent {
     }
     const target = this.getRowByKey(key) || {};
     if (!target.module) {
-      message.error('请填写完整环境信息');
+      message.error('请填写完整应用信息');
       e.target.focus();
       this.setState({
         loading: false,
@@ -88,7 +88,12 @@ export default class AppForm extends PureComponent {
     }
     delete target.isNew;
     this.toggleEditable(e, key);
-    this.props.create(target);
+    if (typeof target.id === 'number') {
+      this.props.update(target);
+    } else {
+      delete target.id;
+      this.props.create(target);
+    }
     this.setState({
       loading: false,
     });

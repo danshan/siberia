@@ -1,4 +1,11 @@
-import { paginateEnvList, createEnv, paginateAppList, removeApp } from '../services/api';
+import {
+  paginateEnvList,
+  createEnv,
+  paginateAppList,
+  createApp,
+  updateApp,
+  removeApp,
+} from '../services/api';
 
 export default {
   namespace: 'settings',
@@ -38,6 +45,16 @@ export default {
         type: 'appList',
         payload: response,
       });
+    },
+
+    *createApp({ payload }, { call }) {
+      const response = yield call(createApp, payload);
+      return response;
+    },
+
+    *updateApp({ payload }, { call }) {
+      const response = yield call(updateApp, payload);
+      return response;
     },
 
     *removeApp({ payload }, { call }) {

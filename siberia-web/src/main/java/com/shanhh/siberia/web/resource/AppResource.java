@@ -69,6 +69,17 @@ public class AppResource {
     }
 
     @Timed
+    @RequestMapping(value = "{appId}", method = RequestMethod.PUT)
+    @ApiOperation(value = "delete app by id", response = BaseResponse.class)
+    public BaseResponse updateAppByid(
+            @Valid @Min(1) @PathVariable("appId") int appId,
+            @Valid @RequestBody AppDTO app
+    ) {
+        app.setId(appId);
+        return new BaseResponse<>(appService.updateAppById(app).orElseThrow(ResourceNotFoundException::new));
+    }
+
+    @Timed
     @RequestMapping(value = "locks", method = RequestMethod.GET)
     @ApiOperation(value = "paginate app locks", response = BaseResponse.class)
     public BaseResponse paginateLocks(

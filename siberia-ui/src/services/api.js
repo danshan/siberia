@@ -129,6 +129,30 @@ export async function updateAppLockStatus(params) {
   });
 }
 
+export async function paginateAppList() {
+  return request('/api/apps');
+}
+
+export async function removeApp(params) {
+  return request(`/api/apps/${params.appId}`, {
+    method: 'DELETE',
+  });
+}
+
+export async function createApp(params) {
+  return request(`/api/apps`, {
+    method: 'POST',
+    body: params,
+  });
+}
+
+export async function updateApp(params) {
+  return request(`/api/apps/${params.id}`, {
+    method: 'PUT',
+    body: params,
+  });
+}
+
 // tasks
 
 export async function paginateTaskList() {
@@ -145,15 +169,5 @@ export async function createEnv(params) {
   return request('/api/settings/envs', {
     method: 'POST',
     body: params,
-  });
-}
-
-export async function paginateAppList() {
-  return request('/api/apps');
-}
-
-export async function removeApp(params) {
-  return request(`/api/apps/${params.appId}`, {
-    method: 'DELETE',
   });
 }

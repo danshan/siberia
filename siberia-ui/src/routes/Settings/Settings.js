@@ -40,7 +40,18 @@ class Settings extends PureComponent {
   createApp = app => {
     this.props
       .dispatch({
-        type: 'settings/createApp`',
+        type: 'settings/createApp',
+        payload: app,
+      })
+      .then(() => {
+        this.paginateAppList();
+      });
+  };
+
+  updateApp = app => {
+    this.props
+      .dispatch({
+        type: 'settings/updateApp',
         payload: app,
       })
       .then(() => {
@@ -71,7 +82,12 @@ class Settings extends PureComponent {
         </Card>
 
         <Card name="app" title="应用配置" className={styles.card} bordered={false}>
-          <AppForm envList={appList} create={this.createApp} remove={this.removeApp} />
+          <AppForm
+            envList={appList}
+            create={this.createApp}
+            update={this.updateApp}
+            remove={this.removeApp}
+          />
         </Card>
       </PageHeaderLayout>
     );
