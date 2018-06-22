@@ -151,3 +151,9 @@ export async function createEnv(params) {
 export async function paginateAppList() {
   return request('/api/apps');
 }
+
+export async function removeApp(params) {
+  return request(`/api/apps/${params.appId}`, {
+    method: 'DELETE',
+  });
+}

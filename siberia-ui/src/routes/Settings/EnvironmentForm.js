@@ -40,7 +40,6 @@ export default class EnvironmentForm extends PureComponent {
   remove(key) {
     const newData = this.state.data.content.filter(item => item.id !== key);
     this.setState({ data: { content: newData } });
-    this.props.onChange(this.state.data);
   }
   newEnv = () => {
     const newData = this.state.data.content.map(item => ({ ...item }));
@@ -107,12 +106,6 @@ export default class EnvironmentForm extends PureComponent {
   }
   render() {
     const columns = [
-      {
-        title: 'ID',
-        dataIndex: 'id',
-        key: 'id',
-        width: '20%',
-      },
       {
         title: '环境名称',
         dataIndex: 'name',

@@ -63,7 +63,7 @@ export default function request(url, options) {
         ...newOptions.headers,
       };
     }
-  } else if (newOptions.method === 'GET' || newOptions.message === 'DELETE') {
+  } else if (newOptions.method === 'GET' || newOptions.method === 'DELETE') {
     if (newOptions.body) {
       finalUrl = `${finalUrl}?`;
       Object.keys(newOptions.body).forEach(val => {

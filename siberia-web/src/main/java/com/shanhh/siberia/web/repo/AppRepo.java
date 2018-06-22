@@ -1,6 +1,8 @@
 package com.shanhh.siberia.web.repo;
 
 import com.shanhh.siberia.web.repo.entity.App;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 /**
@@ -11,4 +13,5 @@ public interface AppRepo extends PagingAndSortingRepository<App, Integer> {
 
     App findByProjectAndModule(String project, String module);
 
+    Page<App> findAllByDeleted(boolean deleted, Pageable pageable);
 }

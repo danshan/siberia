@@ -27,6 +27,7 @@ public class AppDTO implements Serializable {
     private AppType appType;
     private List<AppConfigDTO> configs;
 
+    private boolean deleted;
     private String createBy;
     private String updateBy;
     private Date createTime;
@@ -39,7 +40,6 @@ public class AppDTO implements Serializable {
         Map<String, Object> mergedConfigs = Maps.newHashMap();
         defaultConfig.ifPresent(config -> mergedConfigs.putAll(config.getContent()));
         envConfing.ifPresent(config -> mergedConfigs.putAll(config.getContent()));
-
 
         AppConfigDTO result = new AppConfigDTO();
         result.setEnv(env);

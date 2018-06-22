@@ -1,5 +1,5 @@
 import React, { PureComponent, Fragment } from 'react';
-import { Table, Button, message, Popconfirm, Divider } from 'antd';
+import { Table, Button, message, Popconfirm, Divider, Input } from 'antd';
 import styles from './style.less';
 
 export default class AppForm extends PureComponent {
@@ -37,12 +37,13 @@ export default class AppForm extends PureComponent {
       this.setState({ data: { content: newData } });
     }
   };
-  remove(key) {
+  removeApp = key => {
     const newData = this.state.data.content.filter(item => item.id !== key);
+    this.props.remove(key);
     this.setState({ data: { content: newData } });
-    this.props.onChange(this.state.data);
-  }
-  newEnv = () => {
+  };
+
+  newApp = () => {
     const newData = this.state.data.content.map(item => ({ ...item }));
     newData.push({
       id: `NEW_TEMP_ID_${this.index}`,
@@ -77,7 +78,7 @@ export default class AppForm extends PureComponent {
       return;
     }
     const target = this.getRowByKey(key) || {};
-    if (!target.name || !target.description) {
+    if (!target.module) {
       message.error('请填写完整环境信息');
       e.target.focus();
       this.setState({
@@ -87,7 +88,7 @@ export default class AppForm extends PureComponent {
     }
     delete target.isNew;
     this.toggleEditable(e, key);
-    this.props.createEnv(target);
+    this.props.create(target);
     this.setState({
       loading: false,
     });
@@ -108,22 +109,44 @@ export default class AppForm extends PureComponent {
   render() {
     const columns = [
       {
-        title: 'ID',
-        dataIndex: 'id',
-        key: 'id',
-        width: '20%',
-      },
-      {
         title: 'Project',
         dataIndex: 'project',
         key: 'project',
         width: '20%',
+        render: (text, record) => {
+          if (record.editable) {
+            return (
+              <Input
+                value={text}
+                autoFocus
+                onChange={e => this.handleFieldChange(e, 'project', record.id)}
+                onKeyPress={e => this.handleKeyPress(e, record.id)}
+                placeholder="project name"
+              />
+            );
+          }
+          return text;
+        },
       },
       {
         title: 'Module',
         dataIndex: 'module',
         key: 'module',
         width: '20%',
+        render: (text, record) => {
+          if (record.editable) {
+            return (
+              <Input
+                value={text}
+                autoFocus
+                onChange={e => this.handleFieldChange(e, 'module', record.id)}
+                onKeyPress={e => this.handleKeyPress(e, record.id)}
+                placeholder="module name"
+              />
+            );
+          }
+          return text;
+        },
       },
       {
         title: '类型',
@@ -162,7 +185,7 @@ export default class AppForm extends PureComponent {
             <span>
               <a onClick={e => this.toggleEditable(e, record.id)}>编辑</a>
               <Divider type="vertical" />
-              <Popconfirm title="是否要删除此行？" onConfirm={() => this.remove(record.id)}>
+              <Popconfirm title="是否要删除此行？" onConfirm={() => this.removeApp(record.id)}>
                 <a>删除</a>
               </Popconfirm>
             </span>
@@ -186,10 +209,10 @@ export default class AppForm extends PureComponent {
         <Button
           style={{ width: '100%', marginTop: 16, marginBottom: 8 }}
           type="dashed"
-          onClick={this.newEnv}
+          onClick={this.newApp}
           icon="plus"
         >
-          新增环境
+          新增应用配置
         </Button>
       </Fragment>
     );

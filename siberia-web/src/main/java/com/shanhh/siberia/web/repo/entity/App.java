@@ -30,9 +30,11 @@ public class App {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private AppType appType;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "appId")
+    @OneToMany(cascade = CascadeType.DETACH, fetch = FetchType.LAZY, mappedBy = "appId")
     private List<AppConfig> configs = Lists.newLinkedList();
 
+    @Column(nullable = false, columnDefinition = "TINYINT DEFAULT 0")
+    private boolean deleted;
     @Column(nullable = false, updatable = false)
     private String createBy;
     @Column(nullable = false)

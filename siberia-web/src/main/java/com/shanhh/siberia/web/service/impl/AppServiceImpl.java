@@ -10,6 +10,7 @@ import com.shanhh.siberia.web.repo.AppRepo;
 import com.shanhh.siberia.web.repo.convertor.AppConvertor;
 import com.shanhh.siberia.web.repo.convertor.EnvConvertor;
 import com.shanhh.siberia.web.repo.entity.*;
+import com.shanhh.siberia.web.resource.errors.BadRequestAlertException;
 import com.shanhh.siberia.web.service.AppService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -53,8 +54,16 @@ public class AppServiceImpl implements AppService {
     }
 
     @Override
+    public Optional<AppDTO> deleteAppById(int appId) {
+        AppDTO app = this.loadAppById(appId).orElseThrow(() -> new BadRequestAlertException("app not exists", "appId", "appId"));
+        app.setDeleted(true);
+        App result = appRepo.save(AppConvertor.toPO(app));
+        return Optional.ofNullable(AppConvertor.toDTO(result));
+    }
+
+    @Override
     public Page<AppDTO> paginateApps(int pageNum, int pageSize) {
-        Page<AppDTO> apps = appRepo.findAll(new PageRequest(pageNum, pageSize)).map(AppConvertor::toDTO);
+        Page<AppDTO> apps = appRepo.findAllByDeleted(false, new PageRequest(pageNum, pageSize)).map(AppConvertor::toDTO);
         return apps;
     }
 

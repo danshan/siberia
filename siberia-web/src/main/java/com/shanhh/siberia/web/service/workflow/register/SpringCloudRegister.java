@@ -41,19 +41,19 @@ public class SpringCloudRegister implements TaskStepRegister {
     public void registerDeploySteps(WorkflowBuilder builder, TaskDTO task) {
         AppService sibAppService = SpringContextHolder.getBean(AppService.class);
         AppDTO app = sibAppService.loadAppByModule(task.getProject(), task.getModule())
-                .orElseThrow(() -> new InternalServerErrorException(String.format("app not supported, project: %s, module: %s", task.getProject(), task.getModule())));
+                .orElseThrow(() -> new InternalServerErrorException(String.format("task %s app not supported, project: %s, module: %s", task.getId(), task.getProject(), task.getModule())));
 
         List<String> toDeployHosts = Lists.newLinkedList();
         try {
             AppHostDTO appHost = sibAppService.loadAppHostByEnv(task.getProject(), task.getModule(), task.getEnv()).orElse(new AppHostDTO());
             List<String> hosts = (appHost == null || appHost.getHosts() == null) ? Lists.newArrayList() : appHost.getHosts();
             toDeployHosts.addAll(hosts);
-            log.info("affect hosts: {}", Joiner.on(",").join(toDeployHosts));
+            log.info("task {}, affect hosts: {}", task.getId(), Joiner.on(",").join(toDeployHosts));
             if (toDeployHosts.size() == 0) {
                 return;
             }
         } catch (Exception e) {
-            log.error(String.format("fetch node list failed, %s", task.toString()), e);
+            log.error(String.format("task {} fetch node list failed, %s", task.getId(), task.toString()), e);
         }
 
         builder.register(new TaskNodeUpdateExecutor(toDeployHosts));
@@ -62,11 +62,11 @@ public class SpringCloudRegister implements TaskStepRegister {
 
     @Override
     public void registerRollbackSteps(WorkflowBuilder builder, TaskDTO task, int rollbackBuildNo) {
-        log.info("rollback to {}, task={}", rollbackBuildNo, task);
+        log.info("task {} rollback to {}, task={}", task.getId(), rollbackBuildNo, task);
 
         AppService appService = SpringContextHolder.getBean(AppService.class);
         AppDTO app = appService.loadAppByModule(task.getProject(), task.getModule())
-                .orElseThrow(() -> new InternalServerErrorException(String.format("app not supported, project: %s, module: %s", task.getProject(), task.getModule())));
+                .orElseThrow(() -> new InternalServerErrorException(String.format("task %s app not supported, project: %s, module: %s", task.getId(), task.getProject(), task.getModule())));
 
         TaskService taskService = SpringContextHolder.getBean(TaskService.class);
         TaskDTO.Memo memo = task.getMemo();
@@ -91,7 +91,7 @@ public class SpringCloudRegister implements TaskStepRegister {
                             .put("port", config.getContent().getOrDefault("SERVER_PORT", 8080))
                             .build()));
         } catch (Exception e) {
-            throw new InternalServerErrorException(String.format("register spring cloud failed, %s, %s", task, e.getMessage()));
+            throw new InternalServerErrorException(String.format("task %s, register spring cloud failed, %s, %s", task.getId(), task, e.getMessage()));
         }
     }
 
@@ -104,7 +104,7 @@ public class SpringCloudRegister implements TaskStepRegister {
 
         AppDTO app = SpringContextHolder.getBean(AppService.class)
                 .loadAppByModule(task.getProject(), task.getModule())
-                .orElseThrow(() -> new InternalServerErrorException(String.format("app not supported, project: %s, module: %s", task.getProject(), task.getModule())));
+                .orElseThrow(() -> new InternalServerErrorException(String.format("task %s app not supported, project: %s, module: %s", task.getId(), task.getProject(), task.getModule())));
         Map<String, Object> configs = app.getConfigByEnv(task.getEnv()).getContent();
 
         PropertiesConfiguration defaultConfig = new PropertiesConfiguration(Resources.getResource("spring-boot.boot.properties"));
@@ -124,7 +124,7 @@ public class SpringCloudRegister implements TaskStepRegister {
         String service = new StringSubstitutor(values).replace(file);
         File tempFile = File.createTempFile(appName, ".service");
         Files.write(service, tempFile, Charsets.UTF_8);
-        log.info("write service to {}", tempFile.getAbsoluteFile());
+        log.info("task {} write service to {}", task.getId(), tempFile.getAbsoluteFile());
         return tempFile.getAbsolutePath();
     }
 

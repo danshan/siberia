@@ -17,6 +17,8 @@ public interface AppService {
 
     Optional<AppDTO> loadAppById(int appId);
 
+    Optional<AppDTO> deleteAppById(int appId);
+
     Page<AppDTO> paginateApps(int pageNum, int pageSize);
 
     Page<AppLockDTO> paginateAppLocks(int pageNum, int pageSize);

@@ -60,6 +60,15 @@ public class AppResource {
     }
 
     @Timed
+    @RequestMapping(value = "{appId}", method = RequestMethod.DELETE)
+    @ApiOperation(value = "delete app by id", response = BaseResponse.class)
+    public BaseResponse deleteAppById(
+            @Valid @Min(1) @PathVariable("appId") int appId
+    ) {
+        return new BaseResponse<>(appService.deleteAppById(appId).orElseThrow(ResourceNotFoundException::new));
+    }
+
+    @Timed
     @RequestMapping(value = "locks", method = RequestMethod.GET)
     @ApiOperation(value = "paginate app locks", response = BaseResponse.class)
     public BaseResponse paginateLocks(
