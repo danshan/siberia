@@ -163,4 +163,10 @@ public class AppServiceImpl implements AppService {
         return Optional.ofNullable(AppConvertor.toDTO(saved));
     }
 
+    @Override
+    public List<AppHostDTO> findHostsById(int appId) {
+        List<AppHost> hosts = appHostRepo.findByAppId(appId);
+        return hosts.stream().map(AppConvertor::toDTO).collect(Collectors.toList());
+    }
+
 }

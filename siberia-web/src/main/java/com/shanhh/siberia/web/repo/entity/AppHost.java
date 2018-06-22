@@ -21,6 +21,8 @@ public class AppHost {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
     @Column(nullable = false)
+    private int appId;
+    @Column(columnDefinition = "TEXT NOT NULL DEFAULT ''")
     private String hosts = "";
     @OneToOne
     private Env env;

@@ -102,8 +102,12 @@ export const getRouterData = app => {
       component: dynamicWrapper(app, ['app'], () => import('../routes/Deployment/AppConfigList')),
     },
 
-    '/settings': {
+    '/settings/settings': {
       component: dynamicWrapper(app, ['settings'], () => import('../routes/Settings/Settings')),
+    },
+
+    '/settings/apps/:appId': {
+      component: dynamicWrapper(app, ['app'], () => import('../routes/Settings/App')),
     },
 
     '/form/basic-form': {

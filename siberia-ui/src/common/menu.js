@@ -44,7 +44,8 @@ const menuData = [
   {
     name: '管理后台',
     icon: 'setting',
-    path: '',
+    path: 'settings',
+    exact: true,
     children: [
       {
         name: '系统配置',

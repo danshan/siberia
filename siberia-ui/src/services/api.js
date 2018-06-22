@@ -153,6 +153,27 @@ export async function updateApp(params) {
   });
 }
 
+export async function loadApp(params) {
+  return request(`/api/apps/${params.appId}`, {
+    method: 'GET',
+    body: params,
+  });
+}
+
+export async function findAppConfigList(params) {
+  return request(`/api/apps/${params.appId}/configs`, {
+    method: 'GET',
+    body: params,
+  });
+}
+
+export async function findAppHostList(params) {
+  return request(`/api/apps/${params.appId}/hosts`, {
+    method: 'GET',
+    body: params,
+  });
+}
+
 // tasks
 
 export async function paginateTaskList() {

@@ -123,4 +123,12 @@ public class AppResource {
         return new BaseResponse(appService.loadConfigById(appId, configId));
     }
 
+    @Timed
+    @RequestMapping(value = "{appId}/hosts", method = RequestMethod.GET)
+    @ApiOperation(value = "find app hosts", response = BaseResponse.class)
+    public BaseResponse findHostsByAppId(
+            @PathVariable("appId") int appId
+    ) {
+        return new BaseResponse(appService.findHostsById(appId));
+    }
 }

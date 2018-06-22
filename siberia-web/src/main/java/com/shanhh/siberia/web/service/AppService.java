@@ -39,4 +39,5 @@ public interface AppService {
 
     Optional<AppConfigDTO> updateConfigById(AppConfigDTO config);
 
+    List<AppHostDTO> findHostsById(int appId);
 }

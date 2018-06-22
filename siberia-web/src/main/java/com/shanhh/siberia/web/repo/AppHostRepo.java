@@ -4,6 +4,8 @@ import com.shanhh.siberia.web.repo.entity.AppHost;
 import com.shanhh.siberia.web.repo.entity.Env;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
+import java.util.List;
+
 /**
  * @author shanhonghao
  * @since 2018-06-07 10:18
@@ -11,5 +13,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 public interface AppHostRepo extends PagingAndSortingRepository<AppHost, Integer> {
 
     AppHost findByProjectAndModuleAndEnv(String project, String module, Env env);
+
+    List<AppHost> findByAppId (int appId);
 
 }

@@ -74,7 +74,7 @@ class Settings extends PureComponent {
   };
 
   configApp = appId => {
-    this.props.dispatch(routerRedux.push(`settings/apps/${appId}`));
+    this.props.dispatch(routerRedux.push(`/settings/apps/${appId}`));
   };
 
   render() {
