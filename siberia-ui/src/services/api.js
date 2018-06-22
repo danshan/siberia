@@ -182,7 +182,7 @@ export async function paginateTaskList() {
 
 // settings
 
-export async function paginateEnvList() {
+export async function findEnvList() {
   return request('/api/settings/envs');
 }
 

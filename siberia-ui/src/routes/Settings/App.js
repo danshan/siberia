@@ -1,14 +1,16 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Card } from 'antd';
+import { Card, Tabs } from 'antd';
 import StandardTable from 'components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
 import styles from './App.less';
 
-@connect(({ app, loading }) => ({
+@connect(({ app, settings, loading }) => ({
   app,
-  loading: loading.models.app,
+  settings,
+  appLoading: loading.models.app,
+  settingsLoading: loading.models.settings,
 }))
 export default class App extends PureComponent {
   state = {
@@ -17,6 +19,7 @@ export default class App extends PureComponent {
 
   componentDidMount() {
     this.loadApp();
+    this.findEnvList();
     this.findAppConfigList();
     this.findAppHostList();
   }
@@ -27,6 +30,15 @@ export default class App extends PureComponent {
       type: 'app/loadApp',
       payload: {
         appId: this.props.match.params.appId,
+      },
+    });
+  };
+
+  findEnvList = () => {
+    this.props.dispatch({
+      type: 'settings/findEnvList',
+      payload: {
+        count: 5,
       },
     });
   };
@@ -58,7 +70,7 @@ export default class App extends PureComponent {
   };
 
   render() {
-    const { app: { app, appHostList }, loading } = this.props;
+    const { app: { app, appHostList }, settings: { envList }, appLoading } = this.props;
     const { selectedRows } = this.state;
 
     const hostColumns = [];
@@ -66,19 +78,37 @@ export default class App extends PureComponent {
     return (
       <PageHeaderLayout title="应用配置" content={app.module}>
         <Card name="appconfig" title="基础配置" className={styles.card} bordered={false}>
-          <div />
+          <div>
+            <Tabs defaultActiveKey="1">
+              {(envList || []).map(env => {
+                return (
+                  <Tabs.TabPane tab={env.name} key={env.id}>
+                    {env.name}
+                  </Tabs.TabPane>
+                );
+              })}
+            </Tabs>
+          </div>
         </Card>
 
         <Card name="apphost" title="服务器配置" className={styles.card} bordered={false}>
           <div>
-            <StandardTable
-              selectedRows={selectedRows}
-              loading={loading}
-              data={appHostList}
-              columns={hostColumns}
-              onSelectRow={this.handleSelectRows}
-              rowKey="id"
-            />
+            <Tabs defaultActiveKey="1">
+              {(envList || []).map(env => {
+                return (
+                  <Tabs.TabPane tab={env.name} key={env.id}>
+                    <StandardTable
+                      selectedRows={selectedRows}
+                      loading={appLoading}
+                      data={appHostList}
+                      columns={hostColumns}
+                      onSelectRow={this.handleSelectRows}
+                      rowKey="id"
+                    />
+                  </Tabs.TabPane>
+                );
+              })}
+            </Tabs>
           </div>
         </Card>
       </PageHeaderLayout>

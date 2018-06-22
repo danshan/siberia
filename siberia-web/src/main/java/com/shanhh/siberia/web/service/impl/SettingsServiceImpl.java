@@ -8,12 +8,12 @@ import com.shanhh.siberia.web.repo.convertor.SettingsConvertor;
 import com.shanhh.siberia.web.repo.entity.Env;
 import com.shanhh.siberia.web.service.SettingsService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author shanhonghao
@@ -27,9 +27,9 @@ public class SettingsServiceImpl implements SettingsService {
     private EnvRepo envRepo;
 
     @Override
-    public Page<EnvDTO> paginateEnvs(int pageNum, int pageSize) {
-        Page<EnvDTO> envs = envRepo.findAll(new PageRequest(pageNum, pageSize)).map(EnvConvertor::toDTO);
-        return envs;
+    public List<EnvDTO> findEnvs() {
+        List<Env> envs = envRepo.findByDeleted(false);
+        return envs.stream().map(EnvConvertor::toDTO).collect(Collectors.toList());
     }
 
     @Override

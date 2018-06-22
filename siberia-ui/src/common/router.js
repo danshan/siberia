@@ -107,7 +107,7 @@ export const getRouterData = app => {
     },
 
     '/settings/apps/:appId': {
-      component: dynamicWrapper(app, ['app'], () => import('../routes/Settings/App')),
+      component: dynamicWrapper(app, ['app', 'settings'], () => import('../routes/Settings/App')),
     },
 
     '/form/basic-form': {

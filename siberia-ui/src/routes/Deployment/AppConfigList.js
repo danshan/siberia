@@ -18,7 +18,7 @@ export default class AppConfigList extends PureComponent {
 
   componentDidMount() {
     this.paginateAppLockList();
-    this.paginateEnvList();
+    this.findEnvList();
   }
 
   paginateAppLockList = () => {
@@ -30,9 +30,9 @@ export default class AppConfigList extends PureComponent {
     });
   };
 
-  paginateEnvList = () => {
+  findEnvList = () => {
     this.props.dispatch({
-      type: 'app/paginateEnvList',
+      type: 'app/findEnvList',
       payload: {},
     });
   };

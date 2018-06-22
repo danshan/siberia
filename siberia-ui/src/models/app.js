@@ -1,6 +1,5 @@
 import {
   paginateAppLockList,
-  paginateEnvList,
   updateAppLockStatus,
   loadApp,
   findAppConfigList,
@@ -28,14 +27,6 @@ export default {
       const response = yield call(paginateAppLockList, payload);
       yield put({
         type: 'appLockList',
-        payload: response,
-      });
-    },
-
-    *paginateEnvList({ payload }, { call, put }) {
-      const response = yield call(paginateEnvList, payload);
-      yield put({
-        type: 'envList',
         payload: response,
       });
     },
@@ -82,13 +73,6 @@ export default {
             total: action.payload.data.totalElements,
           },
         },
-      };
-    },
-
-    envList(state, action) {
-      return {
-        ...state,
-        envList: action.payload.data.content,
       };
     },
   },

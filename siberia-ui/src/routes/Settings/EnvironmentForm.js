@@ -20,13 +20,13 @@ export default class EnvironmentForm extends PureComponent {
     }
   }
   getRowByKey(key, newData) {
-    return (newData || this.state.data.content).filter(item => item.id === key)[0];
+    return (newData || this.state.data).filter(item => item.id === key)[0];
   }
   index = 0;
   cacheOriginData = {};
   toggleEditable = (e, key) => {
     e.preventDefault();
-    const newData = this.state.data.content.map(item => ({ ...item }));
+    const newData = this.state.data.map(item => ({ ...item }));
     const target = this.getRowByKey(key, newData);
     if (target) {
       // 进入编辑状态时保存原始数据
@@ -34,15 +34,15 @@ export default class EnvironmentForm extends PureComponent {
         this.cacheOriginData[key] = { ...target };
       }
       target.editable = !target.editable;
-      this.setState({ data: { content: newData } });
+      this.setState({ data: newData });
     }
   };
   remove(key) {
-    const newData = this.state.data.content.filter(item => item.id !== key);
-    this.setState({ data: { content: newData } });
+    const newData = this.state.data.filter(item => item.id !== key);
+    this.setState({ data: newData });
   }
   newEnv = () => {
-    const newData = this.state.data.content.map(item => ({ ...item }));
+    const newData = this.state.data.map(item => ({ ...item }));
     newData.push({
       id: `NEW_TEMP_ID_${this.index}`,
       name: '',
@@ -51,7 +51,7 @@ export default class EnvironmentForm extends PureComponent {
       isNew: true,
     });
     this.index += 1;
-    this.setState({ data: { content: newData } });
+    this.setState({ data: newData });
   };
   handleKeyPress(e, key) {
     if (e.key === 'Enter') {
@@ -59,11 +59,11 @@ export default class EnvironmentForm extends PureComponent {
     }
   }
   handleFieldChange(e, fieldName, key) {
-    const newData = this.state.data.content.map(item => ({ ...item }));
+    const newData = this.state.data.map(item => ({ ...item }));
     const target = this.getRowByKey(key, newData);
     if (target) {
       target[fieldName] = e.target.value;
-      this.setState({ data: { content: newData } });
+      this.setState({ data: newData });
     }
   }
   saveRow(e, key) {
@@ -190,7 +190,7 @@ export default class EnvironmentForm extends PureComponent {
         <Table
           loading={this.state.loading}
           columns={columns}
-          dataSource={this.state.data.content}
+          dataSource={this.state.data}
           pagination={false}
           rowClassName={record => {
             return record.editable ? styles.editable : '';

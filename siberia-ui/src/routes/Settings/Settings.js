@@ -9,13 +9,13 @@ import styles from './style.less';
 
 class Settings extends PureComponent {
   componentDidMount() {
-    this.paginateEnvList();
+    this.findEnvList();
     this.paginateAppList();
   }
 
-  paginateEnvList = () => {
+  findEnvList = () => {
     this.props.dispatch({
-      type: 'settings/paginateEnvList',
+      type: 'settings/findEnvList',
       payload: {
         count: 5,
       },

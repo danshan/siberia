@@ -1,5 +1,5 @@
 import {
-  paginateEnvList,
+  findEnvList,
   createEnv,
   paginateAppList,
   createApp,
@@ -11,7 +11,7 @@ export default {
   namespace: 'settings',
 
   state: {
-    envList: {},
+    envList: [],
     appList: {},
     step: {
       payAccount: 'ant-design@alipay.com',
@@ -22,8 +22,8 @@ export default {
   },
 
   effects: {
-    *paginateEnvList({ payload }, { call, put }) {
-      const response = yield call(paginateEnvList, payload);
+    *findEnvList({ payload }, { call, put }) {
+      const response = yield call(findEnvList, payload);
       yield put({
         type: 'envList',
         payload: response,

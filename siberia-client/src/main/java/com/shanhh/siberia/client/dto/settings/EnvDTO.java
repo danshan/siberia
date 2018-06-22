@@ -25,6 +25,8 @@ public class EnvDTO implements Serializable {
     @NotNull
     @Size(min = 0, max = 255)
     private String description;
+
+    private boolean deleted;
     private String createBy;
     private String updateBy;
     private Date createTime;

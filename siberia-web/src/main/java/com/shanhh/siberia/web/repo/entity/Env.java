@@ -23,6 +23,9 @@ public class Env {
     private String name;
     @Column(nullable = false)
     private String description;
+
+    @Column(nullable = false, columnDefinition = "TINYINT DEFAULT 0")
+    private boolean deleted;
     @Column(nullable = false, updatable = false)
     private String createBy;
     @Column(nullable = false)

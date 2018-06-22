@@ -13,5 +13,5 @@ public interface AppRepo extends PagingAndSortingRepository<App, Integer> {
 
     App findByProjectAndModule(String project, String module);
 
-    Page<App> findAllByDeleted(boolean deleted, Pageable pageable);
+    Page<App> findByDeleted(boolean deleted, Pageable pageable);
 }

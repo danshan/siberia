@@ -75,7 +75,7 @@ public class AppServiceImpl implements AppService {
 
     @Override
     public Page<AppDTO> paginateApps(int pageNum, int pageSize) {
-        Page<AppDTO> apps = appRepo.findAllByDeleted(false, new PageRequest(pageNum, pageSize)).map(AppConvertor::toDTO);
+        Page<AppDTO> apps = appRepo.findByDeleted(false, new PageRequest(pageNum, pageSize)).map(AppConvertor::toDTO);
         return apps;
     }
 
