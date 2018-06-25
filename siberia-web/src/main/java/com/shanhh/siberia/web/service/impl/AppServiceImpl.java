@@ -42,6 +42,27 @@ public class AppServiceImpl implements AppService {
     private AppConfigRepo appConfigRepo;
 
     @Override
+    public Optional<AppDTO> createApp(AppCreateReq appCreateReq) {
+        App exists = appRepo.findByProjectAndModuleAndDeleted(
+                StringUtils.trimToEmpty(appCreateReq.getProject()),
+                StringUtils.trimToEmpty(appCreateReq.getModule()),
+                false);
+        Preconditions.checkArgument(exists == null, "app with project and module already exists");
+
+        AppDTO toSave = new AppDTO();
+        toSave.setProject(StringUtils.trimToEmpty(appCreateReq.getProject()));
+        toSave.setModule(StringUtils.trimToEmpty(appCreateReq.getModule()));
+        toSave.setAppType(appCreateReq.getAppType());
+
+        toSave.setCreateBy("sys");
+        toSave.setUpdateBy("sys");
+        App saved = appRepo.save(AppConvertor.toPO(toSave));
+        log.info("app created, {}", saved);
+
+        return Optional.ofNullable(AppConvertor.toDTO(saved));
+    }
+
+    @Override
     public Optional<AppDTO> loadAppByModule(String project, String module) {
         App app = appRepo.findByProjectAndModule(StringUtils.trimToEmpty(project), module);
         return Optional.ofNullable(AppConvertor.toDTO(app));

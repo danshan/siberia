@@ -2,6 +2,7 @@ package com.shanhh.siberia.web.resource;
 
 import com.codahale.metrics.annotation.Timed;
 import com.shanhh.siberia.client.base.BaseResponse;
+import com.shanhh.siberia.client.dto.app.AppCreateReq;
 import com.shanhh.siberia.client.dto.app.AppDTO;
 import com.shanhh.siberia.client.dto.app.AppLockDTO;
 import com.shanhh.siberia.client.dto.app.AppLockUpdateReq;
@@ -48,6 +49,16 @@ public class AppResource {
         Page<AppDTO> pageInfo = appService.paginateApps(
                 Math.max(pageNum, 0), Math.min(pageSize, LIMIT_MAX));
         return new BaseResponse(pageInfo);
+    }
+
+    @Timed
+    @RequestMapping(method = RequestMethod.POST)
+    @ApiOperation(value = "create app", response = BaseResponse.class)
+    public BaseResponse<AppDTO> createApp(
+            @Valid @RequestBody AppCreateReq createReq
+    ) {
+        return new BaseResponse<>(appService.createApp(createReq)
+                .orElseThrow(ResourceNotFoundException::new));
     }
 
     @Timed

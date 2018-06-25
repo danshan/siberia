@@ -13,6 +13,8 @@ import java.util.Optional;
  */
 public interface AppService {
 
+    Optional<AppDTO> createApp(AppCreateReq appCreateReq);
+
     Optional<AppDTO> loadAppByModule(String project, String module);
 
     Optional<AppDTO> loadAppById(int appId);

@@ -11,6 +11,8 @@ import org.springframework.data.repository.PagingAndSortingRepository;
  */
 public interface AppRepo extends PagingAndSortingRepository<App, Integer> {
 
+    App findByProjectAndModuleAndDeleted(String project, String module, boolean deleted);
+
     App findByProjectAndModule(String project, String module);
 
     Page<App> findByDeleted(boolean deleted, Pageable pageable);

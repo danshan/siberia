@@ -39,6 +39,7 @@ export default class EnvironmentForm extends PureComponent {
   };
   remove(key) {
     const newData = this.state.data.filter(item => item.id !== key);
+    this.props.remove(key);
     this.setState({ data: newData });
   }
   newEnv = () => {
@@ -86,7 +87,12 @@ export default class EnvironmentForm extends PureComponent {
     }
     delete target.isNew;
     this.toggleEditable(e, key);
-    this.props.createEnv(target);
+    if (typeof target.id === 'number') {
+      this.props.update(target);
+    } else {
+      delete target.id;
+      this.props.create(target);
+    }
     this.setState({
       loading: false,
     });

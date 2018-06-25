@@ -39,10 +39,15 @@ class Settings extends PureComponent {
   };
 
   createApp = app => {
+    const req = {
+      project: app.project,
+      module: app.module,
+      appType: app.appType.value,
+    };
     this.props
       .dispatch({
         type: 'settings/createApp',
-        payload: app,
+        payload: req,
       })
       .then(() => {
         this.paginateAppList();
@@ -60,6 +65,17 @@ class Settings extends PureComponent {
       });
   };
 
+  updateEnv = env => {
+    this.props
+      .dispatch({
+        type: 'settings/updateEnv',
+        payload: env,
+      })
+      .then(() => {
+        this.findEnvList();
+      });
+  };
+
   removeApp = appId => {
     this.props
       .dispatch({
@@ -73,6 +89,19 @@ class Settings extends PureComponent {
       });
   };
 
+  removeEnv = envId => {
+    this.props
+      .dispatch({
+        type: 'settings/removeEnv',
+        payload: {
+          envId,
+        },
+      })
+      .then(() => {
+        this.findEnvList();
+      });
+  };
+
   configApp = appId => {
     this.props.dispatch(routerRedux.push(`/settings/apps/${appId}`));
   };
@@ -83,7 +112,12 @@ class Settings extends PureComponent {
     return (
       <PageHeaderLayout title="管理后台" content="管理后台" wrapperClassName={styles.advancedForm}>
         <Card name="environment" title="环境管理" className={styles.card} bordered={false}>
-          <EnvironmentForm envList={envList} createEnv={this.createEnv} />
+          <EnvironmentForm
+            envList={envList}
+            create={this.createEnv}
+            update={this.updateEnv}
+            remove={this.removeEnv}
+          />
         </Card>
 
         <Card name="app" title="应用配置" className={styles.card} bordered={false}>

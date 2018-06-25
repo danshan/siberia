@@ -1,5 +1,5 @@
 import React, { Fragment, PureComponent } from 'react';
-import { Button, Divider, Input, message, Popconfirm, Table } from 'antd';
+import { Button, Divider, Input, message, Popconfirm, Table, Select } from 'antd';
 import styles from './style.less';
 
 export default class AppForm extends PureComponent {
@@ -47,8 +47,9 @@ export default class AppForm extends PureComponent {
     const newData = this.state.data.content.map(item => ({ ...item }));
     newData.push({
       id: `NEW_TEMP_ID_${this.index}`,
-      name: '',
-      description: '',
+      project: '',
+      module: '',
+      appType: { value: '' },
       editable: true,
       isNew: true,
     });
@@ -63,10 +64,12 @@ export default class AppForm extends PureComponent {
   handleFieldChange(e, fieldName, key) {
     const newData = this.state.data.content.map(item => ({ ...item }));
     const target = this.getRowByKey(key, newData);
-    if (target) {
+    if (fieldName === 'appType') {
+      target[fieldName].value = e;
+    } else if (target) {
       target[fieldName] = e.target.value;
-      this.setState({ data: { content: newData } });
     }
+    this.setState({ data: { content: newData } });
   }
   saveRow(e, key) {
     e.persist();
@@ -143,7 +146,6 @@ export default class AppForm extends PureComponent {
             return (
               <Input
                 value={text}
-                autoFocus
                 onChange={e => this.handleFieldChange(e, 'module', record.id)}
                 onKeyPress={e => this.handleKeyPress(e, record.id)}
                 placeholder="module name"
@@ -155,9 +157,24 @@ export default class AppForm extends PureComponent {
       },
       {
         title: '类型',
-        dataIndex: 'appType.desc',
+        dataIndex: 'appType.value',
         key: 'appType',
         width: '20%',
+        render: (text, record) => {
+          if (record.editable && record.isNew) {
+            return (
+              <Select
+                defaultValue={text}
+                style={{ width: 120 }}
+                onChange={e => this.handleFieldChange(e, 'appType', record.id)}
+              >
+                <Select.Option value="nodejs">nodejs</Select.Option>
+                <Select.Option value="spring-cloud">spring-cloud</Select.Option>
+              </Select>
+            );
+          }
+          return text;
+        },
       },
       {
         title: '操作',
