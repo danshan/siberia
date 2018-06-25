@@ -77,7 +77,7 @@ public class AnsibleServiceImpl implements AnsibleService {
                 Long.MAX_VALUE
         );
 
-        String logfile = String.format("%s/%d.log", ansible.getLogPath(), task.getId());
+        String logfile = getLogfile(task, ansible);
 
         Files.append(commandThread.getCmdline().toString() + "\n", new File(logfile), Charsets.UTF_8);
         commandThread.setStdOut(new AnsibleOutputStream(logfile) {
@@ -156,4 +156,12 @@ public class AnsibleServiceImpl implements AnsibleService {
         Preconditions.checkState(new File(playbookBin).exists(), "ansible-playbook not found: %s", playbookBin);
         return playbookBin;
     }
+
+    private String getLogfile(TaskDTO task, SiberiaProperties.Ansible ansible) {
+        Preconditions.checkState(StringUtils.isNotBlank(ansible.getLogPath()), "log path should not be empty");
+        Preconditions.checkState(new File(ansible.getLogPath()).exists(), "log path not exists, %s", ansible.getLogPath());
+        Preconditions.checkState(new File(ansible.getLogPath()).isDirectory(), "log path should be directory, %s", ansible.getLogPath());
+        return String.format("%s/%d.log", ansible.getLogPath(), task.getId());
+    }
+
 }
