@@ -107,7 +107,7 @@ public class SpringCloudRegister implements TaskStepRegister {
                 .orElseThrow(() -> new InternalServerErrorException(String.format("task %s app not supported, project: %s, module: %s", task.getId(), task.getProject(), task.getModule())));
         Map<String, Object> configs = app.getConfigByEnv(task.getEnv()).getContent();
 
-        PropertiesConfiguration defaultConfig = new PropertiesConfiguration(Resources.getResource("spring-boot.boot.properties"));
+        PropertiesConfiguration defaultConfig = new PropertiesConfiguration(Resources.getResource("templates/spring-boot.boot.properties"));
         defaultConfig.addProperty("APP_NAME", appName);
         defaultConfig.addProperty("SERVER_PORT", String.valueOf(configs.getOrDefault("SERVER_PORT", 8080)));
         defaultConfig.addProperty("CLASSPATH_USER", StringUtils.trimToEmpty((String) configs.get("CLASSPATH_USER")));
@@ -120,7 +120,7 @@ public class SpringCloudRegister implements TaskStepRegister {
                 .put("CONFIG_FOLDER", defaultConfig.getString("CONFIG_FOLDER"))
                 .put("CMD", cmd)
                 .build();
-        String file = Resources.toString(Resources.getResource("spring-boot.template.service"), Charsets.UTF_8);
+        String file = Resources.toString(Resources.getResource("templates/spring-boot.template.service"), Charsets.UTF_8);
         String service = new StringSubstitutor(values).replace(file);
         File tempFile = File.createTempFile(appName, ".service");
         Files.write(service, tempFile, Charsets.UTF_8);

@@ -1,6 +1,7 @@
 package com.shanhh.siberia.web.service.impl;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -147,10 +148,12 @@ public class AnsibleServiceImpl implements AnsibleService {
     }
 
     private String playbookBin() {
+        Preconditions.checkState(StringUtils.isNotBlank(siberiaProperties.getAnsible().getAnsibleHome()), "ansible home should not be empty");
         String ansibleHome = siberiaProperties.getAnsible().getAnsibleHome();
         String playbookBin = ansibleHome.endsWith("/")
                 ? (ansibleHome + "bin/ansible-playbook")
                 : (ansibleHome + "/" + "bin/ansible-playbook");
+        Preconditions.checkState(new File(playbookBin).exists(), "ansible-playbook not found: %s", playbookBin);
         return playbookBin;
     }
 }

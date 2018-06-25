@@ -41,6 +41,15 @@ public class TaskConvertor {
         return dto;
     }
 
+    public static TaskStep toPO(TaskStepDTO dto) {
+        if (dto == null) {
+            return null;
+        }
+        TaskStep po = new TaskStep();
+        BeanUtils.copyProperties(dto, po);
+        return po;
+    }
+
     public static TaskDTO.Memo toDTO(Task.Memo memo) {
         if (memo == null) {
             return null;
