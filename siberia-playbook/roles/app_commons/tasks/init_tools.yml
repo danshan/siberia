@@ -1,0 +1,24 @@
+# 初始化依赖的工具
+
+---
+
+- name: install applications with yum
+  yum: name={{ item }} state=present
+  with_items:
+    - unzip
+    - python-pip
+    - python-devel
+    - python-wheel
+  become: yes
+  become_method: sudo
+  become_user: SibApp
+
+- name: install applications with pip
+  command: pip install --upgrade --proxy {{ proxy_host }}:{{ proxy_port }} {{ item }}
+  with_items:
+    - pip
+    - psutil
+  become: yes
+  become_method: sudo
+  become_user: root
+

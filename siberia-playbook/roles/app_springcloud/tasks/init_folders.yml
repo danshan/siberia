@@ -1,0 +1,29 @@
+# 初始化项目文件夹
+
+---
+
+- name: init {{ app }} folders
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+  with_items:
+    - "{{ base_folder }}"
+    - "{{ temp_folder }}"
+    - "{{ app_folder }}"
+    - "{{ log_folder }}"
+    - "{{ config_folder }}"
+
+- name: generate {{ app }} service
+  become_user: root
+  copy:
+    src: "{{ app_service }}"
+    dest: "/usr/lib/systemd/system/{{ app }}.service"
+    mode: 0644
+
+- name: reload {{ app }} service
+  become_user: root
+  command: "systemctl daemon-reload"
+  environment:
+    LANG: "UTF-8"
+    LC_ALL: "en_US.UTF-8"

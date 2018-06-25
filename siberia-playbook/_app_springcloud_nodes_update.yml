@@ -1,0 +1,32 @@
+# static node online
+# 发布template资源
+# 对所有jvm项目, 发布template
+---
+
+# ansible-playbook -i production_dev _app_springcloud_nodes_update.yml -e buildno=27 -e hosts=upp-cpg-edge -e app=upp-cpg-edge -e project=upp-cpg-edge -e module=upp-cpg-edge -e port=8761 ;
+
+- hosts: "{{ hosts }}"
+  gather_facts: no
+  remote_user: root
+  become_user: appuser
+  become: yes
+  vars_files:
+    - roles/app_commons/vars/main.yml
+    - roles/app_springcloud/vars/main.yml
+
+  tasks:
+    - name: check required variables for nodes online
+      fail: msg="Varible '{{ item }}' is not defined"
+      when: "{{ item }} is not defined"
+      with_items:
+        - buildno
+        - app
+        - project
+        - module
+        - port
+
+    - include: roles/app_springcloud/tasks/init_folders.yml
+    - include: roles/app_springcloud/tasks/deploy_app.yml
+#    - include: roles/app_commons/tasks/check_repo_branch.yml
+    - include: roles/app_springcloud/tasks/stop_app.yml
+    - include: roles/app_springcloud/tasks/start_app.yml

@@ -1,0 +1,17 @@
+---
+
+# 使用脚本启动项目
+- name: start app {{ app }} {{ config_folder }}
+  become_user: root
+  command: "systemctl start {{ app }}"
+#  environment:
+#    LANG: "UTF-8"
+#    LC_ALL: "en_US.UTF-8"
+
+- name: wait for port {{ port }} start
+  wait_for:
+    host=localhost
+    port={{ port }}
+    state=started
+    timeout=90
+

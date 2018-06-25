@@ -1,0 +1,22 @@
+---
+
+# 服务器上部署可执行文件
+
+- name: delete static files folder
+  file:
+    state: absent
+    path: "{{ apps_folder }}/"
+
+- name: create static files folder
+  file:
+    state: directory
+    path: "{{ apps_folder }}/"
+
+- name: download jar file from hdfs
+  get_url:
+    url="{{ jenkins_host }}/job/{{ project }}/{{ buildno }}/artifact/{{ module }}.zip"
+    dest="{{ apps_folder }}/{{ app }}.zip"
+    force=yes
+
+- name: upzip package
+  command: "unzip -o {{ apps_folder }}/{{ module }}.zip -d {{ apps_folder }}/{{ module }}"

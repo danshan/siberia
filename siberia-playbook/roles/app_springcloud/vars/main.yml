@@ -1,0 +1,11 @@
+---
+
+base_folder: "/opt/kcb-apps/{{ app }}" # all uploaded jars
+log_folder: "/var/log/kcb/{{ app }}" # logs folder
+config_folder: "/etc/kcb/{{ app }}"
+app_folder: "/var/lib/kcb/{{ app }}"
+temp_folder: "/var/lib/kcb/{{ app }}/temp"
+
+jenkins_build_path: "{{ jenkins_host }}/job/{{ project }}/{{ buildno }}/api/json?tree=actions[lastBuiltRevision[branch[name]]]"
+jenkins_header: "Basic aHN5ay1qZW5raW5zLWJvdDpWTU5XUWg0NFk5UThVVA=="
+

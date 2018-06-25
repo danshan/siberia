@@ -1,0 +1,17 @@
+# 初始化统一脚本
+
+---
+
+- name: copy credit-boot configs
+  copy:
+    src: roles/app_commons/assets/
+    dest: /home/userapp/bin
+    force: yes
+    mode: 0644
+
+- name: copy credit-boot scripts
+  copy:
+    src: roles/app_commons/assets/credit-boot.py
+    dest: /home/userapp/bin
+    force: yes
+    mode: 0755

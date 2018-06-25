@@ -1,0 +1,13 @@
+---
+
+# 服务器上部署可执行文件
+
+- name: download jar file from jenkins
+  get_url:
+    url: "{{ jenkins_host }}/job/{{ project }}/{{ buildno }}/artifact/{{ module }}/target/{{ app }}.jar"
+    headers: "Authorization: {{ jenkins_header }}"
+    validate_certs: no
+    dest: "{{ base_folder }}/{{ app }}-{{ buildno }}.jar"
+    force: yes
+
+

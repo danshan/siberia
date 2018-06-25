@@ -1,0 +1,29 @@
+---
+
+# nginx 上部署static文件
+
+- name: stop current app {{ app }}
+  become_user: root
+  command: "systemctl stop {{ app }}"
+
+- name: wait for port {{ port }} stop
+  wait_for:
+    host=localhost
+    port={{ port }}
+    state=absent
+    timeout=10
+  ignore_errors: yes
+
+- name: delete jar files
+  file:
+    state: absent
+    path: "{{ app_folder }}/{{ app }}.jar"
+
+- name: copy jar file to deploy folder
+  copy:
+    remote_src: yes
+    src: "{{ base_folder }}/{{ app }}-{{ buildno }}.jar"
+    dest: "{{ app_folder }}/{{ app }}.jar"
+    mode: 0644
+
+

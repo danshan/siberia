@@ -1,0 +1,31 @@
+# 用于初始化java项目环境
+
+---
+
+# ansible-playbook -i production_dev _app_init.yml -e hosts=upp-cpg-edge -e app=upp-cpg-edge --tags init_tools
+
+- hosts: "{{ hosts }}"
+  gather_facts: no
+  remote_user: userapp
+  vars:
+    base_folder: "/opt/idc/apps/{{ app }}"
+  vars_files:
+    - roles/app_commons/vars/main.yml
+    - roles/app_runnable/vars/main.yml
+
+  tasks:
+    - name: check required variables for nodes online
+      fail: msg="Varible '{{ item }}' is not defined"
+      when: "{{ item }} is not defined"
+      with_items:
+        - app
+
+    - include: roles/app_runnable/tasks/init_folders.yml
+      tags: init_folders
+
+    - include: roles/app_commons/tasks/init_tools.yml
+      tags: init_tools
+
+    - include: roles/app_commons/tasks/init_scripts.yml
+      tags: init_scripts
+

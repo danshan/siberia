@@ -1,0 +1,23 @@
+---
+
+# 验证当前部署的分支为 master 分支
+
+- name: check required variables for check repo branch
+  fail: msg="Varible '{{ item }}' is not defined"
+  when: "{{ item }} is not defined"
+  with_items:
+    - jenkins_build_path
+    - buildno
+    - app
+
+- name: call jenkins api for repo branch
+  uri:
+    url: "{{ jenkins_build_path }}"
+    method: GET
+    return_content: yes
+    header: "Content-Type=application/json"
+  register: jenkins_build_res
+
+- name: check if git branch is origin/master
+  fail: msg="Branch to deploy is not master, {{ jenkins_build_res.json }}"
+  when: '("origin/master" not in (jenkins_build_res.content)) and ("origin/release" not in (jenkins_build_res.content)) '
