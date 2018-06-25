@@ -42,6 +42,17 @@ class Settings extends PureComponent {
       });
   };
 
+  updateEnv = env => {
+    this.props
+      .dispatch({
+        type: 'settings/updateEnv',
+        payload: env,
+      })
+      .then(() => {
+        this.findEnvList();
+      });
+  };
+
   createApp = app => {
     const req = {
       project: app.project,

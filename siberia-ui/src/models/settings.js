@@ -1,6 +1,7 @@
 import {
   findEnvList,
   createEnv,
+  updateEnv,
   paginateAppList,
   createApp,
   updateApp,
@@ -36,6 +37,11 @@ export default {
         type: 'createdEnv',
         payload: response,
       });
+      return response;
+    },
+
+    *updateEnv({ payload }, { call }) {
+      const response = yield call(updateEnv, payload);
       return response;
     },
 

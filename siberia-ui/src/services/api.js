@@ -192,3 +192,10 @@ export async function createEnv(params) {
     body: params,
   });
 }
+
+export async function updateEnv(params) {
+  return request(`/api/settings/envs/${params.id}`, {
+    method: 'PUT',
+    body: params,
+  });
+}
