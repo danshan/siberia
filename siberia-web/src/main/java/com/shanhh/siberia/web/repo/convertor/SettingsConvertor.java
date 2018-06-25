@@ -1,6 +1,8 @@
 package com.shanhh.siberia.web.repo.convertor;
 
+import com.shanhh.siberia.client.dto.settings.EnvCreateReq;
 import com.shanhh.siberia.client.dto.settings.EnvDTO;
+import com.shanhh.siberia.client.dto.settings.EnvUpdateReq;
 import com.shanhh.siberia.web.repo.entity.Env;
 import org.springframework.beans.BeanUtils;
 
@@ -17,6 +19,18 @@ public class SettingsConvertor {
     }
 
     public static Env toPO(EnvDTO env) {
+        Env po = new Env();
+        BeanUtils.copyProperties(env, po);
+        return po;
+    }
+
+    public static Env toPO(EnvCreateReq env) {
+        Env po = new Env();
+        BeanUtils.copyProperties(env, po);
+        return po;
+    }
+
+    public static Env toPO(EnvUpdateReq env) {
         Env po = new Env();
         BeanUtils.copyProperties(env, po);
         return po;

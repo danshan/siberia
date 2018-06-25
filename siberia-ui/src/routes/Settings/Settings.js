@@ -32,10 +32,14 @@ class Settings extends PureComponent {
   };
 
   createEnv = env => {
-    this.props.dispatch({
-      type: 'settings/createEnv',
-      payload: env,
-    });
+    this.props
+      .dispatch({
+        type: 'settings/createEnv',
+        payload: env,
+      })
+      .then(() => {
+        this.findEnvList();
+      });
   };
 
   createApp = app => {

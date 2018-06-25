@@ -2,7 +2,9 @@ package com.shanhh.siberia.web.resource;
 
 import com.codahale.metrics.annotation.Timed;
 import com.shanhh.siberia.client.base.BaseResponse;
+import com.shanhh.siberia.client.dto.settings.EnvCreateReq;
 import com.shanhh.siberia.client.dto.settings.EnvDTO;
+import com.shanhh.siberia.client.dto.settings.EnvUpdateReq;
 import com.shanhh.siberia.web.service.SettingsService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -53,7 +55,7 @@ public class SettingsResource {
             @ApiParam(value = "environment id", required = true)
             @PathVariable("envId") int envId,
 
-            @RequestBody EnvDTO env
+            @RequestBody EnvUpdateReq env
     ) {
         env.setId(envId);
         return new BaseResponse(settingsService.updateEnvById(env).orElseThrow(ResourceNotFoundException::new));
@@ -63,7 +65,7 @@ public class SettingsResource {
     @RequestMapping(value = "envs", method = RequestMethod.POST)
     @ApiOperation(value = "create environment", response = BaseResponse.class)
     public BaseResponse<EnvDTO> createEnv(
-            @RequestBody EnvDTO env
+            @RequestBody EnvCreateReq env
     ) {
         return new BaseResponse(settingsService.createEnv(env).orElseThrow(ResourceNotFoundException::new));
     }
