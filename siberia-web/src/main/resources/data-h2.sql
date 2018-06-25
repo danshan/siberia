@@ -31,3 +31,6 @@ INSERT INTO pipeline(id, title, description, status, create_by, update_by) VALUE
 
 INSERT INTO pipeline_deployment(id, pipeline_id, project, module, build_no, app_id, create_by, update_by) VALUES
 (1, 1, 'togather', 'togather-edge', 1, 1, 'sys', 'sys');
+
+INSERT INTO app_host(id, app_id, project, module, env_id, hosts, create_by, update_by) VALUES
+(1, 1, 'togather', 'togather-edge', 1, '["192.168.1.1", "192.168.1.2"]', 'sys', 'sys');

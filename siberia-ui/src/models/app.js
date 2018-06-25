@@ -18,8 +18,8 @@ export default {
     },
 
     app: {},
-    appConfigList: [],
-    appHostList: [],
+    appConfigMap: {},
+    appHostMap: {},
   },
 
   effects: {
@@ -47,7 +47,7 @@ export default {
     *findAppConfigList({ payload }, { call, put }) {
       const response = yield call(findAppConfigList, payload);
       yield put({
-        type: 'appConfigList',
+        type: 'appConfigMap',
         payload: response,
       });
     },
@@ -55,7 +55,7 @@ export default {
     *findAppHostList({ payload }, { call, put }) {
       const response = yield call(findAppHostList, payload);
       yield put({
-        type: 'appHostList',
+        type: 'appHostMap',
         payload: response,
       });
     },
@@ -73,6 +73,24 @@ export default {
             total: action.payload.data.totalElements,
           },
         },
+      };
+    },
+
+    app(state, action) {
+      return {
+        ...state,
+        app: action.payload.data,
+      };
+    },
+
+    appConfigMap(state, action) {
+      const appConfigMap = action.payload.data.reduce((map, obj) => {
+        map[obj.env.id + ''] = obj; // eslint-disable-line
+        return map;
+      }, {});
+      return {
+        ...state,
+        appConfigMap,
       };
     },
   },

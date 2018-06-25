@@ -1,11 +1,13 @@
 package com.shanhh.siberia.web.repo.entity;
 
+import com.google.common.collect.Lists;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author shanhonghao
@@ -23,7 +25,8 @@ public class AppHost {
     @Column(nullable = false)
     private int appId;
     @Column(columnDefinition = "TEXT NOT NULL DEFAULT ''")
-    private String hosts = "";
+    @Convert(converter = JpaConverterJson.class)
+    private List hosts = Lists.newLinkedList();
     @OneToOne
     private Env env;
     @Column(nullable = false)
