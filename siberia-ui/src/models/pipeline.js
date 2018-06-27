@@ -2,6 +2,7 @@ import { routerRedux } from 'dva/router';
 import {
   createPipeline,
   loadPipeline,
+  updatePipelineStatus,
   paginatePipelineDeploymentList,
   paginatePipelineList,
   createPipelineDeployment,
@@ -51,6 +52,11 @@ export default {
       if (response.data.id) {
         yield put(routerRedux.push(`/deployment/pipelines/${response.data.id}`));
       }
+    },
+
+    *updatePipelineStatus({ payload }, { call }) {
+      const response = yield call(updatePipelineStatus, payload);
+      return response.data;
     },
 
     *paginatePipelineDeploymentList({ payload }, { call, put }) {

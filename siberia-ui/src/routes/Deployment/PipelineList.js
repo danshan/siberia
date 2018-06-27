@@ -50,7 +50,7 @@ export default class PipelineList extends PureComponent {
   state = {
     modalVisible: false,
 
-    status: 0,
+    status: 1,
     pageNum: 0,
     pageSize: 20,
   };
@@ -68,6 +68,20 @@ export default class PipelineList extends PureComponent {
         status,
       },
     });
+  };
+
+  updatePipelineStatus = (pipelineId, status) => {
+    this.props
+      .dispatch({
+        type: 'pipeline/updatePipelineStatus',
+        payload: {
+          pipelineId,
+          status,
+        },
+      })
+      .then(() =>
+        this.pagiantePipelineList(this.state.pageNum, this.state.pageSize, this.state.status)
+      );
   };
 
   handleModalVisible = flag => {
@@ -99,6 +113,10 @@ export default class PipelineList extends PureComponent {
     );
   };
 
+  handleUpdateStatus = (record, status) => {
+    this.updatePipelineStatus(record.id, status);
+  };
+
   render() {
     const { pipeline: { pipelineList }, loading } = this.props;
     const { modalVisible } = this.state;
@@ -113,7 +131,7 @@ export default class PipelineList extends PureComponent {
 
     const extraContent = (
       <div>
-        <RadioGroup defaultValue="0" onChange={this.handleFilterStatus}>
+        <RadioGroup defaultValue={String(this.state.status)} onChange={this.handleFilterStatus}>
           <RadioButton value="0">全部</RadioButton>
           <RadioButton value="1">进行中</RadioButton>
           <RadioButton value="2">已归档</RadioButton>
@@ -148,6 +166,16 @@ export default class PipelineList extends PureComponent {
     const parentMethods = {
       handleAdd: this.handleAdd,
       handleModalVisible: this.handleModalVisible,
+    };
+
+    const operations = item => {
+      let op = null;
+      if (item.status.value === 1) {
+        op = [<a>编辑</a>, <a onClick={() => this.handleUpdateStatus(item, 2)}>归档</a>];
+      } else if (item.status.value === 2) {
+        op = [<a>编辑</a>, <a onClick={() => this.handleUpdateStatus(item, 1)}>执行</a>];
+      }
+      return op;
     };
 
     return (
@@ -189,7 +217,7 @@ export default class PipelineList extends PureComponent {
               pagination={paginationProps}
               dataSource={pipelineList.content}
               renderItem={item => (
-                <List.Item actions={[<a>编辑</a>, <a>归档</a>]}>
+                <List.Item actions={operations(item)}>
                   <List.Item.Meta
                     title={<Link to={`pipelines/${item.id}`}>{item.title}</Link>}
                     description={item.description}
