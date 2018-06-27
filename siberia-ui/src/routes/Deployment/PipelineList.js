@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import moment from 'moment';
 import { connect } from 'dva';
 import { Link } from 'dva/router';
-import { List, Card, Row, Col, Radio, Input, Button, Modal, Form } from 'antd';
+import { List, Card, Row, Col, Radio, Input, Button, Modal, Form, Badge } from 'antd';
 
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
@@ -147,21 +147,28 @@ export default class PipelineList extends PureComponent {
       showTotal: total => `Total ${total} items`,
     };
 
-    const ListContent = ({ data: { createBy, createTime, status } }) => (
-      <div className={styles.listContent}>
-        <div className={styles.listContentItem}>
-          <span>Owner</span>
-          <p>{createBy}</p>
+    const ListContent = ({ data: { createBy, createTime, status } }) => {
+      let st = null;
+      if (status.value === 1) {
+        st = <Badge status="processing" text="进行中" />;
+      } else if (status.value === 2) {
+        st = <Badge status="success" text="已归档" />;
+      }
+
+      return (
+        <div className={styles.listContent}>
+          <div className={styles.listContentItem}>
+            <span>Owner</span>
+            <p>{createBy}</p>
+          </div>
+          <div className={styles.listContentItem}>
+            <span>开始时间</span>
+            <p>{moment(createTime).format('YYYY-MM-DD HH:mm')}</p>
+          </div>
+          <div className={styles.listContentItem}>{st}</div>
         </div>
-        <div className={styles.listContentItem}>
-          <span>开始时间</span>
-          <p>{moment(createTime).format('YYYY-MM-DD HH:mm')}</p>
-        </div>
-        <div className={styles.listContentItem}>
-          <p>{status.desc}</p>
-        </div>
-      </div>
-    );
+      );
+    };
 
     const parentMethods = {
       handleAdd: this.handleAdd,
