@@ -1,6 +1,6 @@
 import React, { Fragment, PureComponent } from 'react';
 import { connect } from 'dva';
-import { Card, Row, Col, Radio, Input, Divider } from 'antd';
+import { Card, Row, Col, Radio, Input, Divider, Badge } from 'antd';
 import StandardTable from 'components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
@@ -74,6 +74,27 @@ export default class TaskList extends PureComponent {
         title: 'Build No.',
         dataIndex: 'buildNo',
         sorter: true,
+      },
+      {
+        title: 'Env',
+        dataIndex: 'env.name',
+      },
+      {
+        title: 'Status',
+        dataIndex: 'status',
+        render: status => {
+          if (status.value === 'SERVICING' || status.value === 'RUNNING') {
+            return <Badge status="default" text={status.desc} />;
+          } else if (status.value === 'FAIL') {
+            return <Badge status="error" text={status.desc} />;
+          } else if (status.value === 'OK') {
+            return <Badge status="success" text={status.desc} />;
+          } else if (status.value === 'CREATED' || status.value === 'ROLLBACK') {
+            return <Badge status="warning" text={status.desc} />;
+          } else {
+            return <Badge status="default" text={status.desc} />;
+          }
+        },
       },
       {
         title: '操作',

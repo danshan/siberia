@@ -206,3 +206,12 @@ export async function updateEnv(params) {
     body: params,
   });
 }
+
+// logs
+
+export async function findSiberiaLogs(params) {
+  return request(`/api/logs/siberialog/${params.id}`, {
+    method: 'GET',
+    body: params,
+  });
+}

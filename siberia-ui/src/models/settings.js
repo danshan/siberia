@@ -14,12 +14,6 @@ export default {
   state: {
     envList: [],
     appList: {},
-    step: {
-      payAccount: 'ant-design@alipay.com',
-      receiverAccount: 'test@example.com',
-      receiverName: 'Alex',
-      amount: '500',
-    },
   },
 
   effects: {
