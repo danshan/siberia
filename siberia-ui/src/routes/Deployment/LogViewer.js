@@ -12,6 +12,7 @@ import styles from './LogViewer.less';
 export default class LogViewer extends PureComponent {
   componentDidMount() {
     this.findSiberiaLogs();
+    this.findAnsibleLogs();
   }
 
   findSiberiaLogs = () => {
@@ -23,8 +24,17 @@ export default class LogViewer extends PureComponent {
     });
   };
 
+  findAnsibleLogs = () => {
+    this.props.dispatch({
+      type: 'logviewer/findAnsibleLogs',
+      payload: {
+        id: this.props.match.params.taskId,
+      },
+    });
+  };
+
   render() {
-    const { logviewer: { siberiaLogs } } = this.props;
+    const { logviewer: { siberiaLogs, ansibleLogs } } = this.props;
 
     const renderSiberiaLogs = () => {
       const parseLog = log => {
@@ -34,8 +44,43 @@ export default class LogViewer extends PureComponent {
         return `${logs + line}\n`;
       };
 
-      const logs = (siberiaLogs || []).map(log => parseLog(log)).reduce(collectLine, '');
-      return logs;
+      return (siberiaLogs || []).map(log => parseLog(log)).reduce(collectLine, '');
+    };
+
+    const renderAnsibleLogs = () => {
+      let index = 0;
+      const parseLog = log => {
+        const lableStyle = { color: '' };
+        const time = log.substring(0, 19);
+        const content = log.substring(20);
+
+        if (content.startsWith('ok: [')) {
+          lableStyle.color = 'green';
+        } else if (content.startsWith('changed: [')) {
+          lableStyle.color = 'yellow';
+        } else if (content.startsWith('failed: [')) {
+          lableStyle.color = 'orange';
+        } else if (content.startsWith('fatal: [')) {
+          console.log(content);
+          lableStyle.color = 'red';
+        } else if (content.startsWith('included: ') || content.startsWith('skipping: [')) {
+          lableStyle.color = '#00a7d0';
+        } else if (content.startsWith('PLAY ') || content.startsWith('TASK [')) {
+          lableStyle.color = '';
+        }
+
+        const result = (
+          <li>
+            <span key={index}>
+              {time} <span style={lableStyle}>{content}</span>
+            </span>
+          </li>
+        );
+        index += 1;
+        return result;
+      };
+
+      return (ansibleLogs || []).map(log => parseLog(log));
     };
 
     return (
@@ -43,6 +88,14 @@ export default class LogViewer extends PureComponent {
         <Card title="Siberia Log" className={styles.card} bordered={false}>
           <div className={styles.logHighlight}>
             <pre>{`${renderSiberiaLogs()}`}</pre>
+          </div>
+        </Card>
+
+        <Card title="Ansible Log" className={styles.card} bordered={false}>
+          <div className={styles.logHighlight}>
+            <pre>
+              <ul>{renderAnsibleLogs()}</ul>
+            </pre>
           </div>
         </Card>
       </PageHeaderLayout>

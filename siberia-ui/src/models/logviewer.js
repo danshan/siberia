@@ -1,4 +1,4 @@
-import { findSiberiaLogs } from '../services/api';
+import { findSiberiaLogs, findAnsibleLogs } from '../services/api';
 
 export default {
   namespace: 'logviewer',
@@ -16,6 +16,14 @@ export default {
         payload: response,
       });
     },
+
+    *findAnsibleLogs({ payload }, { call, put }) {
+      const response = yield call(findAnsibleLogs, payload);
+      yield put({
+        type: 'ansibleLogs',
+        payload: response,
+      });
+    },
   },
 
   reducers: {
@@ -23,6 +31,13 @@ export default {
       return {
         ...state,
         siberiaLogs: action.payload.data,
+      };
+    },
+
+    ansibleLogs(state, action) {
+      return {
+        ...state,
+        ansibleLogs: action.payload.data,
       };
     },
   },

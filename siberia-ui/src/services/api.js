@@ -215,3 +215,10 @@ export async function findSiberiaLogs(params) {
     body: params,
   });
 }
+
+export async function findAnsibleLogs(params) {
+  return request(`/api/logs/ansiblelog/${params.id}`, {
+    method: 'GET',
+    body: params,
+  });
+}
