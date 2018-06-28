@@ -37,14 +37,31 @@ export default class LogViewer extends PureComponent {
     const { logviewer: { siberiaLogs, ansibleLogs } } = this.props;
 
     const renderSiberiaLogs = () => {
+      let index = 0;
       const parseLog = log => {
-        return `${log.createTime} ${log.result.value} ${log.step} ${log.detail}`;
-      };
-      const collectLine = (logs, line) => {
-        return `${logs + line}\n`;
+        const lableStyle = { color: '' };
+
+        if (log.result.value === 'OK') {
+          lableStyle.color = 'green';
+        } else if (log.result.value === 'FAILED') {
+          lableStyle.color = 'yellow';
+        } else if (log.result.value === 'ERROR') {
+          lableStyle.color = 'red';
+        }
+
+        const result = (
+          <li key={index}>
+            <span>
+              {log.createTime}{' '}
+              <span style={lableStyle}>{`${log.result.value} ${log.step} ${log.detail}`}</span>
+            </span>
+          </li>
+        );
+        index += 1;
+        return result;
       };
 
-      return (siberiaLogs || []).map(log => parseLog(log)).reduce(collectLine, '');
+      return (siberiaLogs || []).map(log => parseLog(log));
     };
 
     const renderAnsibleLogs = () => {
@@ -57,9 +74,9 @@ export default class LogViewer extends PureComponent {
         if (content.startsWith('ok: [')) {
           lableStyle.color = 'green';
         } else if (content.startsWith('changed: [')) {
-          lableStyle.color = 'yellow';
-        } else if (content.startsWith('failed: [')) {
           lableStyle.color = 'orange';
+        } else if (content.startsWith('failed: [')) {
+          lableStyle.color = 'yellow';
         } else if (content.startsWith('fatal: [')) {
           lableStyle.color = 'red';
         } else if (content.startsWith('included: ') || content.startsWith('skipping: [')) {
@@ -86,7 +103,7 @@ export default class LogViewer extends PureComponent {
       <PageHeaderLayout>
         <Card title="Siberia Log" className={styles.card} bordered={false}>
           <div className={styles.logHighlight}>
-            <pre>{`${renderSiberiaLogs()}`}</pre>
+            <pre>{renderSiberiaLogs()}</pre>
           </div>
         </Card>
 
