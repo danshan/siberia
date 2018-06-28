@@ -61,7 +61,6 @@ export default class LogViewer extends PureComponent {
         } else if (content.startsWith('failed: [')) {
           lableStyle.color = 'orange';
         } else if (content.startsWith('fatal: [')) {
-          console.log(content);
           lableStyle.color = 'red';
         } else if (content.startsWith('included: ') || content.startsWith('skipping: [')) {
           lableStyle.color = '#00a7d0';
@@ -70,8 +69,8 @@ export default class LogViewer extends PureComponent {
         }
 
         const result = (
-          <li>
-            <span key={index}>
+          <li key={index}>
+            <span>
               {time} <span style={lableStyle}>{content}</span>
             </span>
           </li>

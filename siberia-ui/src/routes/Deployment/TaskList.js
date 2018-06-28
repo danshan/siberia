@@ -1,5 +1,6 @@
 import React, { Fragment, PureComponent } from 'react';
 import { connect } from 'dva';
+import { routerRedux } from 'dva/router';
 import { Card, Row, Col, Radio, Input, Divider, Badge } from 'antd';
 import StandardTable from 'components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
@@ -32,6 +33,10 @@ export default class TaskList extends PureComponent {
     this.setState({
       selectedRows: rows,
     });
+  };
+
+  handleLog = record => {
+    this.props.dispatch(routerRedux.push(`/deployment/logviewer/${record.id}`));
   };
 
   render() {
@@ -98,9 +103,9 @@ export default class TaskList extends PureComponent {
       },
       {
         title: '操作',
-        render: () => (
+        render: record => (
           <Fragment>
-            <a href="">Log</a>
+            <a onClick={() => this.handleLog(record)}>Log</a>
             <Divider type="vertical" />
             <a href="">重新发布</a>
           </Fragment>
