@@ -174,6 +174,13 @@ export async function findAppConfigList(params) {
   });
 }
 
+export async function updateAppConfig(params) {
+  return request(`/api/apps/${params.appId}/configs`, {
+    method: 'PUT',
+    body: params,
+  });
+}
+
 export async function findAppHostList(params) {
   return request(`/api/apps/${params.appId}/hosts`, {
     method: 'GET',

@@ -2,10 +2,7 @@ package com.shanhh.siberia.web.resource;
 
 import com.codahale.metrics.annotation.Timed;
 import com.shanhh.siberia.client.base.BaseResponse;
-import com.shanhh.siberia.client.dto.app.AppCreateReq;
-import com.shanhh.siberia.client.dto.app.AppDTO;
-import com.shanhh.siberia.client.dto.app.AppLockDTO;
-import com.shanhh.siberia.client.dto.app.AppLockUpdateReq;
+import com.shanhh.siberia.client.dto.app.*;
 import com.shanhh.siberia.web.service.AppService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -132,6 +129,18 @@ public class AppResource {
             @PathVariable("configId") int configId
     ) {
         return new BaseResponse(appService.loadConfigById(appId, configId));
+    }
+
+    @Timed
+    @RequestMapping(value = "{appId}/configs", method = RequestMethod.PUT)
+    @ApiOperation(value = "load app config by id", response = BaseResponse.class)
+    public BaseResponse updateConfig(
+            @PathVariable("appId") int appId,
+            @Valid @RequestBody AppConfigUpdateReq config
+    ) {
+        config.setAppId(appId);
+        config.setOperator("sys");
+        return new BaseResponse(appService.updateConfigByEnv(config));
     }
 
     @Timed

@@ -3,10 +3,7 @@ package com.shanhh.siberia.web.service.impl;
 import com.google.common.base.Preconditions;
 import com.shanhh.siberia.client.dto.app.*;
 import com.shanhh.siberia.client.dto.settings.EnvDTO;
-import com.shanhh.siberia.web.repo.AppConfigRepo;
-import com.shanhh.siberia.web.repo.AppHostRepo;
-import com.shanhh.siberia.web.repo.AppLockRepo;
-import com.shanhh.siberia.web.repo.AppRepo;
+import com.shanhh.siberia.web.repo.*;
 import com.shanhh.siberia.web.repo.convertor.AppConvertor;
 import com.shanhh.siberia.web.repo.convertor.EnvConvertor;
 import com.shanhh.siberia.web.repo.entity.*;
@@ -19,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -40,6 +38,8 @@ public class AppServiceImpl implements AppService {
     private AppHostRepo appHostRepo;
     @Resource
     private AppConfigRepo appConfigRepo;
+    @Resource
+    private EnvRepo envRepo;
 
     @Override
     public Optional<AppDTO> createApp(AppCreateReq appCreateReq) {
@@ -170,18 +170,33 @@ public class AppServiceImpl implements AppService {
     }
 
     @Override
-    public Optional<AppConfigDTO> createConfig(AppConfigDTO config) {
-        if (config.getId() > 0) {
-            return this.updateConfigById(config);
-        }
-        AppConfig saved = appConfigRepo.save(AppConvertor.toPO(config));
-        return Optional.ofNullable(AppConvertor.toDTO(saved));
+    public Optional<AppConfigDTO> loadConfigByEnv(int appId, int envId) {
+        return Optional.ofNullable(AppConvertor.toDTO(appConfigRepo.findByAppIdAndEnvId(appId, envId)));
     }
 
     @Override
-    public Optional<AppConfigDTO> updateConfigById(AppConfigDTO config) {
-        AppConfig saved = appConfigRepo.save(AppConvertor.toPO(config));
-        return Optional.ofNullable(AppConvertor.toDTO(saved));
+    @Transactional
+    public Optional<AppConfigDTO> updateConfigByEnv(AppConfigUpdateReq config) {
+        Optional<AppConfigDTO> exists = this.loadConfigByEnv(config.getAppId(), config.getEnvId());
+        if (exists.isPresent()) {
+            AppConfigDTO existsConfig = exists.get();
+            existsConfig.setContent(config.getContent());
+            existsConfig.setUpdateBy(config.getOperator());
+            appConfigRepo.updateById(existsConfig.getId(), existsConfig.getContent(), existsConfig.getUpdateBy());
+            return Optional.of(existsConfig);
+        } else {
+            return Optional.ofNullable(this.createAppConfig(config));
+        }
+    }
+
+    private AppConfigDTO createAppConfig(AppConfigUpdateReq config) {
+        AppConfig po = new AppConfig();
+        po.setEnv(envRepo.findOne(config.getEnvId()));
+        po.setContent(config.getContent());
+        po.setCreateBy(config.getOperator());
+        po.setUpdateBy(config.getOperator());
+        po.setAppId(config.getAppId());
+        return AppConvertor.toDTO(appConfigRepo.save(po));
     }
 
     @Override

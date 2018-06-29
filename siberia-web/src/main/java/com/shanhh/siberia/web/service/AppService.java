@@ -37,9 +37,9 @@ public interface AppService {
 
     Optional<AppConfigDTO> loadConfigById(int appId, int configId);
 
-    Optional<AppConfigDTO> createConfig(AppConfigDTO config);
+    Optional<AppConfigDTO> loadConfigByEnv(int appId, int envId);
 
-    Optional<AppConfigDTO> updateConfigById(AppConfigDTO config);
+    Optional<AppConfigDTO> updateConfigByEnv(AppConfigUpdateReq config);
 
     List<AppHostDTO> findHostsById(int appId);
 }

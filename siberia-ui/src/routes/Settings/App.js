@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Card, Tabs, Form, Input, Row, Col } from 'antd';
+import { Button, Card, Input, Tabs, message } from 'antd';
 import StandardTable from 'components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
@@ -12,17 +12,31 @@ import styles from './App.less';
   appLoading: loading.models.app,
   settingsLoading: loading.models.settings,
 }))
-@Form.create()
 export default class App extends PureComponent {
-  state = {
-    selectedRows: [],
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      app: props.app,
+      settings: props.settings,
+      selectedRows: [],
+    };
+  }
 
   componentDidMount() {
     this.loadApp();
     this.findEnvList();
-    this.findAppConfigList();
     this.findAppHostList();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if ('app' in nextProps) {
+      this.setState({ app: nextProps.app });
+    }
+
+    if ('settings' in nextProps) {
+      this.setState({ settings: nextProps.settings });
+    }
   }
 
   loadApp = () => {
@@ -44,16 +58,6 @@ export default class App extends PureComponent {
     });
   };
 
-  findAppConfigList = () => {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'app/findAppConfigList',
-      payload: {
-        appId: this.props.match.params.appId,
-      },
-    });
-  };
-
   findAppHostList = () => {
     const { dispatch } = this.props;
     dispatch({
@@ -64,44 +68,72 @@ export default class App extends PureComponent {
     });
   };
 
+  updateAppConfig = (env, config) => {
+    this.props
+      .dispatch({
+        type: 'app/updateAppConfig',
+        payload: {
+          appId: this.props.match.params.appId,
+          envId: env.id,
+          content: JSON.parse(config),
+        },
+      })
+      .then(() => {
+        message.success('修改成功');
+        this.loadApp();
+      });
+  };
+
   handleSelectRows = rows => {
     this.setState({
       selectedRows: rows,
     });
   };
 
+  handleChangeConfig = (e, env) => {
+    const configs = this.state.app.appConfigMap;
+    configs[String(env.id)] = e.target.value;
+    this.setState({
+      app: {
+        appConfigMap: configs,
+      },
+    });
+  };
+
+  handleSaveConfig = (e, env) => {
+    const config = this.state.app.appConfigMap[String(env.id)];
+    this.updateAppConfig(env, config);
+  };
+
   render() {
-    const { app: { app }, settings: { envList }, appLoading, form } = this.props;
-    const { getFieldDecorator } = form;
-    const { selectedRows } = this.state;
+    const { appLoading } = this.props;
+    const { app: { appConfigMap }, settings: { envList }, selectedRows } = this.state;
 
     const hostColumns = [];
 
-    const envTab = env => (
-      <Tabs.TabPane tab={env.name} key={env.id}>
-        <Form layout="vertical" hideRequiredMark>
-          <Row gutter={16}>
-            <Col lg={6} md={12} sm={24}>
-              <Form.Item label="端口号">
-                {getFieldDecorator('name', {
-                  rules: [{ required: true, message: '请输入端口号' }],
-                })(<Input placeholder="请输入端口号" />)}
-              </Form.Item>
-            </Col>
-            <Col xl={{ span: 16, offset: 2 }} lg={16} md={16} sm={24}>
-              <Form.Item label="健康检查 Path">
-                {getFieldDecorator('healthPath', {
-                  rules: [{ required: true, message: '请输入健康检查 path' }],
-                })(<Input placeholder="请输入健康检查 path" />)}
-              </Form.Item>
-            </Col>
-          </Row>
-        </Form>
-      </Tabs.TabPane>
-    );
+    const envTab = env => {
+      return (
+        <Tabs.TabPane tab={env.name} key={env.id}>
+          <Input.TextArea
+            placeholder="Input config content"
+            autosize={{ minRows: 2, maxRows: 6 }}
+            value={appConfigMap[String(env.id)]}
+            onChange={e => this.handleChangeConfig(e, env)}
+          />
+          <Button
+            type="primary"
+            icon="save"
+            loading={this.state.iconLoading}
+            onClick={e => this.handleSaveConfig(e, env)}
+          >
+            Save
+          </Button>
+        </Tabs.TabPane>
+      );
+    };
 
     return (
-      <PageHeaderLayout title="应用配置" content={app.module}>
+      <PageHeaderLayout title="应用配置">
         <Card name="appconfig" title="基础配置" className={styles.card} bordered={false}>
           <div>
             <Tabs defaultActiveKey="1">

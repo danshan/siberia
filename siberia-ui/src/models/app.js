@@ -1,9 +1,9 @@
 import {
+  findAppHostList,
+  loadApp,
+  updateAppConfig,
   paginateAppLockList,
   updateAppLockStatus,
-  loadApp,
-  findAppConfigList,
-  findAppHostList,
 } from '../services/api';
 
 export default {
@@ -44,20 +44,17 @@ export default {
       });
     },
 
-    *findAppConfigList({ payload }, { call, put }) {
-      const response = yield call(findAppConfigList, payload);
-      yield put({
-        type: 'appConfigMap',
-        payload: response,
-      });
-    },
-
     *findAppHostList({ payload }, { call, put }) {
       const response = yield call(findAppHostList, payload);
       yield put({
         type: 'appHostMap',
         payload: response,
       });
+    },
+
+    *updateAppConfig({ payload }, { call }) {
+      const response = yield call(updateAppConfig, payload);
+      return response.data;
     },
   },
 
@@ -77,20 +74,15 @@ export default {
     },
 
     app(state, action) {
+      const configs = {};
+      action.payload.data.configs.forEach(config => {
+        configs[String(config.env.id)] = JSON.stringify(config.content, null, 4);
+      });
+
       return {
         ...state,
         app: action.payload.data,
-      };
-    },
-
-    appConfigMap(state, action) {
-      const appConfigMap = action.payload.data.reduce((map, obj) => {
-        map[obj.env.id + ''] = obj; // eslint-disable-line
-        return map;
-      }, {});
-      return {
-        ...state,
-        appConfigMap,
+        appConfigMap: configs,
       };
     },
   },

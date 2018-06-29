@@ -1,9 +1,13 @@
 package com.shanhh.siberia.web.repo;
 
 import com.shanhh.siberia.web.repo.entity.AppConfig;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author shanhonghao
@@ -14,4 +18,12 @@ public interface AppConfigRepo extends PagingAndSortingRepository<AppConfig, Int
     List<AppConfig> findByAppId(int appId);
 
     AppConfig findByAppIdAndId(int appId, int id);
+
+    AppConfig findByAppIdAndEnvId(int appId, int envId);
+
+    @Modifying
+    @Query("update AppConfig set content=:content, updateBy=:updateBy, updateTime=current_timestamp where id = :id")
+    int updateById(@Param("id") int id,
+                   @Param("content") Map<String, Object> content,
+                   @Param("updateBy") String updateBy);
 }
