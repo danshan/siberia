@@ -24,6 +24,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -98,16 +99,32 @@ public class PipelineServiceImpl implements PipelineService {
         pipeline.setUpdateBy(StringUtils.trimToEmpty(createBy));
         Pipeline saved = pipelineRepo.save(pipeline);
 
+        log.info("pipeline created, {}", saved);
         return Optional.ofNullable(PipelineConvertor.toDTO(saved));
     }
 
     @Override
-    public Optional<PipelineDTO> updatePipelineStatusById(int pipelineId, PipelineStatus status) {
-        PipelineDTO pipeline = loadPipeline(pipelineId).orElseThrow(() -> new BadRequestAlertException("pipeline not exists", "pipelineId", "pipelineId"));
-        pipeline.setStatus(status);
+    public Optional<PipelineDTO> updatePipelineById(PipelineUpdateReq request) {
+        PipelineDTO pipeline = loadPipeline(request.getPipelineId()).orElseThrow(() -> new BadRequestAlertException("pipeline not exists", "pipelineId", "pipelineId"));
+        pipeline.setTitle(StringUtils.trimToEmpty(request.getTitle()));
+        pipeline.setDescription(StringUtils.trimToEmpty(request.getDescription()));
+        pipeline.setUpdateBy(request.getUpdateBy());
+        pipeline.setUpdateTime(new Date());
 
         Pipeline updated = pipelineRepo.save(PipelineConvertor.toPO(pipeline));
-        log.info("pipeline status updated to {}, pipelineId={}", status, pipelineId);
+        log.info("pipeline updated, {}", request);
+        return Optional.ofNullable(PipelineConvertor.toDTO(updated));
+    }
+
+    @Override
+    public Optional<PipelineDTO> updatePipelineStatusById(PipelineStatusUpdateReq request) {
+        PipelineDTO pipeline = loadPipeline(request.getPipelineId()).orElseThrow(() -> new BadRequestAlertException("pipeline not exists", "pipelineId", "pipelineId"));
+        pipeline.setStatus(request.getStatus());
+        pipeline.setUpdateBy(request.getUpdateBy());
+        pipeline.setUpdateTime(new Date());
+
+        Pipeline updated = pipelineRepo.save(PipelineConvertor.toPO(pipeline));
+        log.info("pipeline status updated to {}, pipeline={}", request.getStatus(), request);
         return Optional.ofNullable(PipelineConvertor.toDTO(updated));
     }
 
@@ -124,6 +141,7 @@ public class PipelineServiceImpl implements PipelineService {
                 .orElseThrow(() -> new BadRequestAlertException("Not app exists for moulde", "module", "module")));
 
         PipelineDeployment saved = pipelineDeploymentRepo.save(PipelineConvertor.toPO(deployment));
+        log.info("pipeline deployment created, {}", saved);
         return Optional.ofNullable(PipelineConvertor.toDTO(saved));
     }
 
@@ -148,6 +166,7 @@ public class PipelineServiceImpl implements PipelineService {
         taskReq.setCreateBy(req.getCreateBy());
         taskService.createTask(taskReq);
 
+        log.info("pipeline task created, {}", saved);
         return Optional.ofNullable(PipelineConvertor.toDTO(saved));
     }
 

@@ -2,7 +2,6 @@ package com.shanhh.siberia.web.service.impl;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 import com.shanhh.siberia.client.dto.task.*;
 import com.shanhh.siberia.web.repo.EnvRepo;
 import com.shanhh.siberia.web.repo.TaskRepo;
@@ -15,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.StaleObjectStateException;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
@@ -52,6 +50,7 @@ public class TaskServiceImpl implements TaskService {
         task.setUpdateBy(taskReq.getCreateBy());
 
         Task result = taskRepo.save(task);
+        log.info("task created, {}", result);
         return Optional.ofNullable(TaskConvertor.toDTO(result));
 
     }
@@ -75,6 +74,7 @@ public class TaskServiceImpl implements TaskService {
         task.setStatus(targetStatus);
         try {
             Task result = taskRepo.save(task);
+            log.info("task status changed, {}", task);
             return Optional.ofNullable(TaskConvertor.toDTO(result));
         } catch (StaleObjectStateException exception) {
             log.info("task status has been changed, {}", task);
@@ -95,7 +95,7 @@ public class TaskServiceImpl implements TaskService {
         Preconditions.checkArgument(StringUtils.isNotBlank(detail), "detail should not be blank");
         Preconditions.checkArgument(StringUtils.isNotBlank(operator), "operator should not be blank");
 
-        TaskStep taskStep= new TaskStep();
+        TaskStep taskStep = new TaskStep();
         taskStep.setTaskId(taskId);
         taskStep.setStep(step);
         taskStep.setResult(result);
@@ -103,27 +103,37 @@ public class TaskServiceImpl implements TaskService {
         taskStep.setCreateBy(operator);
         taskStep.setUpdateBy(operator);
 
-        return Optional.ofNullable(TaskConvertor.toDTO(taskStepRepo.save(taskStep)));
+        TaskStep saved = taskStepRepo.save(taskStep);
+        log.info("task step created, {}", saved);
+        return Optional.ofNullable(TaskConvertor.toDTO(saved));
     }
 
     @Override
     public int startTaskById(int taskId, TaskStatus taskStatus) {
-        return taskRepo.updateTaskStatusForStartById(taskId, taskStatus);
+        int result = taskRepo.updateTaskStatusForStartById(taskId, taskStatus);
+        log.info("task status updated to {}, taskId={}", taskStatus, taskId);
+        return result;
     }
 
     @Override
     public int endTaskById(int taskId, TaskStatus taskStatus) {
-        return taskRepo.updateTaskStatusForEndById(taskId, taskStatus);
+        int result = taskRepo.updateTaskStatusForEndById(taskId, taskStatus);
+        log.info("task status updated to {}, taskId={}", taskStatus, taskId);
+        return result;
     }
 
     @Override
     public int updateTaskNodesById(int taskId, List<String> nodes) {
-        return taskRepo.updateTaskNodesById(taskId, Joiner.on(",").join(nodes));
+        int result = taskRepo.updateTaskNodesById(taskId, Joiner.on(",").join(nodes));
+        log.info("task nodes updated to {}, taskId={}", nodes, taskId);
+        return result;
     }
 
     @Override
     public int updateTaskStatusAndMemoById(int taskId, TaskStatus status, TaskDTO.Memo memo) {
-        return taskRepo.updateTaskStatusAndMemoById(taskId, status, TaskConvertor.toPO(memo));
+        int result = taskRepo.updateTaskStatusAndMemoById(taskId, status, TaskConvertor.toPO(memo));
+        log.info("task status updated to {}, taskId={}", status, taskId);
+        return result;
     }
 
 }

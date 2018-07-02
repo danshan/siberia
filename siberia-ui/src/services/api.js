@@ -98,6 +98,13 @@ export async function createPipeline(params) {
   });
 }
 
+export async function updatePipeline(params) {
+  return request(`/api/pipelines/${params.pipelineId}`, {
+    method: 'PUT',
+    body: params,
+  });
+}
+
 export async function updatePipelineStatus(params) {
   return request(`/api/pipelines/${params.pipelineId}/status`, {
     method: 'PUT',

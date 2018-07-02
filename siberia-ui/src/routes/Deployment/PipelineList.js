@@ -12,7 +12,7 @@ const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 
 const CreateForm = Form.create()(props => {
-  const { modalVisible, form, handleAdd, handleModalVisible } = props;
+  const { modalVisible, form, handleAdd, handleModalVisible, values } = props;
   const okHandle = () => {
     form.validateFields((err, fieldsValue) => {
       if (err) return;
@@ -28,13 +28,25 @@ const CreateForm = Form.create()(props => {
       onOk={okHandle}
       onCancel={() => handleModalVisible()}
     >
+      <Form.Item
+        labelCol={{ span: 5 }}
+        wrapperCol={{ span: 15 }}
+        label="标题"
+        style={{ display: 'none' }}
+      >
+        {form.getFieldDecorator('pipelineId', {
+          initialValue: values.pipelineId,
+        })(<Input />)}
+      </Form.Item>
       <Form.Item labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="标题">
         {form.getFieldDecorator('title', {
+          initialValue: values.title,
           rules: [{ required: true, message: 'Please input pipeline title...' }],
         })(<Input placeholder="请输入标题" />)}
       </Form.Item>
       <Form.Item labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="描述">
         {form.getFieldDecorator('description', {
+          initialValue: values.description,
           rules: [{ required: true, message: 'Please input some description...' }],
         })(<Input placeholder="请输入描述" />)}
       </Form.Item>
@@ -50,22 +62,24 @@ export default class PipelineList extends PureComponent {
   state = {
     modalVisible: false,
 
+    pipelineValues: {},
+
     status: 1,
     pageNum: 0,
     pageSize: 20,
   };
 
   componentDidMount() {
-    this.pagiantePipelineList(this.state.pageNum, this.state.pageSize, this.state.status);
+    this.pagiantePipelineList();
   }
 
-  pagiantePipelineList = (pageNum, pageSize, status) => {
+  pagiantePipelineList = () => {
     this.props.dispatch({
       type: 'pipeline/paginatePipelineList',
       payload: {
-        pageNum,
-        pageSize,
-        status,
+        pageNum: this.state.pageNum,
+        pageSize: this.state.pageSize,
+        status: this.state.status,
       },
     });
   };
@@ -79,9 +93,23 @@ export default class PipelineList extends PureComponent {
           status,
         },
       })
-      .then(() =>
-        this.pagiantePipelineList(this.state.pageNum, this.state.pageSize, this.state.status)
-      );
+      .then(() => this.pagiantePipelineList());
+  };
+
+  createPipeline = fieldValues => {
+    this.props.dispatch({
+      type: 'pipeline/createPipeline',
+      payload: fieldValues,
+    });
+  };
+
+  updatePipeline = fieldValues => {
+    this.props
+      .dispatch({
+        type: 'pipeline/updatePipeline',
+        payload: fieldValues,
+      })
+      .then(() => this.pagiantePipelineList());
   };
 
   handleModalVisible = flag => {
@@ -91,10 +119,22 @@ export default class PipelineList extends PureComponent {
   };
 
   handleAdd = fieldValues => {
-    this.props.dispatch({
-      type: 'pipeline/createPipeline',
-      payload: fieldValues,
+    if (typeof fieldValues.pipelineId === 'number' && fieldValues.pipelineId > 0) {
+      this.updatePipeline(fieldValues);
+    } else {
+      this.createPipeline(fieldValues);
+    }
+  };
+
+  handleEdit = record => {
+    this.setState({
+      pipelineValues: {
+        pipelineId: record.id,
+        title: record.title,
+        description: record.description,
+      },
     });
+    this.handleModalVisible(true);
   };
 
   handlePage = (page, pageSize) => {
@@ -103,14 +143,12 @@ export default class PipelineList extends PureComponent {
         pageNum: page - 1,
         pageSize,
       },
-      () => this.pagiantePipelineList(this.state.pageNum, this.state.pageSize, this.state.status)
+      () => this.pagiantePipelineList()
     );
   };
 
   handleFilterStatus = e => {
-    this.setState({ status: e.target.value }, () =>
-      this.pagiantePipelineList(this.state.pageNum, this.state.pageSize, this.state.status)
-    );
+    this.setState({ status: e.target.value }, () => this.pagiantePipelineList());
   };
 
   handleUpdateStatus = (record, status) => {
@@ -173,14 +211,21 @@ export default class PipelineList extends PureComponent {
     const parentMethods = {
       handleAdd: this.handleAdd,
       handleModalVisible: this.handleModalVisible,
+      values: this.state.pipelineValues,
     };
 
     const operations = item => {
       let op = null;
       if (item.status.value === 1) {
-        op = [<a>编辑</a>, <a onClick={() => this.handleUpdateStatus(item, 2)}>归档</a>];
+        op = [
+          <a onClick={() => this.handleEdit(item)}>编辑</a>,
+          <a onClick={() => this.handleUpdateStatus(item, 2)}>归档</a>,
+        ];
       } else if (item.status.value === 2) {
-        op = [<a>编辑</a>, <a onClick={() => this.handleUpdateStatus(item, 1)}>执行</a>];
+        op = [
+          <a onClick={() => this.handleEdit(item)}>编辑</a>,
+          <a onClick={() => this.handleUpdateStatus(item, 1)}>执行</a>,
+        ];
       }
       return op;
     };

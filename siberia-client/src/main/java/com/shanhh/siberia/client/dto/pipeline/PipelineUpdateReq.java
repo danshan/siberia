@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 /**
@@ -14,9 +15,14 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @ToString
-public class PipelineStatusUpdateReq implements Serializable {
+public class PipelineUpdateReq implements Serializable {
     private int pipelineId;
     @NotNull
-    private PipelineStatus status;
+    @Size(min = 1, max = 64)
+    private String title;
+    @NotNull
+    @Size(min = 1, max = 255)
+    private String description;
+
     private String updateBy;
 }

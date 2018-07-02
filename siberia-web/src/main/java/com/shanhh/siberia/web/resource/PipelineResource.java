@@ -63,6 +63,20 @@ public class PipelineResource {
     }
 
     @Timed
+    @RequestMapping(value = "{pipelineId}", method = RequestMethod.PUT)
+    @ApiOperation(value = "paginate pipelines", response = BaseResponse.class)
+    public BaseResponse<PipelineDTO> updatePipelineById(
+            @ApiParam(value = "pipeline id", required = true)
+            @PathVariable("pipelineId") int pipelineId,
+
+            @Valid @RequestBody PipelineUpdateReq request
+    ) {
+        request.setPipelineId(pipelineId);
+        request.setUpdateBy("sys");
+        return new BaseResponse<>(pipelineService.updatePipelineById(request).orElseThrow(ResourceNotFoundException::new));
+    }
+
+    @Timed
     @RequestMapping(value = "{pipelineId}/status", method = RequestMethod.PUT)
     @ApiOperation(value = "update pipeline status", response = BaseResponse.class)
     public BaseResponse<PipelineDTO> updatePipelineStatusById(
@@ -71,7 +85,9 @@ public class PipelineResource {
 
             @Valid @RequestBody PipelineStatusUpdateReq request
     ) {
-        return new BaseResponse<>(pipelineService.updatePipelineStatusById(pipelineId, request.getStatus()).orElseThrow(ResourceNotFoundException::new));
+        request.setPipelineId(pipelineId);
+        request.setUpdateBy("sys");
+        return new BaseResponse<>(pipelineService.updatePipelineStatusById(request).orElseThrow(ResourceNotFoundException::new));
     }
 
     @Timed
