@@ -91,6 +91,7 @@ public class AppServiceImpl implements AppService {
         app.setDeleted(true);
         app.setUpdateTime(new Date());
         App result = appRepo.save(AppConvertor.toPO(app));
+        log.info("app deleted: {}", result);
         return Optional.ofNullable(AppConvertor.toDTO(result));
     }
 
@@ -120,6 +121,7 @@ public class AppServiceImpl implements AppService {
             exists.setLockStatus(lockStatus);
 
             AppLock result = appLockRepo.save(exists);
+            log.info("app lock updated: {}", result);
             return Optional.ofNullable(AppConvertor.toDTO(result));
         } else {
             AppLock appLock = new AppLock();
@@ -131,6 +133,7 @@ public class AppServiceImpl implements AppService {
             appLock.setUpdateBy(operator);
 
             AppLock result = appLockRepo.save(appLock);
+            log.info("app lock created: {}", result);
             return Optional.ofNullable(AppConvertor.toDTO(result));
         }
     }
@@ -145,6 +148,7 @@ public class AppServiceImpl implements AppService {
         exists.setUpdateBy(operator);
         exists.setUpdateTime(new Date());
         AppLock result = appLockRepo.save(exists);
+        log.info("app lock updated: {}", result);
         return Optional.ofNullable(AppConvertor.toDTO(result));
     }
 
@@ -183,6 +187,7 @@ public class AppServiceImpl implements AppService {
             existsConfig.setContent(config.getContent());
             existsConfig.setUpdateBy(config.getOperator());
             appConfigRepo.updateById(existsConfig.getId(), existsConfig.getContent(), existsConfig.getUpdateBy());
+            log.info("app config updated: {}", existsConfig);
             return Optional.of(existsConfig);
         } else {
             return Optional.ofNullable(this.createAppConfig(config));
@@ -196,7 +201,9 @@ public class AppServiceImpl implements AppService {
         po.setCreateBy(config.getOperator());
         po.setUpdateBy(config.getOperator());
         po.setAppId(config.getAppId());
-        return AppConvertor.toDTO(appConfigRepo.save(po));
+        AppConfig saved = appConfigRepo.save(po);
+        log.info("app config created, {}", saved);
+        return AppConvertor.toDTO(saved);
     }
 
     @Override
