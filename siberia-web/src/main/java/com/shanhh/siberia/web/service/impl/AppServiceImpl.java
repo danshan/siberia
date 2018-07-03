@@ -12,6 +12,7 @@ import com.shanhh.siberia.web.resource.errors.BadRequestAlertException;
 import com.shanhh.siberia.web.service.AppService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -248,12 +249,16 @@ public class AppServiceImpl implements AppService {
     }
 
     private AppHostDTO createAppHost(AppHostUpdateReq host) {
+        App app = appRepo.findOne(host.getAppId());
+        Preconditions.checkArgument(app != null, "app not exists");
+
         AppHost po = new AppHost();
+        BeanUtils.copyProperties(app, po, "id");
+        BeanUtils.copyProperties(host, po, "id");
+
         po.setEnv(envRepo.findOne(host.getEnvId()));
-        po.setHosts(host.getHosts());
         po.setCreateBy(host.getOperator());
         po.setUpdateBy(host.getOperator());
-        po.setAppId(host.getAppId());
         AppHost saved = appHostRepo.save(po);
         log.info("app host created, {}", saved);
         return AppConvertor.toDTO(saved);
