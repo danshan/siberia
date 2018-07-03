@@ -52,9 +52,7 @@ export default class App extends PureComponent {
   findEnvList = () => {
     this.props.dispatch({
       type: 'settings/findEnvList',
-      payload: {
-        count: 5,
-      },
+      payload: {},
     });
   };
 
@@ -135,13 +133,11 @@ export default class App extends PureComponent {
     return (
       <PageHeaderLayout title="应用配置">
         <Card name="appconfig" title="基础配置" className={styles.card} bordered={false}>
-          <div>
-            <Tabs defaultActiveKey="1">
-              {(envList || []).map(env => {
-                return envTab(env);
-              })}
-            </Tabs>
-          </div>
+          <Tabs defaultActiveKey="1">
+            {(envList || []).map(env => {
+              return envTab(env);
+            })}
+          </Tabs>
         </Card>
 
         <Card name="apphost" title="服务器配置" className={styles.card} bordered={false}>

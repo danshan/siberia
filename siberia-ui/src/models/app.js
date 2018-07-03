@@ -10,8 +10,6 @@ export default {
   namespace: 'app',
 
   state: {
-    envList: [],
-
     appLockList: {
       pagination: {},
       list: [],

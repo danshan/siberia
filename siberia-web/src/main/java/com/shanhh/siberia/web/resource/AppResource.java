@@ -95,10 +95,13 @@ public class AppResource {
             @RequestParam(value = "pageNum", required = false, defaultValue = "0") int pageNum,
 
             @ApiParam(value = "page size", required = false, defaultValue = LIMIT_DEFAULT)
-            @RequestParam(value = "pageSize", required = false, defaultValue = LIMIT_DEFAULT) int pageSize
+            @RequestParam(value = "pageSize", required = false, defaultValue = LIMIT_DEFAULT) int pageSize,
+
+            @ApiParam(value = "env id", required = false, defaultValue = "0")
+            @RequestParam(value = "envId", required = false, defaultValue = "0") int envId
     ) {
         Page<AppLockDTO> pageInfo = appService.paginateAppLocks(
-                Math.max(pageNum, 0), Math.min(pageSize, LIMIT_MAX));
+                Math.max(pageNum, 0), Math.min(pageSize, LIMIT_MAX), envId);
         return new BaseResponse(pageInfo);
     }
 

@@ -102,8 +102,16 @@ public class AppServiceImpl implements AppService {
     }
 
     @Override
-    public Page<AppLockDTO> paginateAppLocks(int pageNum, int pageSize) {
-        Page<AppLockDTO> appLocks = appLockRepo.findAll(new PageRequest(pageNum, pageSize)).map(AppConvertor::toDTO);
+    public Page<AppLockDTO> paginateAppLocks(int pageNum, int pageSize, int envId) {
+        Page<AppLockDTO> appLocks;
+        if (envId > 0) {
+            Env env = envRepo.findOne(envId);
+            Preconditions.checkArgument(env != null, "env not exists");
+            appLocks = appLockRepo.findByEnv(env, new PageRequest(pageNum, pageSize)).map(AppConvertor::toDTO);
+        } else {
+            appLocks = appLockRepo.findAll(new PageRequest(pageNum, pageSize)).map(AppConvertor::toDTO);
+        }
+
         return appLocks;
     }
 

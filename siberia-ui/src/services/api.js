@@ -132,8 +132,11 @@ export async function paginatePipelineDeploymentList(params) {
 
 // apps
 
-export async function paginateAppLockList() {
-  return request('/api/apps/locks');
+export async function paginateAppLockList(params) {
+  return request('/api/apps/locks', {
+    method: 'GET',
+    body: params,
+  });
 }
 
 export async function updateAppLockStatus(params) {

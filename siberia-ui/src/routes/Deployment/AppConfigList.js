@@ -7,13 +7,19 @@ import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
 import styles from './AppConfigList.less';
 
-@connect(({ app, loading }) => ({
+@connect(({ app, settings, loading }) => ({
   app,
-  loading: loading.models.pipeline,
+  settings,
+  appLoading: loading.models.app,
+  settingsLoading: loading.models.settings,
 }))
 export default class AppConfigList extends PureComponent {
   state = {
     selectedRows: [],
+
+    envId: 0,
+    pageNum: 0,
+    pageSize: 20,
   };
 
   componentDidMount() {
@@ -25,14 +31,17 @@ export default class AppConfigList extends PureComponent {
     this.props.dispatch({
       type: 'app/paginateAppLockList',
       payload: {
-        count: 5,
+        pageNum: this.state.pageNum,
+        pageSize: this.state.pageSize,
+        status: this.state.status,
+        envId: this.state.envId,
       },
     });
   };
 
   findEnvList = () => {
     this.props.dispatch({
-      type: 'app/findEnvList',
+      type: 'settings/findEnvList',
       payload: {},
     });
   };
@@ -55,8 +64,18 @@ export default class AppConfigList extends PureComponent {
     this.updateAppLock(record.id, e ? 0 : 1);
   };
 
+  handleChangeEnv = e => {
+    this.setState(
+      {
+        envId: e.target.value,
+        pageNum: 0,
+      },
+      () => this.paginateAppLockList()
+    );
+  };
+
   render() {
-    const { app: { envList, appLockList }, loading } = this.props;
+    const { app: { appLockList }, settings: { envList }, appLoading } = this.props;
     const { selectedRows } = this.state;
 
     const lockSwitch = (text, record) => (
@@ -78,6 +97,18 @@ export default class AppConfigList extends PureComponent {
         dataIndex: 'module',
       },
       {
+        title: 'Env',
+        dataIndex: 'env.name',
+      },
+      {
+        title: 'Update Time',
+        dataIndex: 'updateTime',
+      },
+      {
+        title: 'Operator',
+        dataIndex: 'updateBy',
+      },
+      {
         title: '状态',
         dataIndex: 'lockStatus',
         render: (text, record) => {
@@ -86,27 +117,22 @@ export default class AppConfigList extends PureComponent {
       },
     ];
 
-    const appFilter = (
+    const extraContent = (
       <div>
-        <Radio.Group defaultValue="0">
-          {(envList || []).map(env => {
-            return (
-              <Radio.Button key={env.id} value={env.id}>
-                {env.name}
-              </Radio.Button>
-            );
-          })}
+        <Radio.Group defaultValue="0" onChange={this.handleChangeEnv}>
+          <Radio.Button value="0">全部</Radio.Button>
+          {(envList || []).map(env => <Radio.Button value={env.id}>{env.name}</Radio.Button>)}
         </Radio.Group>
       </div>
     );
 
     return (
       <PageHeaderLayout>
-        <Card bordered={false} title="应用列表" extra={appFilter}>
+        <Card bordered={false} title="应用列表" extra={extraContent}>
           <div className={styles.tableList}>
             <StandardTable
               selectedRows={selectedRows}
-              loading={loading}
+              loading={appLoading}
               data={appLockList}
               columns={columns}
               onChange={this.handleStandardTableChange}
