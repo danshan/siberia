@@ -60,14 +60,7 @@ export default {
     appLockList(state, action) {
       return {
         ...state,
-        appLockList: {
-          list: action.payload.data.content,
-          pagination: {
-            current: action.payload.data.number,
-            pageSize: action.payload.data.size,
-            total: action.payload.data.totalElements,
-          },
-        },
+        appLockList: action.payload.data,
       };
     },
 

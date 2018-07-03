@@ -1,8 +1,7 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Card, Switch, Icon, Radio } from 'antd';
+import { Card, Switch, Icon, Radio, Table } from 'antd';
 
-import StandardTable from 'components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
 import styles from './AppConfigList.less';
@@ -15,8 +14,6 @@ import styles from './AppConfigList.less';
 }))
 export default class AppConfigList extends PureComponent {
   state = {
-    selectedRows: [],
-
     envId: 0,
     pageNum: 0,
     pageSize: 20,
@@ -74,9 +71,18 @@ export default class AppConfigList extends PureComponent {
     );
   };
 
+  handlePage = (page, pageSize) => {
+    this.setState(
+      {
+        pageNum: page - 1,
+        pageSize,
+      },
+      () => this.paginateAppLockList()
+    );
+  };
+
   render() {
     const { app: { appLockList }, settings: { envList }, appLoading } = this.props;
-    const { selectedRows } = this.state;
 
     const lockSwitch = (text, record) => (
       <Switch
@@ -126,14 +132,22 @@ export default class AppConfigList extends PureComponent {
       </div>
     );
 
+    const paginationProps = {
+      current: appLockList.number + 1,
+      pageSize: appLockList.size,
+      total: appLockList.totalElements,
+      onChange: this.handlePage,
+      showTotal: total => `Total ${total} items`,
+    };
+
     return (
       <PageHeaderLayout>
         <Card bordered={false} title="应用列表" extra={extraContent}>
           <div className={styles.tableList}>
-            <StandardTable
-              selectedRows={selectedRows}
+            <Table
               loading={appLoading}
-              data={appLockList}
+              dataSource={appLockList.content}
+              pagination={paginationProps}
               columns={columns}
               onChange={this.handleStandardTableChange}
               rowKey="id"
