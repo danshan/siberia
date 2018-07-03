@@ -198,6 +198,13 @@ export async function findAppHostList(params) {
   });
 }
 
+export async function updateAppHost(params) {
+  return request(`/api/apps/${params.appId}/hosts`, {
+    method: 'PUT',
+    body: params,
+  });
+}
+
 // tasks
 
 export async function paginateTaskList() {

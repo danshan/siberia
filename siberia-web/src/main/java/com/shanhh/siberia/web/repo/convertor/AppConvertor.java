@@ -66,6 +66,16 @@ public class AppConvertor {
         return dto;
     }
 
+    public static AppHost toPO(AppHostDTO host) {
+        if (host == null) {
+            return null;
+        }
+        AppHost po = new AppHost();
+        BeanUtils.copyProperties(host, po);
+        po.setEnv(EnvConvertor.toPO(host.getEnv()));
+        return po;
+    }
+
     public static AppConfigDTO toDTO(AppConfig config) {
         if (config == null) {
             return null;

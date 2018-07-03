@@ -26,7 +26,7 @@ public class AppHost {
     private int appId;
     @Column(columnDefinition = "TEXT NOT NULL DEFAULT ''")
     @Convert(converter = JpaConverterJson.class)
-    private List hosts = Lists.newLinkedList();
+    private List<String> hosts = Lists.newLinkedList();
     @OneToOne
     private Env env;
     @Column(nullable = false)

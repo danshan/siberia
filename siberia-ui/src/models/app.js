@@ -2,6 +2,7 @@ import {
   findAppHostList,
   loadApp,
   updateAppConfig,
+  updateAppHost,
   paginateAppLockList,
   updateAppLockStatus,
 } from '../services/api';
@@ -54,6 +55,11 @@ export default {
       const response = yield call(updateAppConfig, payload);
       return response.data;
     },
+
+    *updateAppHost({ payload }, { call }) {
+      const response = yield call(updateAppHost, payload);
+      return response.data;
+    },
   },
 
   reducers: {
@@ -74,6 +80,17 @@ export default {
         ...state,
         app: action.payload.data,
         appConfigMap: configs,
+      };
+    },
+
+    appHostMap(state, action) {
+      const hosts = {};
+      action.payload.data.forEach(host => {
+        hosts[String(host.env.id)] = JSON.stringify(host.hosts, null, 4);
+      });
+      return {
+        ...state,
+        appHostMap: hosts,
       };
     },
   },

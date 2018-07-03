@@ -1,5 +1,6 @@
 package com.shanhh.siberia.web.service.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Preconditions;
 import com.shanhh.siberia.client.dto.app.*;
 import com.shanhh.siberia.client.dto.settings.EnvDTO;
@@ -40,6 +41,9 @@ public class AppServiceImpl implements AppService {
     private AppConfigRepo appConfigRepo;
     @Resource
     private EnvRepo envRepo;
+
+    @Resource
+    private ObjectMapper objectMapper;
 
     @Override
     public Optional<AppDTO> createApp(AppCreateReq appCreateReq) {
@@ -194,8 +198,9 @@ public class AppServiceImpl implements AppService {
             AppConfigDTO existsConfig = exists.get();
             existsConfig.setContent(config.getContent());
             existsConfig.setUpdateBy(config.getOperator());
-            appConfigRepo.updateById(existsConfig.getId(), existsConfig.getContent(), existsConfig.getUpdateBy());
-            log.info("app config updated: {}", existsConfig);
+            existsConfig.setUpdateTime(new Date());
+            AppConfig saved = appConfigRepo.save(AppConvertor.toPO(existsConfig));
+            log.info("app config updated: {}", saved);
             return Optional.of(existsConfig);
         } else {
             return Optional.ofNullable(this.createAppConfig(config));
@@ -218,6 +223,40 @@ public class AppServiceImpl implements AppService {
     public List<AppHostDTO> findHostsById(int appId) {
         List<AppHost> hosts = appHostRepo.findByAppId(appId);
         return hosts.stream().map(AppConvertor::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<AppHostDTO> loadHostByEnv(int appId, int envId) {
+        return Optional.ofNullable(AppConvertor.toDTO(appHostRepo.findByAppIdAndEnvId(appId, envId)));
+    }
+
+    @Override
+    @Transactional
+    public Optional<AppHostDTO> updateHostByEnv(AppHostUpdateReq host) {
+        Optional<AppHostDTO> exists = this.loadHostByEnv(host.getAppId(), host.getEnvId());
+        if (exists.isPresent()) {
+            AppHostDTO existsHost = exists.get();
+            existsHost.setHosts(host.getHosts());
+            existsHost.setUpdateBy(host.getOperator());
+            existsHost.setUpdateTime(new Date());
+            AppHost saved = appHostRepo.save(AppConvertor.toPO(existsHost));
+            log.info("app hosts updated: {}", saved);
+            return Optional.of(existsHost);
+        } else {
+            return Optional.ofNullable(this.createAppHost(host));
+        }
+    }
+
+    private AppHostDTO createAppHost(AppHostUpdateReq host) {
+        AppHost po = new AppHost();
+        po.setEnv(envRepo.findOne(host.getEnvId()));
+        po.setHosts(host.getHosts());
+        po.setCreateBy(host.getOperator());
+        po.setUpdateBy(host.getOperator());
+        po.setAppId(host.getAppId());
+        AppHost saved = appHostRepo.save(po);
+        log.info("app host created, {}", saved);
+        return AppConvertor.toDTO(saved);
     }
 
 }

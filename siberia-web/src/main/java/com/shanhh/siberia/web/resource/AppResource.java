@@ -154,4 +154,16 @@ public class AppResource {
     ) {
         return new BaseResponse(appService.findHostsById(appId));
     }
+
+    @Timed
+    @RequestMapping(value = "{appId}/hosts", method = RequestMethod.PUT)
+    @ApiOperation(value = "load app config by id", response = BaseResponse.class)
+    public BaseResponse updateConfig(
+            @PathVariable("appId") int appId,
+            @Valid @RequestBody AppHostUpdateReq config
+    ) {
+        config.setAppId(appId);
+        config.setOperator("sys");
+        return new BaseResponse(appService.updateHostByEnv(config));
+    }
 }

@@ -21,9 +21,4 @@ public interface AppConfigRepo extends PagingAndSortingRepository<AppConfig, Int
 
     AppConfig findByAppIdAndEnvId(int appId, int envId);
 
-    @Modifying
-    @Query("update AppConfig set content=:content, updateBy=:updateBy, updateTime=current_timestamp where id = :id")
-    int updateById(@Param("id") int id,
-                   @Param("content") Map<String, Object> content,
-                   @Param("updateBy") String updateBy);
 }

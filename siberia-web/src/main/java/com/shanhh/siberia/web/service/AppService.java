@@ -42,4 +42,8 @@ public interface AppService {
     Optional<AppConfigDTO> updateConfigByEnv(AppConfigUpdateReq config);
 
     List<AppHostDTO> findHostsById(int appId);
+
+    Optional<AppHostDTO> loadHostByEnv(int appId, int envId);
+
+    Optional<AppHostDTO> updateHostByEnv(AppHostUpdateReq host);
 }

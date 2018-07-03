@@ -13,6 +13,7 @@ import java.util.List;
 public class AppHostDTO implements Serializable {
 
     private int id;
+    private int appId;
     private String project;
     private String module;
     private EnvDTO env;
