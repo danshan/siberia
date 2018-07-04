@@ -27,8 +27,8 @@ public class PipelineDeployment {
     private String module;
     @Column(nullable = false)
     private int buildNo;
-    @OneToOne
-    private App app;
+    @Column(nullable = false)
+    private int appId;
 
     @Column(nullable = false, updatable = false)
     private String createBy;

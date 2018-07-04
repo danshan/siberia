@@ -38,7 +38,6 @@ public class PipelineConvertor {
         }
         PipelineDeploymentDTO dto = new PipelineDeploymentDTO();
         BeanUtils.copyProperties(po, dto);
-        dto.setApp(AppConvertor.toDTO(po.getApp()));
         return dto;
     }
 
@@ -48,7 +47,6 @@ public class PipelineConvertor {
         }
         PipelineDeployment po = new PipelineDeployment();
         BeanUtils.copyProperties(dto, po);
-        po.setApp(AppConvertor.toPO(dto.getApp()));
         return po;
     }
 

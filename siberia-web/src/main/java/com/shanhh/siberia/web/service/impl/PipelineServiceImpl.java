@@ -137,8 +137,9 @@ public class PipelineServiceImpl implements PipelineService {
         deployment.setBuildNo(buildNo);
         deployment.setCreateBy(StringUtils.trimToEmpty(createBy));
         deployment.setUpdateBy(StringUtils.trimToEmpty(createBy));
-        deployment.setApp(appService.loadAppByModule(deployment.getProject(), deployment.getModule())
-                .orElseThrow(() -> new BadRequestAlertException("Not app exists for moulde", "module", "module")));
+        deployment.setAppId(appService.loadAppByModule(deployment.getProject(), deployment.getModule())
+                .orElseThrow(() -> new BadRequestAlertException("Not app exists for moulde", "module", "module"))
+                .getId());
 
         PipelineDeployment saved = pipelineDeploymentRepo.save(PipelineConvertor.toPO(deployment));
         log.info("pipeline deployment created, {}", saved);

@@ -115,6 +115,14 @@ export default class AppForm extends PureComponent {
     this.clickedCancel = false;
   }
   render() {
+    const envOptions = () => {
+      const children = [];
+      (this.state.envList || []).forEach(env => {
+        children.push(<Select.Option key={env.id}>{env.name}</Select.Option>);
+      });
+      return children;
+    };
+
     const columns = [
       {
         title: 'Project',
@@ -150,6 +158,21 @@ export default class AppForm extends PureComponent {
                 onKeyPress={e => this.handleKeyPress(e, record.id)}
                 placeholder="module name"
               />
+            );
+          }
+          return text;
+        },
+      },
+      {
+        title: '环境',
+        dataIndex: 'appType',
+        key: 'appType',
+        render: (text, record) => {
+          if (record.editable) {
+            return (
+              <Select mode="multiple" defaultValue={['1', '2']}>
+                {envOptions}
+              </Select>
             );
           }
           return text;
