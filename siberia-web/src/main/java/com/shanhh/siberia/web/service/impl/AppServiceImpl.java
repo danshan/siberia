@@ -121,13 +121,11 @@ public class AppServiceImpl implements AppService {
     }
 
     @Override
-    public Optional<AppLockDTO> updateLockStatus(String project, String module, EnvDTO env, LockStatus lockStatus, String operator) {
-        Preconditions.checkArgument(StringUtils.isNotBlank(project), "app should not be empty");
+    public Optional<AppLockDTO> updateLockStatus(AppDTO app, EnvDTO env, LockStatus lockStatus, String operator) {
+        Preconditions.checkArgument(app != null, "app should not be empty");
         Preconditions.checkArgument(env != null, "env should not be empty");
 
-        Env envPo = new Env();
-        envPo.setId(env.getId());
-        AppLock exists = appLockRepo.findByProjectAndModuleAndEnv(project, module, envPo);
+        AppLock exists = appLockRepo.findByAppAndEnv(app.getId(), env.getId());
         if (exists != null) {
             exists.setUpdateBy(operator);
             exists.setUpdateTime(new Date());
@@ -138,9 +136,8 @@ public class AppServiceImpl implements AppService {
             return Optional.ofNullable(AppConvertor.toDTO(result));
         } else {
             AppLock appLock = new AppLock();
-            appLock.setProject(StringUtils.trimToEmpty(project));
-            appLock.setModule(StringUtils.trimToEmpty(module));
-            appLock.setEnv(envPo);
+            appLock.setApp(AppConvertor.toPO(app));
+            appLock.setEnv(EnvConvertor.toPO(env));
             appLock.setLockStatus(lockStatus);
             appLock.setCreateBy(operator);
             appLock.setUpdateBy(operator);
@@ -166,8 +163,8 @@ public class AppServiceImpl implements AppService {
     }
 
     @Override
-    public Optional<AppHostDTO> loadAppHostByEnv(String project, String module, EnvDTO env) {
-        AppHost appHost = appHostRepo.findByProjectAndModuleAndEnv(project, module, EnvConvertor.toPO(env));
+    public Optional<AppHostDTO> loadAppHostByAppAndEnv(int appId, int envId) {
+        AppHost appHost = appHostRepo.findByAppIdAndEnv(appId, envId);
         return Optional.ofNullable(AppConvertor.toDTO(appHost));
     }
 
@@ -228,7 +225,7 @@ public class AppServiceImpl implements AppService {
 
     @Override
     public Optional<AppHostDTO> loadHostByEnv(int appId, int envId) {
-        return Optional.ofNullable(AppConvertor.toDTO(appHostRepo.findByAppIdAndEnvId(appId, envId)));
+        return Optional.ofNullable(AppConvertor.toDTO(appHostRepo.findByAppIdAndEnv(appId, envId)));
     }
 
     @Override

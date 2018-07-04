@@ -1,6 +1,5 @@
 package com.shanhh.siberia.web.repo.entity;
 
-import com.google.common.collect.Lists;
 import com.shanhh.siberia.client.dto.app.AppType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,7 +7,6 @@ import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.List;
 
 /**
  * @author shanhonghao
@@ -30,8 +28,8 @@ public class App {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private AppType appType;
-    @OneToMany(cascade = CascadeType.DETACH, fetch = FetchType.LAZY, mappedBy = "appId")
-    private List<AppConfig> configs = Lists.newLinkedList();
+//    @OneToMany(cascade = CascadeType.DETACH, fetch = FetchType.LAZY, mappedBy = "appId")
+//    private List<AppConfig> configs = Lists.newLinkedList();
 
     @Column(nullable = false, columnDefinition = "TINYINT DEFAULT 0")
     private boolean deleted;

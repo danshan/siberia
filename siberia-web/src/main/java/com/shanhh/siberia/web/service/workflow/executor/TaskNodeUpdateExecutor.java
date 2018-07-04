@@ -42,14 +42,14 @@ public class TaskNodeUpdateExecutor implements StepExecutor {
         TaskDTO task = workflow.getTask();
 
         Preconditions.checkState(taskService.updateTaskNodesById(task.getId(), nodes) > 0,
-                "update task nodes failed: %s, %s" + task.getBuildNo(), task.getEnv());
+                "update task nodes failed: %s, %s" + task.getId(), task.getEnv());
         task.setNodes(nodes);
     }
 
     @Override
     public void onSuccess(WorkflowDTO workflow) {
         TaskDTO task = workflow.getTask();
-        log.info("update task nodes: {}, {}, {}", task.getBuildNo(), task.getEnv(), nodes);
+        log.info("update task nodes: {}, {}, {}", task.getId(), task.getEnv(), nodes);
         String detail = "update nodes to " + nodes;
         TaskStepDTO taskStep = SpringContextHolder.getBean(TaskStepService.class).createStep(
                 task.getId(),

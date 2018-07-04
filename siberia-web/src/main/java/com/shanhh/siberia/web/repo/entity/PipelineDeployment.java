@@ -22,13 +22,9 @@ public class PipelineDeployment {
     @Column(nullable = false)
     private int pipelineId;
     @Column(nullable = false)
-    private String project;
-    @Column(nullable = false)
-    private String module;
-    @Column(nullable = false)
     private int buildNo;
-    @Column(nullable = false)
-    private int appId;
+    @OneToOne
+    private App app;
 
     @Column(nullable = false, updatable = false)
     private String createBy;

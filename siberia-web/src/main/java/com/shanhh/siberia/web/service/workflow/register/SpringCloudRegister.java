@@ -10,7 +10,7 @@ import com.google.common.io.Resources;
 import com.shanhh.siberia.client.dto.app.AppConfigDTO;
 import com.shanhh.siberia.client.dto.app.AppDTO;
 import com.shanhh.siberia.client.dto.app.AppHostDTO;
-import com.shanhh.siberia.client.dto.settings.EnvDTO;
+import com.shanhh.siberia.client.dto.pipeline.PipelineDeploymentDTO;
 import com.shanhh.siberia.client.dto.task.TaskDTO;
 import com.shanhh.siberia.client.dto.task.TaskStatus;
 import com.shanhh.siberia.core.SpringContextHolder;
@@ -23,7 +23,6 @@ import com.shanhh.siberia.web.service.workflow.executor.TaskNodeUpdateExecutor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.text.StrSubstitutor;
 import org.apache.commons.text.StringSubstitutor;
 
 import java.io.File;
@@ -38,14 +37,13 @@ import java.util.Map;
 public class SpringCloudRegister implements TaskStepRegister {
 
     @Override
-    public void registerDeploySteps(WorkflowBuilder builder, TaskDTO task) {
-        AppService sibAppService = SpringContextHolder.getBean(AppService.class);
-        AppDTO app = sibAppService.loadAppByModule(task.getProject(), task.getModule())
-                .orElseThrow(() -> new InternalServerErrorException(String.format("task %s app not supported, project: %s, module: %s", task.getId(), task.getProject(), task.getModule())));
+    public void registerDeploySteps(WorkflowBuilder builder, TaskDTO task, PipelineDeploymentDTO deployment) {
+        AppService appService = SpringContextHolder.getBean(AppService.class);
+        AppDTO app = deployment.getApp();
 
         List<String> toDeployHosts = Lists.newLinkedList();
         try {
-            AppHostDTO appHost = sibAppService.loadAppHostByEnv(task.getProject(), task.getModule(), task.getEnv()).orElse(new AppHostDTO());
+            AppHostDTO appHost = appService.loadAppHostByAppAndEnv(app.getId(), task.getEnv().getId()).orElse(new AppHostDTO());
             List<String> hosts = (appHost == null || appHost.getHosts() == null) ? Lists.newArrayList() : appHost.getHosts();
             toDeployHosts.addAll(hosts);
             log.info("task {}, affect hosts: {}", task.getId(), Joiner.on(",").join(toDeployHosts));
@@ -57,37 +55,35 @@ public class SpringCloudRegister implements TaskStepRegister {
         }
 
         builder.register(new TaskNodeUpdateExecutor(toDeployHosts));
-        registerSteps(builder, task.getEnv(), task, app, toDeployHosts, task.getBuildNo());
+        registerSteps(builder, task, deployment, toDeployHosts, deployment.getBuildNo());
     }
 
     @Override
-    public void registerRollbackSteps(WorkflowBuilder builder, TaskDTO task, int rollbackBuildNo) {
+    public void registerRollbackSteps(WorkflowBuilder builder, TaskDTO task, PipelineDeploymentDTO deployment, int rollbackBuildNo) {
         log.info("task {} rollback to {}, task={}", task.getId(), rollbackBuildNo, task);
-
-        AppService appService = SpringContextHolder.getBean(AppService.class);
-        AppDTO app = appService.loadAppByModule(task.getProject(), task.getModule())
-                .orElseThrow(() -> new InternalServerErrorException(String.format("task %s app not supported, project: %s, module: %s", task.getId(), task.getProject(), task.getModule())));
 
         TaskService taskService = SpringContextHolder.getBean(TaskService.class);
         TaskDTO.Memo memo = task.getMemo();
         memo.setRollbackVersion(rollbackBuildNo);
         taskService.updateTaskStatusAndMemoById(task.getId(), TaskStatus.RUNNING, memo);
 
-        registerSteps(builder, task.getEnv(), task, app, task.getNodes(), rollbackBuildNo);
+        registerSteps(builder, task, deployment, task.getNodes(), rollbackBuildNo);
     }
 
-    private void registerSteps(WorkflowBuilder builder, EnvDTO env, TaskDTO task, AppDTO app, List<String> toDeployHosts, int buildNo) {
+    private void registerSteps(WorkflowBuilder builder, TaskDTO task, PipelineDeploymentDTO deployment, List<String> toDeployHosts, int buildNo) {
         try {
-            AppConfigDTO config = app.getConfigByEnv(env);
+            AppService appService = SpringContextHolder.getBean(AppService.class);
+            AppConfigDTO config = appService.loadConfigByEnv(deployment.getApp().getId(), task.getEnv().getId())
+                    .orElseThrow(() -> new InternalServerErrorException("app config not found"));
             builder.register(new AnsibleExecutor("inventory",
                     "_app_springcloud_nodes_update.yml",
                     ImmutableMap.<String, Object>builder()
-                            .put("buildno", buildNo)
+                            .put("buildno", deployment.getBuildNo())
                             .put("hosts", Joiner.on(",").join(toDeployHosts))
-                            .put("app", buildAppName(task))
-                            .put("app_service", generateService(task))
-                            .put("project", task.getProject())
-                            .put("module", task.getModule())
+                            .put("app", buildAppName(deployment.getApp()))
+                            .put("app_service", generateService(task, deployment))
+                            .put("project", deployment.getApp().getProject())
+                            .put("module", deployment.getApp().getModule())
                             .put("port", config.getContent().getOrDefault("SERVER_PORT", 8080))
                             .build()));
         } catch (Exception e) {
@@ -95,17 +91,18 @@ public class SpringCloudRegister implements TaskStepRegister {
         }
     }
 
-    private String buildAppName(TaskDTO task) {
-        return StringUtils.defaultIfBlank(task.getModule(), task.getProject());
+    private String buildAppName(AppDTO app) {
+        return StringUtils.defaultIfBlank(app.getModule(), app.getProject());
     }
 
-    private String generateService(TaskDTO task) throws Exception {
-        String appName = buildAppName(task);
+    private String generateService(TaskDTO task, PipelineDeploymentDTO deployment) throws Exception {
+        AppDTO app = deployment.getApp();
+        String appName = buildAppName(app);
 
-        AppDTO app = SpringContextHolder.getBean(AppService.class)
-                .loadAppByModule(task.getProject(), task.getModule())
-                .orElseThrow(() -> new InternalServerErrorException(String.format("task %s app not supported, project: %s, module: %s", task.getId(), task.getProject(), task.getModule())));
-        Map<String, Object> configs = app.getConfigByEnv(task.getEnv()).getContent();
+        AppService appService = SpringContextHolder.getBean(AppService.class);
+        Map<String, Object> configs = appService.loadConfigByEnv(deployment.getApp().getId(), task.getEnv().getId())
+                .orElseThrow(() -> new InternalServerErrorException("app config not found"))
+                .getContent();
 
         PropertiesConfiguration defaultConfig = new PropertiesConfiguration(Resources.getResource("templates/spring-boot.boot.properties"));
         defaultConfig.addProperty("APP_NAME", appName);

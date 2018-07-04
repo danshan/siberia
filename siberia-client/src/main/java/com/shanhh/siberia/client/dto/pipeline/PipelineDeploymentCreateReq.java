@@ -1,13 +1,10 @@
 package com.shanhh.siberia.client.dto.pipeline;
 
-import com.shanhh.siberia.client.dto.app.AppDTO;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
 
 /**
  * @author shanhonghao
@@ -16,18 +13,13 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @ToString(exclude = {"createTime", "updateTime"})
-public class PipelineDeploymentDTO implements Serializable {
+public class PipelineDeploymentCreateReq implements Serializable {
 
-    private int id;
     private int pipelineId;
     private int buildNo;
-    private AppDTO app;
-
-    private List<PipelineTaskDTO> tasks;
+    private String project;
+    private String module;
 
     private String createBy;
-    private String updateBy;
-    private Date createTime;
-    private Date updateTime;
 
 }

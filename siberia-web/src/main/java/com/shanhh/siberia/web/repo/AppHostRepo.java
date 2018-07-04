@@ -12,10 +12,7 @@ import java.util.List;
  */
 public interface AppHostRepo extends PagingAndSortingRepository<AppHost, Integer> {
 
-    AppHost findByProjectAndModuleAndEnv(String project, String module, Env env);
-
     List<AppHost> findByAppId (int appId);
 
-    AppHost findByAppIdAndEnvId(int appId, int envId);
-
+    AppHost findByAppIdAndEnv(int appId, int envId);
 }

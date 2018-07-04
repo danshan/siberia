@@ -17,20 +17,20 @@ INSERT INTO app_config (id, app_id, env_id, create_by, update_by, content) VALUE
 (5, 2, 2, 'sys', 'sys', '{"abc": "abc"}'),
 (6, 2, 3, 'sys', 'sys', '{"abc": "abc"}');
 
-INSERT INTO app_lock(id, project, module, env_id, lock_status, create_by, update_by) VALUES
-(1, 'togather', 'togather-edge', 1, 'LOCKED', 'sys', 'sys'),
-(2, 'togather', 'togather-edge', 2, 'UNLOCKED', 'sys', 'sys'),
-(3, 'togather', 'togather-edge', 3, 'LOCKED', 'sys', 'sys'),
-(4, 'togather', 'togather-news', 1, 'LOCKED', 'sys', 'sys'),
-(5, 'togather', 'togather-todo', 2, 'UNLOCKED', 'sys', 'sys'),
-(6, 'togather', 'togather-task', 3, 'LOCKED', 'sys', 'sys');
+INSERT INTO app_lock(id, app_id, env_id, lock_status, create_by, update_by) VALUES
+(1, 1, 1, 'LOCKED', 'sys', 'sys'),
+(2, 1, 2, 'UNLOCKED', 'sys', 'sys'),
+(3, 1, 3, 'LOCKED', 'sys', 'sys'),
+(4, 2, 1, 'LOCKED', 'sys', 'sys'),
+(5, 2, 2, 'UNLOCKED', 'sys', 'sys'),
+(6, 2, 3, 'LOCKED', 'sys', 'sys');
 
 INSERT INTO pipeline(id, title, description, status, create_by, update_by) VALUES
 (1, 'demo', 'pipeline for demo', 'RUNNING', 'sys', 'sys'),
 (2, 'demo', 'pipeline for demo', 'RUNNING', 'sys', 'sys');
 
-INSERT INTO pipeline_deployment(id, pipeline_id, project, module, build_no, app_id, create_by, update_by) VALUES
-(1, 1, 'togather', 'togather-edge', 1, 1, 'sys', 'sys');
+INSERT INTO pipeline_deployment(id, pipeline_id, build_no, app_id, create_by, update_by) VALUES
+(1, 1, 1, 1, 'sys', 'sys');
 
-INSERT INTO app_host(id, app_id, project, module, env_id, hosts, create_by, update_by) VALUES
-(1, 1, 'togather', 'togather-edge', 1, '["192.168.1.1", "192.168.1.2"]', 'sys', 'sys');
+INSERT INTO app_host(id, app_id, env_id, hosts, create_by, update_by) VALUES
+(1, 1, 1, '["192.168.1.1", "192.168.1.2"]', 'sys', 'sys');

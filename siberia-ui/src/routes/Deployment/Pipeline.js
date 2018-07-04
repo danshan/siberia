@@ -159,25 +159,17 @@ export default class Pipeline extends PureComponent {
 
     const columns = [
       {
-        title: 'Project',
-        dataIndex: 'project',
-        sorter: true,
-      },
-      {
-        title: 'Module',
-        dataIndex: 'module',
-        sorter: true,
+        title: 'Name',
+        dataIndex: 'app.name',
       },
       {
         title: 'Build No.',
         dataIndex: 'buildNo',
-        sorter: true,
         align: 'right',
       },
       {
         title: '更新时间',
         dataIndex: 'updateTime',
-        sorter: true,
       },
       {
         title: '操作',

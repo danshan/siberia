@@ -124,10 +124,10 @@ public class PipelineResource {
     @ResponseStatus(HttpStatus.CREATED)
     public BaseResponse<PipelineDeploymentDTO> createPipelineDeployment(
             @Valid @Min(1) @PathVariable int pipelineId,
-            @Valid @RequestBody PipelineDeploymentDTO deployment
+            @Valid @RequestBody PipelineDeploymentCreateReq request
     ) {
-        return new BaseResponse<>(pipelineService.createPipelineDeployment(
-                pipelineId, deployment.getProject(), deployment.getModule(), deployment.getBuildNo(), null).orElseThrow(ResourceNotFoundException::new));
+        return new BaseResponse<>(pipelineService.createPipelineDeployment(request)
+                .orElseThrow(ResourceNotFoundException::new));
     }
 
     @Timed

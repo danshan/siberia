@@ -36,11 +36,9 @@ public class ScheduleTasks {
         taskService.updateTaskStatusById(task, TaskStatus.SERVICING)
                 .ifPresent(targetTask -> {
                     try {
-                        log.info("start task: {}, {}, {}, {}, {}",
-                                task.getId(), task.getProject(), task.getModule(), task.getEnv(), task.getBuildNo());
+                        log.info("start task: {}", task.getId());
                         workflowService.startTaskWorkflow(task);
-                        log.info("finish task: {}, {}, {}, {}, {}",
-                                task.getId(), task.getProject(), task.getModule(), task.getEnv(), task.getBuildNo());
+                        log.info("finish task: {}", task.getId());
                     } catch (Exception e) {
                         log.error("task interrupted", e);
                         taskService.updateTaskStatusById(targetTask, TaskStatus.FAIL);

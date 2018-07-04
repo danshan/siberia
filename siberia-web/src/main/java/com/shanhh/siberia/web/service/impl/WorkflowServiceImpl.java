@@ -3,12 +3,13 @@ package com.shanhh.siberia.web.service.impl;
 import com.google.common.collect.Lists;
 import com.shanhh.siberia.client.dto.app.AppDTO;
 import com.shanhh.siberia.client.dto.app.LockStatus;
+import com.shanhh.siberia.client.dto.pipeline.PipelineDeploymentDTO;
 import com.shanhh.siberia.client.dto.task.TaskDTO;
 import com.shanhh.siberia.client.dto.task.TaskStatus;
 import com.shanhh.siberia.client.dto.workflow.StepExecutor;
 import com.shanhh.siberia.client.dto.workflow.WorkflowDTO;
-import com.shanhh.siberia.web.resource.errors.CustomParameterizedException;
-import com.shanhh.siberia.web.service.AppService;
+import com.shanhh.siberia.web.resource.errors.InternalServerErrorException;
+import com.shanhh.siberia.web.service.PipelineService;
 import com.shanhh.siberia.web.service.WorkflowService;
 import com.shanhh.siberia.web.service.workflow.TaskStepRegisterFactory;
 import com.shanhh.siberia.web.service.workflow.WorkflowBuilder;
@@ -33,19 +34,22 @@ import java.util.List;
 public class WorkflowServiceImpl implements WorkflowService {
 
     @Resource
-    private AppService appService;
+    private PipelineService pipelineService;
 
     @Override
     @Transactional
     public void startTaskWorkflow(TaskDTO task) {
         List<String> relatedUsers = Lists.newArrayList(task.getCreateBy());
 
-        AppDTO app = appService.loadAppByModule(task.getProject(), task.getModule())
-                .orElseThrow(() -> new CustomParameterizedException(String.format("app not supported, project: %s, module: %s", task.getProject(), task.getModule())));
+        PipelineDeploymentDTO deployment = pipelineService.loadPipelineDeploymentById(task.getDeploymentId())
+                .orElseThrow(() -> new InternalServerErrorException("deployment not found"));
+        AppDTO app = deployment.getApp();
 
         WorkflowBuilder workflowBuilder = WorkflowBuilder.getInstance();
 
-        workflowBuilder.withTask(task)
+        workflowBuilder
+                .withTask(task)
+                .withDeployment(deployment)
                 // 修改task 状态为 running
                 .register(new TaskStartExecutor(TaskStatus.RUNNING))
                 // 锁定task环境
@@ -53,7 +57,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 
         TaskStepRegisterFactory factory = new TaskStepRegisterFactory();
         TaskStepRegister register = factory.getRegister(app.getAppType());
-        register.registerDeploySteps(workflowBuilder, task);
+        register.registerDeploySteps(workflowBuilder, task, deployment);
 
         workflowBuilder
                 .register(new TaskEndExecutor(TaskStatus.OK))

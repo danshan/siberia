@@ -38,6 +38,7 @@ public class PipelineConvertor {
         }
         PipelineDeploymentDTO dto = new PipelineDeploymentDTO();
         BeanUtils.copyProperties(po, dto);
+        dto.setApp(AppConvertor.toDTO(po.getApp()));
         return dto;
     }
 
@@ -47,6 +48,7 @@ public class PipelineConvertor {
         }
         PipelineDeployment po = new PipelineDeployment();
         BeanUtils.copyProperties(dto, po);
+        po.setApp(AppConvertor.toPO(dto.getApp()));
         return po;
     }
 
@@ -56,7 +58,6 @@ public class PipelineConvertor {
         }
         PipelineTaskDTO dto = new PipelineTaskDTO();
         BeanUtils.copyProperties(po, dto);
-        dto.setDeployment(PipelineConvertor.toDTO(po.getDeployment()));
         dto.setEnv(SettingsConvertor.toDTO(po.getEnv()));
         return dto;
     }
@@ -67,7 +68,6 @@ public class PipelineConvertor {
         }
         PipelineTask po = new PipelineTask();
         BeanUtils.copyProperties(dto, po);
-        po.setDeployment(PipelineConvertor.toPO(dto.getDeployment()));
         po.setEnv(SettingsConvertor.toPO(dto.getEnv()));
         return po;
     }

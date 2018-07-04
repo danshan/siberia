@@ -17,7 +17,7 @@ import java.util.Date;
 @ToString(exclude = {"createTime", "updateTime"})
 public class PipelineTaskDTO implements Serializable {
     private int id;
-    private PipelineDeploymentDTO deployment;
+    private int deploymentId;
     private EnvDTO env;
 
     private String createBy;

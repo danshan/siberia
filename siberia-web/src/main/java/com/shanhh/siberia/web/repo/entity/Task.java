@@ -23,17 +23,11 @@ public class Task {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
     @Column(nullable = false)
-    private int pipelineId;
+    private int deploymentId;
     @Column(nullable = false)
     private String nodes = "";
     @OneToOne
     private Env env;
-    @Column(nullable = false)
-    private String project;
-    @Column(nullable = false)
-    private String module;
-    @Column(nullable = false)
-    private int buildNo;
     private Date startTime;
     private Date endTime;
     @Column(nullable = false)

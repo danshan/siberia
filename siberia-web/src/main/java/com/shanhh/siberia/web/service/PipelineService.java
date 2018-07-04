@@ -29,7 +29,7 @@ public interface PipelineService {
 
     Optional<PipelineDeploymentDTO> loadPipelineDeploymentById(int deploymentId);
 
-    Optional<PipelineDeploymentDTO> createPipelineDeployment(int pipelineId, String project, String module, int buildNo, String createBy);
+    Optional<PipelineDeploymentDTO> createPipelineDeployment(PipelineDeploymentCreateReq request);
 
     // task
 

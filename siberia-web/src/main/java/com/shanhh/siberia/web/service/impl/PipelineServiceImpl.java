@@ -1,6 +1,7 @@
 package com.shanhh.siberia.web.service.impl;
 
 import com.google.common.collect.Lists;
+import com.shanhh.siberia.client.dto.app.AppDTO;
 import com.shanhh.siberia.client.dto.pipeline.*;
 import com.shanhh.siberia.client.dto.settings.EnvDTO;
 import com.shanhh.siberia.client.dto.task.TaskCreateReq;
@@ -129,17 +130,15 @@ public class PipelineServiceImpl implements PipelineService {
     }
 
     @Override
-    public Optional<PipelineDeploymentDTO> createPipelineDeployment(int pipelineId, String project, String module, int buildNo, String createBy) {
+    public Optional<PipelineDeploymentDTO> createPipelineDeployment(PipelineDeploymentCreateReq request) {
+        AppDTO app = appService.loadAppByModule(request.getProject(), request.getModule())
+                .orElseThrow(() -> new BadRequestAlertException("app not found", "request", "module"));
         PipelineDeploymentDTO deployment = new PipelineDeploymentDTO();
-        deployment.setPipelineId(pipelineId);
-        deployment.setProject(StringUtils.trimToEmpty(project));
-        deployment.setModule(StringUtils.trimToEmpty(module));
-        deployment.setBuildNo(buildNo);
-        deployment.setCreateBy(StringUtils.trimToEmpty(createBy));
-        deployment.setUpdateBy(StringUtils.trimToEmpty(createBy));
-        deployment.setAppId(appService.loadAppByModule(deployment.getProject(), deployment.getModule())
-                .orElseThrow(() -> new BadRequestAlertException("Not app exists for moulde", "module", "module"))
-                .getId());
+        deployment.setPipelineId(request.getPipelineId());
+        deployment.setBuildNo(request.getBuildNo());
+        deployment.setCreateBy(StringUtils.trimToEmpty(request.getCreateBy()));
+        deployment.setUpdateBy(deployment.getCreateBy());
+        deployment.setApp(app);
 
         PipelineDeployment saved = pipelineDeploymentRepo.save(PipelineConvertor.toPO(deployment));
         log.info("pipeline deployment created, {}", saved);
@@ -153,17 +152,14 @@ public class PipelineServiceImpl implements PipelineService {
 
         PipelineTaskDTO task = new PipelineTaskDTO();
         task.setEnv(env);
-        task.setDeployment(deployment);
+        task.setDeploymentId(deployment.getId());
         task.setCreateBy(req.getCreateBy());
         task.setUpdateBy(req.getCreateBy());
         PipelineTask saved = pipelineTaskRepo.save(PipelineConvertor.toPO(task));
 
         TaskCreateReq taskReq = new TaskCreateReq();
         taskReq.setEnvId(env.getId());
-        taskReq.setPipelineId(deployment.getPipelineId());
-        taskReq.setProject(deployment.getProject());
-        taskReq.setModule(deployment.getModule());
-        taskReq.setBuildNo(deployment.getBuildNo());
+        taskReq.setDeploymentId(deployment.getId());
         taskReq.setCreateBy(req.getCreateBy());
         taskService.createTask(taskReq);
 

@@ -29,10 +29,6 @@ public class AppHost {
     private List<String> hosts = Lists.newLinkedList();
     @OneToOne
     private Env env;
-    @Column(nullable = false)
-    private String project;
-    @Column(nullable = false)
-    private String module;
 
     @Column(nullable = false, updatable = false)
     private String createBy;

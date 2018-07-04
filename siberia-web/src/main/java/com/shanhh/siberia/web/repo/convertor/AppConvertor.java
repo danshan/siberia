@@ -10,10 +10,6 @@ import com.shanhh.siberia.web.repo.entity.AppHost;
 import com.shanhh.siberia.web.repo.entity.AppLock;
 import org.springframework.beans.BeanUtils;
 
-import java.util.List;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
-
 /**
  * @author shanhonghao
  * @since 2018-05-30 17:22
@@ -26,10 +22,6 @@ public class AppConvertor {
         }
         AppDTO dto = new AppDTO();
         BeanUtils.copyProperties(app, dto);
-        List<AppConfig> configs = app.getConfigs();
-        if (configs != null) {
-            dto.setConfigs(configs.stream().map(AppConvertor::toDTO).collect(Collectors.toList()));
-        }
         return dto;
     }
 
@@ -39,10 +31,6 @@ public class AppConvertor {
         }
         App po = new App();
         BeanUtils.copyProperties(dto, po);
-        List<AppConfigDTO> configs = dto.getConfigs();
-        if (configs != null) {
-            po.setConfigs(configs.stream().map(AppConvertor::toPO).collect(Collectors.toList()));
-        }
         return po;
     }
 
@@ -53,6 +41,7 @@ public class AppConvertor {
         AppLockDTO dto = new AppLockDTO();
         BeanUtils.copyProperties(lock, dto);
         dto.setEnv(EnvConvertor.toDTO(lock.getEnv()));
+        dto.setApp(AppConvertor.toDTO(lock.getApp()));
         return dto;
     }
 

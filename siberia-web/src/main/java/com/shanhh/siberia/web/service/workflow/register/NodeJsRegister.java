@@ -6,7 +6,7 @@ import com.google.common.collect.Lists;
 import com.shanhh.siberia.client.dto.app.AppConfigDTO;
 import com.shanhh.siberia.client.dto.app.AppDTO;
 import com.shanhh.siberia.client.dto.app.AppHostDTO;
-import com.shanhh.siberia.client.dto.settings.EnvDTO;
+import com.shanhh.siberia.client.dto.pipeline.PipelineDeploymentDTO;
 import com.shanhh.siberia.client.dto.task.TaskDTO;
 import com.shanhh.siberia.client.dto.task.TaskStatus;
 import com.shanhh.siberia.core.SpringContextHolder;
@@ -17,6 +17,7 @@ import com.shanhh.siberia.web.service.workflow.WorkflowBuilder;
 import com.shanhh.siberia.web.service.workflow.executor.AnsibleExecutor;
 import com.shanhh.siberia.web.service.workflow.executor.TaskNodeUpdateExecutor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 
@@ -28,58 +29,57 @@ import java.util.List;
 public class NodeJsRegister implements TaskStepRegister {
 
     @Override
-    public void registerDeploySteps(WorkflowBuilder builder, TaskDTO task) {
+    public void registerDeploySteps(WorkflowBuilder builder, TaskDTO task, PipelineDeploymentDTO deployment) {
         AppService appService = SpringContextHolder.getBean(AppService.class);
-        AppDTO app = appService.loadAppByModule(task.getProject(), task.getModule())
-                .orElseThrow(() -> new InternalServerErrorException(String.format("app not supported, project: %s, module: %s", task.getProject(), task.getModule())));
+        AppDTO app = deployment.getApp();
 
         List<String> toDeployHosts = Lists.newLinkedList();
         try {
-            AppHostDTO sibAppHostDTO = appService.loadAppHostByEnv(task.getProject(), task.getModule(), task.getEnv()).orElse(new AppHostDTO());
+            AppHostDTO sibAppHostDTO = appService.loadAppHostByAppAndEnv(app.getId(), task.getEnv().getId()).orElse(new AppHostDTO());
             List<String> hosts = (sibAppHostDTO == null || sibAppHostDTO.getHosts() == null) ? Lists.newArrayList() : sibAppHostDTO.getHosts();
             toDeployHosts.addAll(hosts);
-            log.info("affect hosts: {}", Joiner.on(",").join(toDeployHosts));
+            log.info("task {}, affect hosts: {}", task.getId(), Joiner.on(",").join(toDeployHosts));
             if (toDeployHosts.size() == 0) {
                 return;
             }
         } catch (Exception e) {
-            log.error(String.format("fetch node list failed, %s", task.toString()), e);
+            log.error(String.format("task {} fetch node list failed, %s", task.getId(), task.toString()), e);
         }
 
         builder.register(new TaskNodeUpdateExecutor(toDeployHosts));
 
-        registerSteps(builder, task.getEnv(), task, app, toDeployHosts, task.getBuildNo());
+        registerSteps(builder, task, deployment, toDeployHosts, deployment.getBuildNo());
     }
 
     @Override
-    public void registerRollbackSteps(WorkflowBuilder builder, TaskDTO task, int rollbackBuildNo) {
-        log.info("rollback to {}, task={}", rollbackBuildNo, task);
-
-        AppService appService = SpringContextHolder.getBean(AppService.class);
-        AppDTO app = appService.loadAppByModule(task.getProject(), task.getModule())
-                .orElseThrow(() -> new InternalServerErrorException(String.format("app not supported, project: %s, module: %s", task.getProject(), task.getModule())));
+    public void registerRollbackSteps(WorkflowBuilder builder, TaskDTO task, PipelineDeploymentDTO deployment, int rollbackBuildNo) {
+        log.info("task {} rollback to {}, task={}", task.getId(), rollbackBuildNo, task);
 
         TaskService sibTaskService = SpringContextHolder.getBean(TaskService.class);
         TaskDTO.Memo memo = task.getMemo();
         memo.setRollbackVersion(rollbackBuildNo);
         sibTaskService.updateTaskStatusAndMemoById(task.getId(), TaskStatus.RUNNING, memo);
 
-        registerSteps(builder, task.getEnv(), task, app, task.getNodes(), rollbackBuildNo);
-
+        registerSteps(builder, task, deployment, task.getNodes(), rollbackBuildNo);
     }
 
-    private void registerSteps(WorkflowBuilder builder, EnvDTO env, TaskDTO task, AppDTO app, List<String> hosts, int buildNo) {
-        AppConfigDTO config = app.getConfigByEnv(env);
+    private void registerSteps(WorkflowBuilder builder, TaskDTO task, PipelineDeploymentDTO deployment, List<String> toDeployHosts, int buildNo) {
+        AppService appService = SpringContextHolder.getBean(AppService.class);
+        AppConfigDTO config = appService.loadConfigByEnv(deployment.getApp().getId(), task.getEnv().getId())
+                .orElseThrow(() -> new InternalServerErrorException("app config not found"));
         builder.register(new AnsibleExecutor("inventory",
                 "_app_nodejs_nodes_update.yml",
                 ImmutableMap.<String, Object>builder()
                         .put("buildno", buildNo)
-                        .put("hosts", Joiner.on(",").join(hosts))
-                        .put("app", task.getModule())
-                        .put("project", task.getProject())
-                        .put("module", task.getModule())
+                        .put("hosts", Joiner.on(",").join(toDeployHosts))
+                        .put("app", buildAppName(deployment.getApp()))
+                        .put("project", deployment.getApp().getProject())
+                        .put("module", deployment.getApp().getModule())
                         .put("port", config.getContent().getOrDefault("SERVER_PORT", 80))
                         .build()));
     }
 
+    private String buildAppName(AppDTO app) {
+        return StringUtils.defaultIfBlank(app.getModule(), app.getProject());
+    }
 }

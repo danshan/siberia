@@ -19,8 +19,8 @@ public class PipelineTask {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
-    @OneToOne
-    private PipelineDeployment deployment;
+    @Column(nullable = false)
+    private int deploymentId;
     @OneToOne
     private Env env;
 

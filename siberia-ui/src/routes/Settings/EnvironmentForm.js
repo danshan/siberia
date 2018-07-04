@@ -152,6 +152,14 @@ export default class EnvironmentForm extends PureComponent {
         },
       },
       {
+        title: 'Update By',
+        dataIndex: 'updateBy',
+      },
+      {
+        title: 'Update Time',
+        dataIndex: 'updateTime',
+      },
+      {
         title: '操作',
         key: 'action',
         render: (text, record) => {

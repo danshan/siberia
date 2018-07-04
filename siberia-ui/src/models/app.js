@@ -1,9 +1,10 @@
 import {
+  findAppConfigList,
   findAppHostList,
   loadApp,
+  paginateAppLockList,
   updateAppConfig,
   updateAppHost,
-  paginateAppLockList,
   updateAppLockStatus,
 } from '../services/api';
 
@@ -43,6 +44,14 @@ export default {
       });
     },
 
+    *findAppConfigList({ payload }, { call, put }) {
+      const response = yield call(findAppConfigList, payload);
+      yield put({
+        type: 'appConfigMap',
+        payload: response,
+      });
+    },
+
     *findAppHostList({ payload }, { call, put }) {
       const response = yield call(findAppHostList, payload);
       yield put({
@@ -71,14 +80,19 @@ export default {
     },
 
     app(state, action) {
-      const configs = {};
-      action.payload.data.configs.forEach(config => {
-        configs[String(config.env.id)] = JSON.stringify(config.content, null, 4);
-      });
-
       return {
         ...state,
         app: action.payload.data,
+      };
+    },
+
+    appConfigMap(state, action) {
+      const configs = {};
+      action.payload.data.forEach(config => {
+        configs[String(config.env.id)] = JSON.stringify(config.content, null, 4);
+      });
+      return {
+        ...state,
         appConfigMap: configs,
       };
     },

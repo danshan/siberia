@@ -40,11 +40,8 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public Optional<TaskDTO> createTask(TaskCreateReq taskReq) {
         Task task = new Task();
-        task.setPipelineId(taskReq.getPipelineId());
+        task.setDeploymentId(taskReq.getDeploymentId());
         task.setEnv(envRepo.findOne(taskReq.getEnvId()));
-        task.setProject(StringUtils.trimToEmpty(taskReq.getProject()));
-        task.setModule(StringUtils.trimToEmpty(taskReq.getModule()));
-        task.setBuildNo(taskReq.getBuildNo());
         task.setStatus(TaskStatus.CREATED);
         task.setCreateBy(taskReq.getCreateBy());
         task.setUpdateBy(taskReq.getCreateBy());

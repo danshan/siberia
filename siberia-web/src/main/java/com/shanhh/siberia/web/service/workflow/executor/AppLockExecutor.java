@@ -1,8 +1,9 @@
 package com.shanhh.siberia.web.service.workflow.executor;
 
 
-import com.google.common.base.Preconditions;
+import com.shanhh.siberia.client.dto.app.AppDTO;
 import com.shanhh.siberia.client.dto.app.LockStatus;
+import com.shanhh.siberia.client.dto.pipeline.PipelineDeploymentDTO;
 import com.shanhh.siberia.client.dto.task.TaskDTO;
 import com.shanhh.siberia.client.dto.task.TaskStepDTO;
 import com.shanhh.siberia.client.dto.task.TaskStepResult;
@@ -46,15 +47,17 @@ public class AppLockExecutor implements StepExecutor {
     @Override
     public void exec(WorkflowDTO workflow) {
         TaskDTO task = workflow.getTask();
+        PipelineDeploymentDTO deployment = workflow.getDeployment();
+        AppDTO app = deployment.getApp();
 
-        appService.updateLockStatus(task.getProject(), task.getModule(), task.getEnv(), lockStatus, task.getUpdateBy())
-                .orElseThrow(() -> new IllegalStateException(String.format("update lock status failed: %s, %s", task.getBuildNo(), task.getEnv())));
+        appService.updateLockStatus(app, task.getEnv(), lockStatus, task.getUpdateBy())
+                .orElseThrow(() -> new IllegalStateException(String.format("update lock status failed: %s, %s", deployment.getBuildNo(), task.getEnv())));
     }
 
     @Override
     public void onSuccess(WorkflowDTO workflow) {
         TaskDTO task = workflow.getTask();
-        log.info("update app lock status: {}, {}, {}", new Object[]{task.getBuildNo(), task.getEnv(), lockStatus});
+        log.info("update app lock status: {}, {}, {}", task.getId(), task.getEnv(), lockStatus);
         String detail = "update task env lock status for deploy: " + lockStatus;
         TaskStepDTO taskStep = taskService.createTaskStep(
                 task.getId(),

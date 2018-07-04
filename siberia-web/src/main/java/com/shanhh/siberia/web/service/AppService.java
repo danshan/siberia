@@ -27,11 +27,11 @@ public interface AppService {
 
     Page<AppLockDTO> paginateAppLocks(int pageNum, int pageSize, int envId);
 
-    Optional<AppLockDTO> updateLockStatus(String project, String module, EnvDTO env, LockStatus lockStatus, String operator);
+    Optional<AppLockDTO> updateLockStatus(AppDTO app, EnvDTO env, LockStatus lockStatus, String operator);
 
     Optional<AppLockDTO> updateLockStatus(int appLockId, LockStatus lockStatus, String operator);
 
-    Optional<AppHostDTO> loadAppHostByEnv(String project, String module, EnvDTO env);
+    Optional<AppHostDTO> loadAppHostByAppAndEnv(int appId, int envId);
 
     List<AppConfigDTO> findConfigsByAppId(int appId);
 

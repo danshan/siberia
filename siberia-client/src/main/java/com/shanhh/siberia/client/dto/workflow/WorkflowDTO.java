@@ -1,6 +1,7 @@
 package com.shanhh.siberia.client.dto.workflow;
 
 
+import com.shanhh.siberia.client.dto.pipeline.PipelineDeploymentDTO;
 import com.shanhh.siberia.client.dto.task.TaskDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,6 +18,8 @@ public class WorkflowDTO {
 
     @Getter
     private final TaskDTO task;
+    @Getter
+    private final PipelineDeploymentDTO deployment;
     @Getter
     private final List<StepExecutor> stepChain;
     @Getter

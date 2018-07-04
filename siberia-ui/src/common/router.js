@@ -100,7 +100,7 @@ export const getRouterData = app => {
     },
     '/deployment/applocklist': {
       component: dynamicWrapper(app, ['app', 'settings'], () =>
-        import('../routes/Deployment/AppConfigList')
+        import('../routes/Deployment/AppLockList')
       ),
     },
     '/deployment/logviewer/:taskId': {

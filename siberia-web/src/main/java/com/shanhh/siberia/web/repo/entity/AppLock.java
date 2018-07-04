@@ -22,12 +22,10 @@ public class AppLock {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
-    @Column(nullable = false)
-    private String project;
-    @Column(nullable = false)
-    private String module;
     @OneToOne
     private Env env;
+    @OneToOne
+    private App app;
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private LockStatus lockStatus;

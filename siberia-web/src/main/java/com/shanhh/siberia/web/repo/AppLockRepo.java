@@ -12,7 +12,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
  */
 public interface AppLockRepo extends PagingAndSortingRepository<AppLock, Integer> {
 
-    AppLock findByProjectAndModuleAndEnv(String project, String module, Env env);
+    AppLock findByAppAndEnv(int appId, int envId);
 
     Page<AppLock> findByEnv(Env env, Pageable pageable);
 }

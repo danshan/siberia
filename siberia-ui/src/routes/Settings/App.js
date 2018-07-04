@@ -24,6 +24,7 @@ export default class App extends PureComponent {
   componentDidMount() {
     this.loadApp();
     this.findEnvList();
+    this.findAppConfigList();
     this.findAppHostList();
   }
 
@@ -51,6 +52,16 @@ export default class App extends PureComponent {
     this.props.dispatch({
       type: 'settings/findEnvList',
       payload: {},
+    });
+  };
+
+  findAppConfigList = () => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'app/findAppConfigList',
+      payload: {
+        appId: this.props.match.params.appId,
+      },
     });
   };
 

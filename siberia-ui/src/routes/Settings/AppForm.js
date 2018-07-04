@@ -1,5 +1,5 @@
 import React, { Fragment, PureComponent } from 'react';
-import { Button, Divider, Input, message, Popconfirm, Table, Select } from 'antd';
+import { Button, Divider, Input, message, Popconfirm, Select, Table } from 'antd';
 import styles from './style.less';
 
 export default class AppForm extends PureComponent {
@@ -115,14 +115,6 @@ export default class AppForm extends PureComponent {
     this.clickedCancel = false;
   }
   render() {
-    const envOptions = () => {
-      const children = [];
-      (this.state.envList || []).forEach(env => {
-        children.push(<Select.Option key={env.id}>{env.name}</Select.Option>);
-      });
-      return children;
-    };
-
     const columns = [
       {
         title: 'Project',
@@ -164,21 +156,6 @@ export default class AppForm extends PureComponent {
         },
       },
       {
-        title: '环境',
-        dataIndex: 'appType',
-        key: 'appType',
-        render: (text, record) => {
-          if (record.editable) {
-            return (
-              <Select mode="multiple" defaultValue={['1', '2']}>
-                {envOptions}
-              </Select>
-            );
-          }
-          return text;
-        },
-      },
-      {
         title: '类型',
         dataIndex: 'appType.value',
         key: 'appType',
@@ -198,6 +175,14 @@ export default class AppForm extends PureComponent {
           }
           return text;
         },
+      },
+      {
+        title: 'Update By',
+        dataIndex: 'updateBy',
+      },
+      {
+        title: 'Update Time',
+        dataIndex: 'updateTime',
       },
       {
         title: '操作',

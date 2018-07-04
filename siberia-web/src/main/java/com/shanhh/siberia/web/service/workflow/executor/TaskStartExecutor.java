@@ -2,6 +2,7 @@ package com.shanhh.siberia.web.service.workflow.executor;
 
 
 import com.google.common.base.Preconditions;
+import com.shanhh.siberia.client.dto.pipeline.PipelineDeploymentDTO;
 import com.shanhh.siberia.client.dto.task.TaskDTO;
 import com.shanhh.siberia.client.dto.task.TaskStatus;
 import com.shanhh.siberia.client.dto.task.TaskStepDTO;
@@ -40,17 +41,17 @@ public class TaskStartExecutor implements StepExecutor {
     @Override
     public void exec(WorkflowDTO workflow) {
         TaskDTO task = workflow.getTask();
+        PipelineDeploymentDTO deployment = workflow.getDeployment();
 
         Preconditions.checkState(taskService.startTaskById(task.getId(), taskStatus) > 0,
-                "update task status failed: %s, %s", task.getBuildNo(), task.getEnv());
+                "update task status failed: %s, %s", deployment.getBuildNo(), task.getEnv());
         task.setStatus(taskStatus);
     }
 
     @Override
     public void onSuccess(WorkflowDTO workflow) {
         TaskDTO task = workflow.getTask();
-        log.info("update task status: {}, {}, {}, {}, {}",
-                new Object[]{task.getProject(), task.getModule(), task.getBuildNo(), task.getEnv(), taskStatus});
+        log.info("update task status: {}, {}, {}", task.getId(), task.getEnv(), taskStatus);
 
         String detail = "Job status:" + taskStatus.value;
         TaskStepDTO taskStep = taskService.createTaskStep(

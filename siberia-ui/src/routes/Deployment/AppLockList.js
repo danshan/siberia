@@ -4,7 +4,7 @@ import { Card, Switch, Icon, Radio, Table } from 'antd';
 
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
-import styles from './AppConfigList.less';
+import styles from './AppLockList.less';
 
 @connect(({ app, settings, loading }) => ({
   app,
@@ -95,12 +95,8 @@ export default class AppConfigList extends PureComponent {
 
     const columns = [
       {
-        title: 'Project',
-        dataIndex: 'project',
-      },
-      {
-        title: 'Module',
-        dataIndex: 'module',
+        title: 'Name',
+        dataIndex: 'app.name',
       },
       {
         title: 'Env',

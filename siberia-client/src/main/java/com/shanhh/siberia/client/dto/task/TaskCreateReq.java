@@ -13,11 +13,8 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class TaskCreateReq implements Serializable {
 
-    private int pipelineId;
     private int envId;
-    private String project;
-    private String module;
-    private int buildNo;
+    private int deploymentId;
     private String createBy;
 
 }
