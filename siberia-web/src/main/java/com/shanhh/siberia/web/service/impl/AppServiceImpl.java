@@ -1,6 +1,5 @@
 package com.shanhh.siberia.web.service.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Preconditions;
 import com.shanhh.siberia.client.dto.app.*;
 import com.shanhh.siberia.client.dto.settings.EnvDTO;
@@ -42,9 +41,6 @@ public class AppServiceImpl implements AppService {
     private AppConfigRepo appConfigRepo;
     @Resource
     private EnvRepo envRepo;
-
-    @Resource
-    private ObjectMapper objectMapper;
 
     @Override
     public Optional<AppDTO> createApp(AppCreateReq appCreateReq) {
@@ -125,7 +121,7 @@ public class AppServiceImpl implements AppService {
         Preconditions.checkArgument(app != null, "app should not be empty");
         Preconditions.checkArgument(env != null, "env should not be empty");
 
-        AppLock exists = appLockRepo.findByAppAndEnv(app.getId(), env.getId());
+        AppLock exists = appLockRepo.findByAppIdAndEnvId(app.getId(), env.getId());
         if (exists != null) {
             exists.setUpdateBy(operator);
             exists.setUpdateTime(new Date());
@@ -164,7 +160,7 @@ public class AppServiceImpl implements AppService {
 
     @Override
     public Optional<AppHostDTO> loadAppHostByAppAndEnv(int appId, int envId) {
-        AppHost appHost = appHostRepo.findByAppIdAndEnv(appId, envId);
+        AppHost appHost = appHostRepo.findByAppIdAndEnvId(appId, envId);
         return Optional.ofNullable(AppConvertor.toDTO(appHost));
     }
 
@@ -225,7 +221,7 @@ public class AppServiceImpl implements AppService {
 
     @Override
     public Optional<AppHostDTO> loadHostByEnv(int appId, int envId) {
-        return Optional.ofNullable(AppConvertor.toDTO(appHostRepo.findByAppIdAndEnv(appId, envId)));
+        return Optional.ofNullable(AppConvertor.toDTO(appHostRepo.findByAppIdAndEnvId(appId, envId)));
     }
 
     @Override

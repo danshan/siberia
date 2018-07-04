@@ -1,16 +1,11 @@
 import { routerRedux } from 'dva/router';
 import React, { Fragment, PureComponent } from 'react';
 import { connect } from 'dva';
-import { Button, Badge, Card, Divider, Form, Input, message, Modal } from 'antd';
-import StandardTable from 'components/StandardTable';
+import { Button, Badge, Card, Divider, Form, Input, message, Modal, Table } from 'antd';
+
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
 import styles from './Pipeline.less';
-
-const getValue = obj =>
-  Object.keys(obj)
-    .map(key => obj[key])
-    .join(',');
 
 const CreateForm = Form.create()(props => {
   const { modalVisible, form, handleAdd, handleModalVisible } = props;
@@ -47,16 +42,18 @@ const CreateForm = Form.create()(props => {
   );
 });
 
-@connect(({ pipeline, loading }) => ({
+@connect(({ pipeline, task, loading }) => ({
   pipeline,
+  task,
   loading: loading.models.pipeline,
 }))
 @Form.create()
 export default class Pipeline extends PureComponent {
   state = {
     modalVisible: false,
-    selectedRows: [],
-    formValues: {},
+
+    pageNum: 0,
+    pageSize: 20,
   };
 
   componentDidMount() {
@@ -80,6 +77,8 @@ export default class Pipeline extends PureComponent {
       type: 'pipeline/paginatePipelineDeploymentList',
       payload: {
         pipelineId: this.props.match.params.pipelineId,
+        pageNum: this.state.pageNum,
+        pageSize: this.state.pageSize,
       },
     });
   };
@@ -103,30 +102,18 @@ export default class Pipeline extends PureComponent {
     });
   };
 
-  sendSuccessMessage = msg => {
-    message.success(msg);
+  createTask = deployment => {
+    this.props.dispatch({
+      type: 'task/createTask',
+      payload: {
+        envId: 1,
+        deploymentId: deployment.id,
+      },
+    });
   };
 
-  handleStandardTableChange = (pagination, filtersArg, sorter) => {
-    const { formValues } = this.state;
-
-    const filters = Object.keys(filtersArg).reduce((obj, key) => {
-      const newObj = { ...obj };
-      newObj[key] = getValue(filtersArg[key]);
-      return newObj;
-    }, {});
-
-    const params = {
-      currentPage: pagination.current,
-      pageSize: pagination.pageSize,
-      ...formValues,
-      ...filters,
-    };
-    if (sorter.field) {
-      params.sorter = `${sorter.field}_${sorter.order}`;
-    }
-
-    this.paginatePipelineDeploymentList();
+  sendSuccessMessage = msg => {
+    message.success(msg);
   };
 
   handleModalVisible = flag => {
@@ -143,19 +130,42 @@ export default class Pipeline extends PureComponent {
     this.props.dispatch(routerRedux.push(`/settings/apps/${record.app.id}`));
   };
 
+  handleCreateTask = record => {
+    console.log(record);
+    this.createTask(record);
+  };
+
   handleLog = record => {
     this.props.dispatch(routerRedux.push(`/deployment/logviewer/${record.id}`));
   };
 
+  handlePage = (page, pageSize) => {
+    this.setState(
+      {
+        pageNum: page - 1,
+        pageSize,
+      },
+      () => this.paginatePipelineDeploymentList()
+    );
+  };
+
   render() {
     const { pipeline: { pipeline, pipelineDeploymentList }, loading } = this.props;
-    const { selectedRows, modalVisible } = this.state;
+    const { modalVisible } = this.state;
 
     const content = (
       <div className={styles.pageHeaderContent}>
         <p>{pipeline.description}</p>
       </div>
     );
+
+    const paginationProps = {
+      current: pipelineDeploymentList.number + 1,
+      pageSize: pipelineDeploymentList.size,
+      total: pipelineDeploymentList.totalElements,
+      onChange: this.handlePage,
+      showTotal: total => `Total ${total} items`,
+    };
 
     const columns = [
       {
@@ -177,6 +187,7 @@ export default class Pipeline extends PureComponent {
           <Fragment>
             <a onClick={() => this.handleConfig(record)}>Config</a>
             <Divider type="vertical" />
+            <a onClick={() => this.handleCreateTask(record)}>Deploy</a>
             <Button.Group>
               {[].map(config => {
                 return (
@@ -206,13 +217,11 @@ export default class Pipeline extends PureComponent {
                 新建
               </Button>
             </div>
-            <StandardTable
-              selectedRows={selectedRows}
+            <Table
               loading={loading}
-              data={pipelineDeploymentList}
+              pagination={paginationProps}
               columns={columns}
-              onSelectRow={this.handleSelectRows}
-              onChange={this.handleStandardTableChange}
+              dataSource={pipelineDeploymentList.content}
               rowKey="id"
             />
           </div>

@@ -53,7 +53,7 @@ public class TaskEndExecutor implements StepExecutor {
     @Override
     public void onSuccess(WorkflowDTO workflow) {
         TaskDTO task = workflow.getTask();
-        PipelineDeploymentDTO deployment = workflow.getDeployment();
+        PipelineDeploymentDTO deployment = task.getDeployment();
         AppDTO app = deployment.getApp();
 
         log.info("update task status: {}, {}, {}, {}, {}",

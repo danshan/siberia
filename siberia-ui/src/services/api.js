@@ -119,13 +119,6 @@ export async function createPipelineDeployment(params) {
   });
 }
 
-export async function createPipelineTask(params) {
-  return request(`/api/pipelines/${params.pipelineId}/tasks`, {
-    method: 'POST',
-    body: params,
-  });
-}
-
 export async function paginatePipelineDeploymentList(params) {
   return request(`/api/pipelines/${params.pipelineId}/deployments`);
 }
@@ -209,6 +202,13 @@ export async function updateAppHost(params) {
 
 export async function paginateTaskList() {
   return request('/api/tasks');
+}
+
+export async function createTask(params) {
+  return request(`/api/tasks`, {
+    method: 'POST',
+    body: params,
+  });
 }
 
 // settings

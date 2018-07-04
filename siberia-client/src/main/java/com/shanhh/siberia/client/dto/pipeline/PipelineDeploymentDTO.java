@@ -7,7 +7,6 @@ import lombok.ToString;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 /**
  * @author shanhonghao
@@ -22,8 +21,6 @@ public class PipelineDeploymentDTO implements Serializable {
     private int pipelineId;
     private int buildNo;
     private AppDTO app;
-
-    private List<PipelineTaskDTO> tasks;
 
     private String createBy;
     private String updateBy;

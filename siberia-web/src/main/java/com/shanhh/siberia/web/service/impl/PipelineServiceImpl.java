@@ -1,17 +1,16 @@
 package com.shanhh.siberia.web.service.impl;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import com.shanhh.siberia.client.dto.app.AppConfigDTO;
 import com.shanhh.siberia.client.dto.app.AppDTO;
 import com.shanhh.siberia.client.dto.pipeline.*;
-import com.shanhh.siberia.client.dto.settings.EnvDTO;
-import com.shanhh.siberia.client.dto.task.TaskCreateReq;
+import com.shanhh.siberia.client.dto.task.TaskDTO;
 import com.shanhh.siberia.web.repo.PipelineDeploymentRepo;
 import com.shanhh.siberia.web.repo.PipelineRepo;
-import com.shanhh.siberia.web.repo.PipelineTaskRepo;
 import com.shanhh.siberia.web.repo.convertor.PipelineConvertor;
 import com.shanhh.siberia.web.repo.entity.Pipeline;
 import com.shanhh.siberia.web.repo.entity.PipelineDeployment;
-import com.shanhh.siberia.web.repo.entity.PipelineTask;
 import com.shanhh.siberia.web.resource.errors.BadRequestAlertException;
 import com.shanhh.siberia.web.service.AppService;
 import com.shanhh.siberia.web.service.PipelineService;
@@ -43,8 +42,6 @@ public class PipelineServiceImpl implements PipelineService {
     private PipelineRepo pipelineRepo;
     @Resource
     private PipelineDeploymentRepo pipelineDeploymentRepo;
-    @Resource
-    private PipelineTaskRepo pipelineTaskRepo;
     @Resource
     private AppService appService;
     @Resource
@@ -146,25 +143,28 @@ public class PipelineServiceImpl implements PipelineService {
     }
 
     @Override
-    public Optional<PipelineTaskDTO> createPipelineTask(PipelineTaskReq req) {
-        EnvDTO env = settingsService.loadEnvById(req.getEnvId()).orElseThrow(() -> new BadRequestAlertException("env not exists", "envId", "envId"));
-        PipelineDeploymentDTO deployment = loadPipelineDeploymentById(req.getDeploymentId()).orElseThrow(() -> new BadRequestAlertException("deployment not exists", "deploymentId", "deploymentId"));
+    public List<PipelineDeploymentProcessDTO> findDeploymentProcess(int deploymentId) {
+        PipelineDeployment deployment = pipelineDeploymentRepo.findOne(deploymentId);
+        Preconditions.checkArgument(deployment != null, "deployemnt not found");
 
-        PipelineTaskDTO task = new PipelineTaskDTO();
-        task.setEnv(env);
-        task.setDeploymentId(deployment.getId());
-        task.setCreateBy(req.getCreateBy());
-        task.setUpdateBy(req.getCreateBy());
-        PipelineTask saved = pipelineTaskRepo.save(PipelineConvertor.toPO(task));
+        List<AppConfigDTO> configs = appService.findConfigsByAppId(deployment.getApp().getId());
+        List<TaskDTO> tasks = taskService.findTaskStatusByDeployemnt(deploymentId);
 
-        TaskCreateReq taskReq = new TaskCreateReq();
-        taskReq.setEnvId(env.getId());
-        taskReq.setDeploymentId(deployment.getId());
-        taskReq.setCreateBy(req.getCreateBy());
-        taskService.createTask(taskReq);
-
-        log.info("pipeline task created, {}", saved);
-        return Optional.ofNullable(PipelineConvertor.toDTO(saved));
+        List<PipelineDeploymentProcessDTO> results = Lists.newLinkedList();
+        configs.stream().forEach(config -> {
+            PipelineDeploymentProcessDTO process = new PipelineDeploymentProcessDTO();
+            process.setDeploymentId(deploymentId);
+            process.setEnvId(config.getEnv().getId());
+            process.setEnvName(config.getEnv().getName());
+            tasks.stream().filter(task -> task.getEnv().getId() == config.getEnv().getId())
+                    .findFirst()
+                    .ifPresent(task -> {
+                        process.setStatus(task.getStatus());
+                        process.setTaskId(task.getId());
+                    });
+            results.add(process);
+        });
+        return results;
     }
 
 }

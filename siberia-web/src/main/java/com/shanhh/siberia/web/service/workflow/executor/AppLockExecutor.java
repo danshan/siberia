@@ -47,7 +47,7 @@ public class AppLockExecutor implements StepExecutor {
     @Override
     public void exec(WorkflowDTO workflow) {
         TaskDTO task = workflow.getTask();
-        PipelineDeploymentDTO deployment = workflow.getDeployment();
+        PipelineDeploymentDTO deployment = task.getDeployment();
         AppDTO app = deployment.getApp();
 
         appService.updateLockStatus(app, task.getEnv(), lockStatus, task.getUpdateBy())

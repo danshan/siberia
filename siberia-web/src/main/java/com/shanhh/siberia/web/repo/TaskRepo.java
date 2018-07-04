@@ -17,6 +17,9 @@ public interface TaskRepo extends PagingAndSortingRepository<Task, Integer> {
 
     List<Task> findByStatus(TaskStatus status);
 
+    @Query("from Task where deployment.id = :deploymentId")
+    List<Task> findStatusByDeploymentId(@Param("deploymentId") int deploymentId);
+
     @Modifying
     @Query("update Task set status=:taskStatus, startTime=current_timestamp, updateTime=current_time where id = :taskId")
     int updateTaskStatusForStartById(@Param("taskId") int taskId,

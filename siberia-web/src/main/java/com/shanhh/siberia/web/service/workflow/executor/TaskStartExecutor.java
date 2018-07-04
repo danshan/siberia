@@ -41,7 +41,7 @@ public class TaskStartExecutor implements StepExecutor {
     @Override
     public void exec(WorkflowDTO workflow) {
         TaskDTO task = workflow.getTask();
-        PipelineDeploymentDTO deployment = workflow.getDeployment();
+        PipelineDeploymentDTO deployment = task.getDeployment();
 
         Preconditions.checkState(taskService.startTaskById(task.getId(), taskStatus) > 0,
                 "update task status failed: %s, %s", deployment.getBuildNo(), task.getEnv());

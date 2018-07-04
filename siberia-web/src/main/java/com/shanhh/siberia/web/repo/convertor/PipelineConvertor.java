@@ -2,10 +2,8 @@ package com.shanhh.siberia.web.repo.convertor;
 
 import com.shanhh.siberia.client.dto.pipeline.PipelineDTO;
 import com.shanhh.siberia.client.dto.pipeline.PipelineDeploymentDTO;
-import com.shanhh.siberia.client.dto.pipeline.PipelineTaskDTO;
 import com.shanhh.siberia.web.repo.entity.Pipeline;
 import com.shanhh.siberia.web.repo.entity.PipelineDeployment;
-import com.shanhh.siberia.web.repo.entity.PipelineTask;
 import org.springframework.beans.BeanUtils;
 
 /**
@@ -52,24 +50,5 @@ public class PipelineConvertor {
         return po;
     }
 
-    public static PipelineTaskDTO toDTO(PipelineTask po) {
-        if (po == null) {
-            return null;
-        }
-        PipelineTaskDTO dto = new PipelineTaskDTO();
-        BeanUtils.copyProperties(po, dto);
-        dto.setEnv(SettingsConvertor.toDTO(po.getEnv()));
-        return dto;
-    }
-
-    public static PipelineTask toPO(PipelineTaskDTO dto) {
-        if (dto == null) {
-            return null;
-        }
-        PipelineTask po = new PipelineTask();
-        BeanUtils.copyProperties(dto, po);
-        po.setEnv(SettingsConvertor.toPO(dto.getEnv()));
-        return po;
-    }
 }
 

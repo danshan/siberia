@@ -19,6 +19,7 @@ public class TaskConvertor {
         TaskDTO dto = new TaskDTO();
         BeanUtils.copyProperties(task, dto);
         dto.setEnv(EnvConvertor.toDTO(task.getEnv()));
+        dto.setDeployment(PipelineConvertor.toDTO(task.getDeployment()));
         return dto;
     }
 
@@ -29,6 +30,7 @@ public class TaskConvertor {
         Task task = new Task();
         BeanUtils.copyProperties(taskDTO, task);
         task.setEnv(EnvConvertor.toPO(taskDTO.getEnv()));
+        task.setDeployment(PipelineConvertor.toPO(taskDTO.getDeployment()));
         return task;
     }
 

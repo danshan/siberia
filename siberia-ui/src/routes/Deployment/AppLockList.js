@@ -145,7 +145,6 @@ export default class AppConfigList extends PureComponent {
               dataSource={appLockList.content}
               pagination={paginationProps}
               columns={columns}
-              onChange={this.handleStandardTableChange}
               rowKey="id"
             />
           </div>

@@ -4,6 +4,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.shanhh.siberia.client.dto.task.*;
 import com.shanhh.siberia.web.repo.EnvRepo;
+import com.shanhh.siberia.web.repo.PipelineDeploymentRepo;
 import com.shanhh.siberia.web.repo.TaskRepo;
 import com.shanhh.siberia.web.repo.TaskStepRepo;
 import com.shanhh.siberia.web.repo.convertor.TaskConvertor;
@@ -36,11 +37,13 @@ public class TaskServiceImpl implements TaskService {
     private TaskStepRepo taskStepRepo;
     @Resource
     private EnvRepo envRepo;
+    @Resource
+    private PipelineDeploymentRepo pipelineDeploymentRepo;
 
     @Override
     public Optional<TaskDTO> createTask(TaskCreateReq taskReq) {
         Task task = new Task();
-        task.setDeploymentId(taskReq.getDeploymentId());
+        task.setDeployment(pipelineDeploymentRepo.findOne(taskReq.getDeploymentId()));
         task.setEnv(envRepo.findOne(taskReq.getEnvId()));
         task.setStatus(TaskStatus.CREATED);
         task.setCreateBy(taskReq.getCreateBy());
@@ -49,7 +52,6 @@ public class TaskServiceImpl implements TaskService {
         Task result = taskRepo.save(task);
         log.info("task created, {}", result);
         return Optional.ofNullable(TaskConvertor.toDTO(result));
-
     }
 
     @Override
@@ -57,6 +59,13 @@ public class TaskServiceImpl implements TaskService {
         Page<TaskDTO> page = taskRepo.findAll(new PageRequest(pageNum, pageSize))
                 .map(TaskConvertor::toDTO);
         return page;
+    }
+
+    @Override
+    public List<TaskDTO> findTaskStatusByDeployemnt(int deploymentId) {
+        return taskRepo.findStatusByDeploymentId(deploymentId).stream()
+                .map(TaskConvertor::toDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -114,7 +123,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public int endTaskById(int taskId, TaskStatus taskStatus) {
-        int result = taskRepo.updateTaskStatusForEndById(taskId, taskStatus);
+        int result = taskRepo.updateTaskStatusForStartById(taskId, taskStatus);
         log.info("task status updated to {}, taskId={}", taskStatus, taskId);
         return result;
     }

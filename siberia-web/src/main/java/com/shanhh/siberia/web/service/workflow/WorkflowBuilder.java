@@ -2,7 +2,6 @@ package com.shanhh.siberia.web.service.workflow;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import com.shanhh.siberia.client.dto.pipeline.PipelineDeploymentDTO;
 import com.shanhh.siberia.client.dto.task.TaskDTO;
 import com.shanhh.siberia.client.dto.workflow.StepExecutor;
 import com.shanhh.siberia.client.dto.workflow.WorkflowDTO;
@@ -18,7 +17,6 @@ public class WorkflowBuilder {
     private List<StepExecutor> stepChain;
     private List<StepExecutor> failedChain;
     private TaskDTO task;
-    private PipelineDeploymentDTO deployment;
 
     private WorkflowBuilder() {
     }
@@ -30,12 +28,6 @@ public class WorkflowBuilder {
     public WorkflowBuilder withTask(TaskDTO task) {
         Preconditions.checkNotNull(task, "task should not be null.");
         this.task = task;
-        return this;
-    }
-
-    public WorkflowBuilder withDeployment(PipelineDeploymentDTO deployment) {
-        Preconditions.checkNotNull(deployment, "deployment should not be null.");
-        this.deployment = deployment;
         return this;
     }
 
@@ -58,7 +50,7 @@ public class WorkflowBuilder {
     }
 
     public WorkflowDTO build() {
-        return new WorkflowDTO(task, deployment, stepChain, failedChain);
+        return new WorkflowDTO(task, stepChain, failedChain);
     }
 
 }

@@ -1,8 +1,7 @@
 import React, { Fragment, PureComponent } from 'react';
 import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
-import { Card, Row, Col, Radio, Input, Divider, Badge } from 'antd';
-import StandardTable from 'components/StandardTable';
+import { Card, Row, Col, Radio, Input, Divider, Badge, Table } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
 import styles from './TaskList.less';
@@ -17,31 +16,36 @@ const { Search } = Input;
 }))
 export default class TaskList extends PureComponent {
   state = {
-    selectedRows: [],
+    pageNum: 0,
+    pageSize: 20,
   };
 
   componentDidMount() {
     this.props.dispatch({
       type: 'task/paginateTaskList',
       payload: {
-        count: 5,
+        pageNum: this.state.pageNum,
+        pageSize: this.state.pageSize,
       },
     });
   }
-
-  handleSelectRows = rows => {
-    this.setState({
-      selectedRows: rows,
-    });
-  };
 
   handleLog = record => {
     this.props.dispatch(routerRedux.push(`/deployment/logviewer/${record.id}`));
   };
 
+  handlePage = (page, pageSize) => {
+    this.setState(
+      {
+        pageNum: page - 1,
+        pageSize,
+      },
+      () => this.paginateAppLockList()
+    );
+  };
+
   render() {
     const { task: { taskList }, loading } = this.props;
-    const { selectedRows } = this.state;
 
     const Info = ({ title, value, bordered }) => (
       <div className={styles.headerInfo}>
@@ -65,20 +69,11 @@ export default class TaskList extends PureComponent {
     const columns = [
       {
         title: 'App',
-        dataIndex: 'module',
-        sorter: true,
-        render: (text, record) => {
-          return (
-            <p>
-              {record.project || ''} : {record.module}
-            </p>
-          );
-        },
+        dataIndex: 'deployment.app.name',
       },
       {
         title: 'Build No.',
-        dataIndex: 'buildNo',
-        sorter: true,
+        dataIndex: 'deployment.buildNo',
       },
       {
         title: 'Env',
@@ -113,6 +108,14 @@ export default class TaskList extends PureComponent {
       },
     ];
 
+    const paginationProps = {
+      current: taskList.number + 1,
+      pageSize: taskList.size,
+      total: taskList.totalElements,
+      onChange: this.handlePage,
+      showTotal: total => `Total ${total} items`,
+    };
+
     return (
       <PageHeaderLayout>
         <div className={styles.standardList}>
@@ -137,12 +140,11 @@ export default class TaskList extends PureComponent {
             bodyStyle={{ padding: '0 32px 40px 32px' }}
             extra={extraContent}
           >
-            <StandardTable
-              selectedRows={selectedRows}
+            <Table
               loading={loading}
-              data={taskList}
+              dataSource={taskList.content}
+              pagination={paginationProps}
               columns={columns}
-              onSelectRow={this.handleSelectRows}
               rowKey="id"
             />
           </Card>

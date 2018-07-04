@@ -8,8 +8,6 @@ import com.shanhh.siberia.client.dto.task.TaskDTO;
 import com.shanhh.siberia.client.dto.task.TaskStatus;
 import com.shanhh.siberia.client.dto.workflow.StepExecutor;
 import com.shanhh.siberia.client.dto.workflow.WorkflowDTO;
-import com.shanhh.siberia.web.resource.errors.InternalServerErrorException;
-import com.shanhh.siberia.web.service.PipelineService;
 import com.shanhh.siberia.web.service.WorkflowService;
 import com.shanhh.siberia.web.service.workflow.TaskStepRegisterFactory;
 import com.shanhh.siberia.web.service.workflow.WorkflowBuilder;
@@ -22,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -33,23 +30,18 @@ import java.util.List;
 @Slf4j
 public class WorkflowServiceImpl implements WorkflowService {
 
-    @Resource
-    private PipelineService pipelineService;
-
     @Override
     @Transactional
     public void startTaskWorkflow(TaskDTO task) {
         List<String> relatedUsers = Lists.newArrayList(task.getCreateBy());
 
-        PipelineDeploymentDTO deployment = pipelineService.loadPipelineDeploymentById(task.getDeploymentId())
-                .orElseThrow(() -> new InternalServerErrorException("deployment not found"));
+        PipelineDeploymentDTO deployment = task.getDeployment();
         AppDTO app = deployment.getApp();
 
         WorkflowBuilder workflowBuilder = WorkflowBuilder.getInstance();
 
         workflowBuilder
                 .withTask(task)
-                .withDeployment(deployment)
                 // 修改task 状态为 running
                 .register(new TaskStartExecutor(TaskStatus.RUNNING))
                 // 锁定task环境

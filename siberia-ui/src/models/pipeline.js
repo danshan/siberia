@@ -7,23 +7,15 @@ import {
   paginatePipelineDeploymentList,
   paginatePipelineList,
   createPipelineDeployment,
-  createPipelineTask,
 } from '../services/api';
 
 export default {
   namespace: 'pipeline',
 
   state: {
-    pipelineList: {
-      total: 0,
-      size: 0,
-      list: [],
-    },
+    pipelineList: {},
     pipeline: {},
-    pipelineDeploymentList: {
-      pagination: {},
-      list: [],
-    },
+    pipelineDeploymentList: {},
     createdPipelineDeployment: {},
   },
 
@@ -81,14 +73,6 @@ export default {
       });
       return response.data;
     },
-
-    *createPipelineTask({ payload }, { call, put }) {
-      const response = yield call(createPipelineTask, payload);
-      yield put({
-        type: 'createdPipelineTask',
-        payload: response,
-      });
-    },
   },
 
   reducers: {
@@ -109,14 +93,7 @@ export default {
     pipelineDeploymentList(state, action) {
       return {
         ...state,
-        pipelineDeploymentList: {
-          list: action.payload.data.content,
-          pagination: {
-            current: action.payload.data.number,
-            pageSize: action.payload.data.size,
-            total: action.payload.data.totalElements,
-          },
-        },
+        pipelineDeploymentList: action.payload.data,
       };
     },
 

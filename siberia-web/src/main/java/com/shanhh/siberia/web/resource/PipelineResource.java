@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
+import java.util.List;
 
 /**
  * @author shanhonghao
@@ -131,16 +132,11 @@ public class PipelineResource {
     }
 
     @Timed
-    @RequestMapping(value = "{pipelineId}/tasks", method = RequestMethod.POST)
-    @ApiOperation(value = "create pipeline task", response = BaseResponse.class)
-    @ResponseStatus(HttpStatus.CREATED)
-    public BaseResponse<PipelineTaskDTO> createPipelineTask(
-            @Valid @Min(1) @PathVariable int pipelineId,
-            @Valid @RequestBody PipelineTaskReq task
+    @RequestMapping(value = "{pipelineId}/deployments/{deploymentId}/processes", method = RequestMethod.GET)
+    @ApiOperation(value = "create pipeline deployment", response = BaseResponse.class)
+    public BaseResponse<List<PipelineDeploymentProcessDTO>> findPipelineDeploymentProcesses(
+            @Valid @Min(1) @PathVariable int deploymentId
     ) {
-        task.setCreateBy("demo");
-        return new BaseResponse<>(pipelineService.createPipelineTask(task)
-                .orElseThrow(ResourceNotFoundException::new));
+        return new BaseResponse<>(pipelineService.findDeploymentProcess(deploymentId));
     }
-
 }

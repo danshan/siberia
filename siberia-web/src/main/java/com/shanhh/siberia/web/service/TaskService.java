@@ -16,6 +16,8 @@ public interface TaskService {
 
     Page<TaskDTO> paginateTasks(int pageNum, int pageSize);
 
+    List<TaskDTO> findTaskStatusByDeployemnt(int deploymentId);
+
     List<TaskDTO> findTasksByStatus(TaskStatus status);
 
     Optional<TaskDTO> updateTaskStatusById(TaskDTO taskDTO, TaskStatus targetStatus);

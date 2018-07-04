@@ -14,5 +14,5 @@ public interface AppHostRepo extends PagingAndSortingRepository<AppHost, Integer
 
     List<AppHost> findByAppId (int appId);
 
-    AppHost findByAppIdAndEnv(int appId, int envId);
+    AppHost findByAppIdAndEnvId(int appId, int envId);
 }

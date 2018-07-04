@@ -11,6 +11,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,6 +36,7 @@ public class TaskResource {
     @Timed
     @RequestMapping(method = RequestMethod.POST)
     @ApiOperation(value = "create task", response = BaseResponse.class)
+    @ResponseStatus(HttpStatus.CREATED)
     public BaseResponse<TaskDTO> createTask(
             @RequestBody TaskCreateReq task
     ) {

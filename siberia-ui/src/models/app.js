@@ -12,11 +12,7 @@ export default {
   namespace: 'app',
 
   state: {
-    appLockList: {
-      pagination: {},
-      list: [],
-    },
-
+    appLockList: {},
     app: {},
     appConfigMap: {},
     appHostMap: {},

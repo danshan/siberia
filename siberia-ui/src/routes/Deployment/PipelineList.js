@@ -70,10 +70,10 @@ export default class PipelineList extends PureComponent {
   };
 
   componentDidMount() {
-    this.pagiantePipelineList();
+    this.paginatePipelineList();
   }
 
-  pagiantePipelineList = () => {
+  paginatePipelineList = () => {
     this.props.dispatch({
       type: 'pipeline/paginatePipelineList',
       payload: {
@@ -143,7 +143,7 @@ export default class PipelineList extends PureComponent {
         pageNum: page - 1,
         pageSize,
       },
-      () => this.pagiantePipelineList()
+      () => this.paginatePipelineList()
     );
   };
 

@@ -1,5 +1,6 @@
 package com.shanhh.siberia.client.dto.task;
 
+import com.shanhh.siberia.client.dto.pipeline.PipelineDeploymentDTO;
 import com.shanhh.siberia.client.dto.settings.EnvDTO;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,7 +20,7 @@ import java.util.List;
 public class TaskDTO implements Serializable {
 
     private int id;
-    private int deploymentId;
+    private PipelineDeploymentDTO deployment;
     private List<String> nodes;
     private EnvDTO env;
     private Date startTime;
