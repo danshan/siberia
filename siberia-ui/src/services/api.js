@@ -123,6 +123,12 @@ export async function paginatePipelineDeploymentList(params) {
   return request(`/api/pipelines/${params.pipelineId}/deployments`);
 }
 
+export async function findDeploymentProcessList(params) {
+  return request(
+    `/api/pipelines/${params.pipelineId}/deployments/${params.deploymentId}/processes`
+  );
+}
+
 // apps
 
 export async function paginateAppLockList(params) {

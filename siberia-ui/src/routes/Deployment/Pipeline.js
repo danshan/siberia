@@ -1,7 +1,7 @@
 import { routerRedux } from 'dva/router';
-import React, { Fragment, PureComponent } from 'react';
+import React, { Fragment, Component } from 'react';
 import { connect } from 'dva';
-import { Button, Badge, Card, Divider, Form, Input, message, Modal, Table } from 'antd';
+import { Badge, Button, Card, Divider, Form, Input, message, Modal, Table } from 'antd';
 
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
@@ -48,9 +48,10 @@ const CreateForm = Form.create()(props => {
   loading: loading.models.pipeline,
 }))
 @Form.create()
-export default class Pipeline extends PureComponent {
+export default class Pipeline extends Component {
   state = {
     modalVisible: false,
+    deploymentProcessMap: {},
 
     pageNum: 0,
     pageSize: 20,
@@ -80,7 +81,29 @@ export default class Pipeline extends PureComponent {
         pageNum: this.state.pageNum,
         pageSize: this.state.pageSize,
       },
+    }).then(() => {
+      this.props.pipeline.pipelineDeploymentList.content.forEach(deployment => {
+        this.findDeploymentProcessList(deployment.id);
+      });
     });
+  };
+
+  findDeploymentProcessList = deploymentId => {
+    this.props
+      .dispatch({
+        type: 'pipeline/findDeploymentProcessList',
+        payload: {
+          pipelineId: this.props.match.params.pipelineId,
+          deploymentId,
+        },
+      })
+      .then(processList => {
+        const map = this.state.deploymentProcessMap;
+        map[String(deploymentId)] = processList;
+        this.setState({
+          deploymentProcessMap: map,
+        });
+      });
   };
 
   createPipelineDeployment = fields => {
@@ -102,12 +125,12 @@ export default class Pipeline extends PureComponent {
     });
   };
 
-  createTask = deployment => {
+  createTask = process => {
     this.props.dispatch({
       type: 'task/createTask',
       payload: {
-        envId: 1,
-        deploymentId: deployment.id,
+        envId: process.envId,
+        deploymentId: process.deploymentId,
       },
     });
   };
@@ -130,13 +153,12 @@ export default class Pipeline extends PureComponent {
     this.props.dispatch(routerRedux.push(`/settings/apps/${record.app.id}`));
   };
 
-  handleCreateTask = record => {
-    console.log(record);
-    this.createTask(record);
+  handleCreateTask = process => {
+    this.createTask(process);
   };
 
-  handleLog = record => {
-    this.props.dispatch(routerRedux.push(`/deployment/logviewer/${record.id}`));
+  handleLog = process => {
+    this.props.dispatch(routerRedux.push(`/deployment/logviewer/${process.taskId}`));
   };
 
   handlePage = (page, pageSize) => {
@@ -167,6 +189,16 @@ export default class Pipeline extends PureComponent {
       showTotal: total => `Total ${total} items`,
     };
 
+    const deploymentStatus = {
+      UNKNOWN: 'default',
+      CREATED: 'processing',
+      OK: 'success',
+      SERVICING: 'processing',
+      RUNNING: 'processing',
+      ROLLBACK: 'warning',
+      FAIL: 'error',
+    };
+
     const columns = [
       {
         title: 'Name',
@@ -187,15 +219,22 @@ export default class Pipeline extends PureComponent {
           <Fragment>
             <a onClick={() => this.handleConfig(record)}>Config</a>
             <Divider type="vertical" />
-            <a onClick={() => this.handleCreateTask(record)}>Deploy</a>
             <Button.Group>
-              {[].map(config => {
-                return (
-                  <Button key={config.env.id}>
-                    <Badge status="error" />
-                    {config.env.name}
-                  </Button>
-                );
+              {(this.state.deploymentProcessMap[String(record.id)] || []).map(process => {
+                if (process.status) {
+                  return (
+                    <Button key={process.envId} onClick={() => this.handleLog(process)}>
+                      <Badge status={deploymentStatus[process.status.value]} />
+                      {process.envName}
+                    </Button>
+                  );
+                } else {
+                  return (
+                    <Button key={process.envId} onClick={() => this.handleCreateTask(process)}>
+                      {process.envName}
+                    </Button>
+                  );
+                }
               })}
             </Button.Group>
           </Fragment>

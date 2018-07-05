@@ -7,6 +7,7 @@ import {
   paginatePipelineDeploymentList,
   paginatePipelineList,
   createPipelineDeployment,
+  findDeploymentProcessList,
 } from '../services/api';
 
 export default {
@@ -17,6 +18,8 @@ export default {
     pipeline: {},
     pipelineDeploymentList: {},
     createdPipelineDeployment: {},
+
+    deploymentProcessMap: {},
   },
 
   effects: {
@@ -71,6 +74,11 @@ export default {
         type: 'createdPipelineDeployment',
         payload: response,
       });
+      return response.data;
+    },
+
+    *findDeploymentProcessList({ payload }, { call }) {
+      const response = yield call(findDeploymentProcessList, payload);
       return response.data;
     },
   },
