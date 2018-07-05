@@ -52,6 +52,7 @@ export default class Pipeline extends Component {
   state = {
     modalVisible: false,
     deploymentProcessMap: {},
+    buttonLoadingMap: {},
 
     pageNum: 0,
     pageSize: 20,
@@ -98,10 +99,16 @@ export default class Pipeline extends Component {
         },
       })
       .then(processList => {
-        const map = this.state.deploymentProcessMap;
-        map[String(deploymentId)] = processList;
+        const processMap = this.state.deploymentProcessMap;
+        processMap[String(deploymentId)] = processList;
+
+        const buttonMap = this.state.buttonLoadingMap;
+        processList.forEach(process => {
+          buttonMap[`${process.deploymentId}:${process.envId}`] = false;
+        });
         this.setState({
-          deploymentProcessMap: map,
+          deploymentProcessMap: processMap,
+          buttonLoadingMap: buttonMap,
         });
       });
   };
@@ -126,13 +133,26 @@ export default class Pipeline extends Component {
   };
 
   createTask = process => {
-    this.props.dispatch({
-      type: 'task/createTask',
-      payload: {
-        envId: process.envId,
-        deploymentId: process.deploymentId,
+    const buttonMap = this.state.buttonLoadingMap;
+    buttonMap[`${process.deploymentId}:${process.envId}`] = true;
+    this.setState(
+      {
+        buttonLoadingMap: buttonMap,
       },
-    });
+      () => {
+        this.props
+          .dispatch({
+            type: 'task/createTask',
+            payload: {
+              envId: process.envId,
+              deploymentId: process.deploymentId,
+            },
+          })
+          .then(() => {
+            this.paginatePipelineDeploymentList();
+          });
+      }
+    );
   };
 
   sendSuccessMessage = msg => {
@@ -153,7 +173,7 @@ export default class Pipeline extends Component {
     this.props.dispatch(routerRedux.push(`/settings/apps/${record.app.id}`));
   };
 
-  handleCreateTask = process => {
+  handleCreateTask = (e, process) => {
     this.createTask(process);
   };
 
@@ -223,14 +243,20 @@ export default class Pipeline extends Component {
               {(this.state.deploymentProcessMap[String(record.id)] || []).map(process => {
                 if (process.status) {
                   return (
-                    <Button key={process.envId} onClick={() => this.handleLog(process)}>
+                    <Button
+                      key={process.envId}
+                      loading={
+                        this.state.buttonLoadingMap[`${process.deploymentId}:${process.envId}`]
+                      }
+                      onClick={() => this.handleLog(process)}
+                    >
                       <Badge status={deploymentStatus[process.status.value]} />
                       {process.envName}
                     </Button>
                   );
                 } else {
                   return (
-                    <Button key={process.envId} onClick={() => this.handleCreateTask(process)}>
+                    <Button key={process.envId} onClick={e => this.handleCreateTask(e, process)}>
                       {process.envName}
                     </Button>
                   );

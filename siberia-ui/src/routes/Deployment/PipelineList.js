@@ -93,7 +93,7 @@ export default class PipelineList extends PureComponent {
           status,
         },
       })
-      .then(() => this.pagiantePipelineList());
+      .then(() => this.paginatePipelineList());
   };
 
   createPipeline = fieldValues => {
@@ -109,7 +109,7 @@ export default class PipelineList extends PureComponent {
         type: 'pipeline/updatePipeline',
         payload: fieldValues,
       })
-      .then(() => this.pagiantePipelineList());
+      .then(() => this.paginatePipelineList());
   };
 
   handleModalVisible = flag => {
@@ -148,7 +148,7 @@ export default class PipelineList extends PureComponent {
   };
 
   handleFilterStatus = e => {
-    this.setState({ status: e.target.value }, () => this.pagiantePipelineList());
+    this.setState({ status: e.target.value }, () => this.paginatePipelineList());
   };
 
   handleUpdateStatus = (record, status) => {
