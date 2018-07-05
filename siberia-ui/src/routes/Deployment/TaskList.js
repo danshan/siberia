@@ -1,4 +1,5 @@
 import React, { Fragment, PureComponent } from 'react';
+import SockJsClient from 'react-stomp';
 import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
 import { Card, Row, Col, Radio, Input, Divider, Badge, Table } from 'antd';
@@ -42,6 +43,14 @@ export default class TaskList extends PureComponent {
       },
       () => this.paginateAppLockList()
     );
+  };
+
+  handleEvent = msg => {
+    console.log(msg);
+    this.props.dispatch({
+      type: 'task/refreshTask',
+      payload: msg,
+    });
   };
 
   render() {
@@ -148,6 +157,11 @@ export default class TaskList extends PureComponent {
               rowKey="id"
             />
           </Card>
+          <SockJsClient
+            url="http://localhost:8080/wsendpoint"
+            topics={['/task']}
+            onMessage={msg => this.handleEvent(msg)}
+          />
         </div>
       </PageHeaderLayout>
     );

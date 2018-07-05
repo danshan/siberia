@@ -2,7 +2,9 @@ package com.shanhh.siberia.web.service.impl;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableMap;
 import com.shanhh.siberia.client.dto.task.*;
+import com.shanhh.siberia.web.config.WebSocketConfiguration;
 import com.shanhh.siberia.web.repo.EnvRepo;
 import com.shanhh.siberia.web.repo.PipelineDeploymentRepo;
 import com.shanhh.siberia.web.repo.TaskRepo;
@@ -16,10 +18,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.StaleObjectStateException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -39,6 +44,9 @@ public class TaskServiceImpl implements TaskService {
     private EnvRepo envRepo;
     @Resource
     private PipelineDeploymentRepo pipelineDeploymentRepo;
+
+    @Resource
+    private SimpMessagingTemplate simpMessagingTemplate;
 
     @Override
     public Optional<TaskDTO> createTask(TaskCreateReq taskReq) {
@@ -81,6 +89,7 @@ public class TaskServiceImpl implements TaskService {
         try {
             Task result = taskRepo.save(task);
             log.info("task status changed, {}", task);
+            pushTaskUpdatedEvent(taskDTO.getId(), targetStatus);
             return Optional.ofNullable(TaskConvertor.toDTO(result));
         } catch (StaleObjectStateException exception) {
             log.info("task status has been changed, {}", task);
@@ -118,6 +127,7 @@ public class TaskServiceImpl implements TaskService {
     public int startTaskById(int taskId, TaskStatus taskStatus) {
         int result = taskRepo.updateTaskStatusForStartById(taskId, taskStatus);
         log.info("task status updated to {}, taskId={}", taskStatus, taskId);
+        pushTaskUpdatedEvent(taskId, taskStatus);
         return result;
     }
 
@@ -125,7 +135,17 @@ public class TaskServiceImpl implements TaskService {
     public int endTaskById(int taskId, TaskStatus taskStatus) {
         int result = taskRepo.updateTaskStatusForStartById(taskId, taskStatus);
         log.info("task status updated to {}, taskId={}", taskStatus, taskId);
+        pushTaskUpdatedEvent(taskId, taskStatus);
         return result;
+    }
+
+    private void pushTaskUpdatedEvent(int taskId, TaskStatus status) {
+        Map<String, Object> msg = ImmutableMap.<String, Object>builder()
+                .put("taskId", taskId)
+                .put("status", status)
+                .put("updateTime", new Date())
+                .build();
+        simpMessagingTemplate.convertAndSend(WebSocketConfiguration.TASK, msg);
     }
 
     @Override

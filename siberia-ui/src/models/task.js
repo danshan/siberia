@@ -23,6 +23,13 @@ export default {
         payload: response,
       });
     },
+
+    *refreshTask({ payload }, { put }) {
+      yield put({
+        type: 'taskEvent',
+        payload,
+      });
+    },
   },
 
   reducers: {
@@ -31,6 +38,19 @@ export default {
         ...state,
         taskList: action.payload.data,
       };
+    },
+
+    taskEvent(state, action) {
+      const list = state.taskList;
+      const task = list.content.find(l => l.id === action.payload.taskId);
+      if (task) {
+        task.updateTime = action.payload.updateTime;
+        task.status = action.payload.status;
+        return {
+          ...state,
+          taskList: list,
+        };
+      }
     },
   },
 };

@@ -14,8 +14,8 @@ import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 @EnableWebSocketMessageBroker
 public class WebSocketConfiguration extends AbstractWebSocketMessageBrokerConfigurer {
 
-    public static final String TASKS_LIST = "/tasks/list";
-    public static final String APP_LOCK_LIST= "/apps/locks/list";
+    public static final String TASK = "/task";
+    public static final String APP_LOCK_LIST = "/applock";
     public static final String LOGS_ANSIBLE = "/logs/ansible/%s";
     public static final String LOGS_SIBERIA = "/logs/siberia/%s";
     public static final String PIPELINES = "/pipelines/%s";
@@ -28,7 +28,7 @@ public class WebSocketConfiguration extends AbstractWebSocketMessageBrokerConfig
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.enableSimpleBroker("/tasks", "/pipelines", "/apps", "/envs", "/logs");
+        registry.enableSimpleBroker("/task", "/pipelines", "/applock", "/envs", "/logs");
         registry.setApplicationDestinationPrefixes("/app-receive");
     }
 

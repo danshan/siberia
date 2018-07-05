@@ -114,12 +114,14 @@ export default {
     appLockEvent(state, action) {
       const list = state.appLockList;
       const lock = list.content.find(l => l.id === action.payload.appLockId);
-      lock.lockStatus = action.payload.status;
-      lock.updateBy = action.payload.updateBy;
-      return {
-        ...state,
-        appLockList: list,
-      };
+      if (lock) {
+        lock.lockStatus = action.payload.status;
+        lock.updateBy = action.payload.updateBy;
+        return {
+          ...state,
+          appLockList: list,
+        };
+      }
     },
   },
 };

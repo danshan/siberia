@@ -165,13 +165,11 @@ export default class AppConfigList extends PureComponent {
             />
           </div>
         </Card>
-        <div>
-          <SockJsClient
-            url="http://localhost:8080/wsendpoint"
-            topics={['/apps/locks/list']}
-            onMessage={msg => this.handleEvent(msg)}
-          />
-        </div>
+        <SockJsClient
+          url="http://localhost:8080/wsendpoint"
+          topics={['/applock']}
+          onMessage={msg => this.handleEvent(msg)}
+        />
       </PageHeaderLayout>
     );
   }
