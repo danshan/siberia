@@ -6,6 +6,7 @@ import com.shanhh.siberia.client.dto.app.AppConfigDTO;
 import com.shanhh.siberia.client.dto.app.AppDTO;
 import com.shanhh.siberia.client.dto.pipeline.*;
 import com.shanhh.siberia.client.dto.task.TaskDTO;
+import com.shanhh.siberia.web.config.WebSocketConfiguration;
 import com.shanhh.siberia.web.repo.PipelineDeploymentRepo;
 import com.shanhh.siberia.web.repo.PipelineRepo;
 import com.shanhh.siberia.web.repo.convertor.PipelineConvertor;
@@ -14,13 +15,13 @@ import com.shanhh.siberia.web.repo.entity.PipelineDeployment;
 import com.shanhh.siberia.web.resource.errors.BadRequestAlertException;
 import com.shanhh.siberia.web.service.AppService;
 import com.shanhh.siberia.web.service.PipelineService;
-import com.shanhh.siberia.web.service.SettingsService;
 import com.shanhh.siberia.web.service.TaskService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -45,9 +46,10 @@ public class PipelineServiceImpl implements PipelineService {
     @Resource
     private AppService appService;
     @Resource
-    private SettingsService settingsService;
-    @Resource
     private TaskService taskService;
+
+    @Resource
+    private SimpMessagingTemplate simpMessagingTemplate;
 
     @Override
     public Page<PipelineDTO> paginatePipelines(int pageNum, int pageSize, PipelineStatus status) {
@@ -111,6 +113,7 @@ public class PipelineServiceImpl implements PipelineService {
 
         Pipeline updated = pipelineRepo.save(PipelineConvertor.toPO(pipeline));
         log.info("pipeline updated, {}", request);
+        simpMessagingTemplate.convertAndSend(String.format(WebSocketConfiguration.PIPELINES, request.getPipelineId()), updated);
         return Optional.ofNullable(PipelineConvertor.toDTO(updated));
     }
 
@@ -123,6 +126,7 @@ public class PipelineServiceImpl implements PipelineService {
 
         Pipeline updated = pipelineRepo.save(PipelineConvertor.toPO(pipeline));
         log.info("pipeline status updated to {}, pipeline={}", request.getStatus(), request);
+        simpMessagingTemplate.convertAndSend(String.format(WebSocketConfiguration.PIPELINES, request.getPipelineId()), updated);
         return Optional.ofNullable(PipelineConvertor.toDTO(updated));
     }
 
