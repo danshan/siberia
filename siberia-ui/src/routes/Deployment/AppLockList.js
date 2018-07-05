@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react';
+import SockJsClient from 'react-stomp';
 import { connect } from 'dva';
 import { Card, Switch, Icon, Radio, Table } from 'antd';
 
@@ -13,11 +14,15 @@ import styles from './AppLockList.less';
   settingsLoading: loading.models.settings,
 }))
 export default class AppConfigList extends PureComponent {
-  state = {
-    envId: 0,
-    pageNum: 0,
-    pageSize: 20,
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      envId: 0,
+      pageNum: 0,
+      pageSize: 20,
+    };
+  }
 
   componentDidMount() {
     this.paginateAppLockList();
@@ -81,6 +86,13 @@ export default class AppConfigList extends PureComponent {
     );
   };
 
+  handleEvent = msg => {
+    this.props.dispatch({
+      type: 'app/refreshAppLock',
+      payload: msg,
+    });
+  };
+
   render() {
     const { app: { appLockList }, settings: { envList }, appLoading } = this.props;
 
@@ -123,7 +135,11 @@ export default class AppConfigList extends PureComponent {
       <div>
         <Radio.Group defaultValue="0" onChange={this.handleChangeEnv}>
           <Radio.Button value="0">全部</Radio.Button>
-          {(envList || []).map(env => <Radio.Button value={env.id}>{env.name}</Radio.Button>)}
+          {(envList || []).map(env => (
+            <Radio.Button value={env.id} key={env.id}>
+              {env.name}
+            </Radio.Button>
+          ))}
         </Radio.Group>
       </div>
     );
@@ -149,6 +165,13 @@ export default class AppConfigList extends PureComponent {
             />
           </div>
         </Card>
+        <div>
+          <SockJsClient
+            url="http://localhost:8080/wsendpoint"
+            topics={['/apps/locks/list']}
+            onMessage={msg => this.handleEvent(msg)}
+          />
+        </div>
       </PageHeaderLayout>
     );
   }

@@ -32,6 +32,13 @@ export default {
       return response.data;
     },
 
+    *refreshAppLock({ payload }, { put }) {
+      yield put({
+        type: 'appLockEvent',
+        payload,
+      });
+    },
+
     *loadApp({ payload }, { call, put }) {
       const response = yield call(loadApp, payload);
       yield put({
@@ -101,6 +108,17 @@ export default {
       return {
         ...state,
         appHostMap: hosts,
+      };
+    },
+
+    appLockEvent(state, action) {
+      const list = state.appLockList;
+      const lock = list.content.find(l => l.id === action.payload.appLockId);
+      lock.lockStatus = action.payload.status;
+      lock.updateBy = action.payload.updateBy;
+      return {
+        ...state,
+        appLockList: list,
       };
     },
   },
