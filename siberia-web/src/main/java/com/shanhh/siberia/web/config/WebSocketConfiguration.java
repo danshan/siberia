@@ -15,10 +15,10 @@ import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 public class WebSocketConfiguration extends AbstractWebSocketMessageBrokerConfigurer {
 
     public static final String TASKS_LIST = "/tasks/list";
-    public static final String ENVS_LIST = "/envs/list";
+    public static final String APP_LOCK_LIST= "/apps/locks/list";
     public static final String LOGS_ANSIBLE = "/logs/ansible/%s";
     public static final String LOGS_SIBERIA = "/logs/siberia/%s";
-    public static final String PIPELINES = "/pipelines /%s";
+    public static final String PIPELINES = "/pipelines/%s";
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {

@@ -1,8 +1,10 @@
 package com.shanhh.siberia.web.service.impl;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableMap;
 import com.shanhh.siberia.client.dto.app.*;
 import com.shanhh.siberia.client.dto.settings.EnvDTO;
+import com.shanhh.siberia.web.config.WebSocketConfiguration;
 import com.shanhh.siberia.web.repo.*;
 import com.shanhh.siberia.web.repo.convertor.AppConvertor;
 import com.shanhh.siberia.web.repo.convertor.EnvConvertor;
@@ -14,12 +16,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -41,6 +45,9 @@ public class AppServiceImpl implements AppService {
     private AppConfigRepo appConfigRepo;
     @Resource
     private EnvRepo envRepo;
+
+    @Resource
+    private SimpMessagingTemplate simpMessagingTemplate;
 
     @Override
     public Optional<AppDTO> createApp(AppCreateReq appCreateReq) {
@@ -127,9 +134,13 @@ public class AppServiceImpl implements AppService {
             exists.setUpdateTime(new Date());
             exists.setLockStatus(lockStatus);
 
-            AppLock result = appLockRepo.save(exists);
-            log.info("app lock updated: {}", result);
-            return Optional.ofNullable(AppConvertor.toDTO(result));
+            AppLock saved = appLockRepo.save(exists);
+            log.info("app lock updated: {}", saved);
+
+            AppLockDTO result = AppConvertor.toDTO(saved);
+            this.pushAppLockUpdatedEvent(result, lockStatus, operator);
+
+            return Optional.ofNullable(result);
         } else {
             AppLock appLock = new AppLock();
             appLock.setApp(AppConvertor.toPO(app));
@@ -138,10 +149,23 @@ public class AppServiceImpl implements AppService {
             appLock.setCreateBy(operator);
             appLock.setUpdateBy(operator);
 
-            AppLock result = appLockRepo.save(appLock);
-            log.info("app lock created: {}", result);
-            return Optional.ofNullable(AppConvertor.toDTO(result));
+            AppLock saved = appLockRepo.save(appLock);
+            log.info("app lock created: {}", saved);
+
+            AppLockDTO result = AppConvertor.toDTO(saved);
+            this.pushAppLockUpdatedEvent(result, lockStatus, operator);
+
+            return Optional.ofNullable(result);
         }
+    }
+
+    private void pushAppLockUpdatedEvent(AppLockDTO lock, LockStatus lockStatus, String updateBy) {
+        Map<String, Object> msg = ImmutableMap.<String, Object>builder()
+                .put("appLockId", lock.getId())
+                .put("status", lockStatus)
+                .put("updateBy", updateBy)
+                .build();
+        simpMessagingTemplate.convertAndSend(WebSocketConfiguration.APP_LOCK_LIST, msg);
     }
 
     @Override
@@ -153,9 +177,13 @@ public class AppServiceImpl implements AppService {
         exists.setLockStatus(lockStatus);
         exists.setUpdateBy(operator);
         exists.setUpdateTime(new Date());
-        AppLock result = appLockRepo.save(exists);
-        log.info("app lock updated: {}", result);
-        return Optional.ofNullable(AppConvertor.toDTO(result));
+        AppLock saved = appLockRepo.save(exists);
+        log.info("app lock updated: {}", saved);
+
+        AppLockDTO result = AppConvertor.toDTO(saved);
+        this.pushAppLockUpdatedEvent(result, lockStatus, operator);
+
+        return Optional.ofNullable(result);
     }
 
     @Override
