@@ -28,7 +28,7 @@ public class WebSocketConfiguration extends AbstractWebSocketMessageBrokerConfig
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.enableSimpleBroker("/tasks", "/pipelines", "/envs", "/logs");
+        registry.enableSimpleBroker("/tasks", "/pipelines", "/apps", "/envs", "/logs");
         registry.setApplicationDestinationPrefixes("/app-receive");
     }
 
