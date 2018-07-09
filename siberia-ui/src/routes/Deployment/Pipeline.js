@@ -237,7 +237,12 @@ export default class Pipeline extends Component {
         title: '操作',
         render: (text, record) => (
           <Fragment>
-            <a onClick={() => this.handleConfig(record)}>Config</a>
+            <Button
+              type="primary"
+              shape="circle"
+              icon="profile"
+              onClick={() => this.handleConfig(record)}
+            />
             <Divider type="vertical" />
             <Button.Group>
               {(this.state.deploymentProcessMap[String(record.id)] || []).map(process => {
