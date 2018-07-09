@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react';
+import SockJsClient from 'react-stomp';
 import { connect } from 'dva';
 import { Card } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
@@ -30,6 +31,21 @@ export default class LogViewer extends PureComponent {
       payload: {
         id: this.props.match.params.taskId,
       },
+    });
+  };
+
+  pushSiberiaLog = msg => {
+    this.props.dispatch({
+      type: 'logviewer/pushSiberiaLog',
+      payload: msg,
+    });
+  };
+
+  pushAnsibleLog = msg => {
+    console.log(msg);
+    this.props.dispatch({
+      type: 'logviewer/pushAnsibleLog',
+      payload: msg,
     });
   };
 
@@ -114,6 +130,16 @@ export default class LogViewer extends PureComponent {
             </pre>
           </div>
         </Card>
+        <SockJsClient
+          url="http://localhost:8080/wsendpoint"
+          topics={[`/logs/siberia/${this.props.match.params.taskId}`]}
+          onMessage={msg => this.pushSiberiaLog(msg)}
+        />
+        <SockJsClient
+          url="http://localhost:8080/wsendpoint"
+          topics={[`/logs/ansible/${this.props.match.params.taskId}`]}
+          onMessage={msg => this.pushAnsibleLog(msg)}
+        />
       </PageHeaderLayout>
     );
   }

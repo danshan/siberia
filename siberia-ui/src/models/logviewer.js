@@ -24,6 +24,20 @@ export default {
         payload: response,
       });
     },
+
+    *pushSiberiaLog({ payload }, { put }) {
+      yield put({
+        type: 'siberiaLine',
+        payload,
+      });
+    },
+
+    *pushAnsibleLog({ payload }, { put }) {
+      yield put({
+        type: 'ansibleLine',
+        payload,
+      });
+    },
   },
 
   reducers: {
@@ -38,6 +52,24 @@ export default {
       return {
         ...state,
         ansibleLogs: action.payload.data,
+      };
+    },
+
+    siberiaLine(state, action) {
+      const log = state.siberiaLogs;
+      log.push(action.payload.line);
+      return {
+        ...state,
+        siberiaLogs: log,
+      };
+    },
+
+    ansibleLine(state, action) {
+      const log = state.ansibleLogs;
+      log.push(action.payload.line);
+      return {
+        ...state,
+        ansibleLine: log,
       };
     },
   },

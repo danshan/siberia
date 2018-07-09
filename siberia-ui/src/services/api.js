@@ -120,7 +120,10 @@ export async function createPipelineDeployment(params) {
 }
 
 export async function paginatePipelineDeploymentList(params) {
-  return request(`/api/pipelines/${params.pipelineId}/deployments`);
+  return request(`/api/pipelines/${params.pipelineId}/deployments`, {
+    method: 'GET',
+    body: params,
+  });
 }
 
 export async function findDeploymentProcessList(params) {
@@ -145,8 +148,11 @@ export async function updateAppLockStatus(params) {
   });
 }
 
-export async function paginateAppList() {
-  return request('/api/apps');
+export async function paginateAppList(params) {
+  return request('/api/apps', {
+    method: 'GET',
+    body: params,
+  });
 }
 
 export async function removeApp(params) {
@@ -206,8 +212,11 @@ export async function updateAppHost(params) {
 
 // tasks
 
-export async function paginateTaskList() {
-  return request('/api/tasks');
+export async function paginateTaskList(params) {
+  return request('/api/tasks', {
+    method: 'GET',
+    body: params,
+  });
 }
 
 export async function createTask(params) {

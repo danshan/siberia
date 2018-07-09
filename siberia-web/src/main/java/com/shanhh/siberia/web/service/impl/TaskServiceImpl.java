@@ -18,6 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.StaleObjectStateException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -64,7 +65,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public Page<TaskDTO> paginateTasks(int pageNum, int pageSize) {
-        Page<TaskDTO> page = taskRepo.findAll(new PageRequest(pageNum, pageSize))
+        Page<TaskDTO> page = taskRepo.findAll(new PageRequest(pageNum, pageSize, Sort.Direction.DESC, "id"))
                 .map(TaskConvertor::toDTO);
         return page;
     }

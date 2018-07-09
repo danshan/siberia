@@ -22,6 +22,10 @@ export default class TaskList extends PureComponent {
   };
 
   componentDidMount() {
+    this.paginateTaskList();
+  }
+
+  paginateTaskList = () => {
     this.props.dispatch({
       type: 'task/paginateTaskList',
       payload: {
@@ -29,7 +33,7 @@ export default class TaskList extends PureComponent {
         pageSize: this.state.pageSize,
       },
     });
-  }
+  };
 
   handleLog = record => {
     this.props.dispatch(routerRedux.push(`/deployment/logviewer/${record.id}`));
@@ -41,12 +45,11 @@ export default class TaskList extends PureComponent {
         pageNum: page - 1,
         pageSize,
       },
-      () => this.paginateAppLockList()
+      () => this.paginateTaskList()
     );
   };
 
   handleEvent = msg => {
-    console.log(msg);
     this.props.dispatch({
       type: 'task/refreshTask',
       payload: msg,

@@ -20,6 +20,7 @@ export default {
 
   effects: {
     *paginateAppLockList({ payload }, { call, put }) {
+      console.log(payload);
       const response = yield call(paginateAppLockList, payload);
       yield put({
         type: 'appLockList',
