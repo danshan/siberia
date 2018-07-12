@@ -21,6 +21,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -60,13 +61,16 @@ public class PipelineServiceImpl implements PipelineService {
             statusVals = Lists.newArrayList(status);
         }
 
-        Page<PipelineDTO> pipelines = pipelineRepo.findByStatus(statusVals, new PageRequest(pageNum, pageSize)).map(PipelineConvertor::toDTO);
+        Page<PipelineDTO> pipelines = pipelineRepo
+                .findByStatus(statusVals, new PageRequest(pageNum, pageSize, Sort.Direction.DESC, "id"))
+                .map(PipelineConvertor::toDTO);
         return pipelines;
     }
 
     @Override
     public Page<PipelineDeploymentDTO> paginatePipelineDeployments(int pageNum, int pageSize, int pipelineId) {
-        Page<PipelineDeploymentDTO> results = pipelineDeploymentRepo.findByPipelineId(pipelineId, new PageRequest(pageNum, pageSize))
+        Page<PipelineDeploymentDTO> results = pipelineDeploymentRepo
+                .findByPipelineId(pipelineId, new PageRequest(pageNum, pageSize, Sort.Direction.DESC, "id"))
                 .map(PipelineConvertor::toDTO);
         return results;
     }

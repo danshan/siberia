@@ -16,6 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -105,7 +106,9 @@ public class AppServiceImpl implements AppService {
 
     @Override
     public Page<AppDTO> paginateApps(int pageNum, int pageSize) {
-        Page<AppDTO> apps = appRepo.findByDeleted(false, new PageRequest(pageNum, pageSize)).map(AppConvertor::toDTO);
+        Page<AppDTO> apps = appRepo
+                .findByDeleted(false, new PageRequest(pageNum, pageSize, Sort.Direction.DESC, "id"))
+                .map(AppConvertor::toDTO);
         return apps;
     }
 
@@ -115,9 +118,11 @@ public class AppServiceImpl implements AppService {
         if (envId > 0) {
             Env env = envRepo.findOne(envId);
             Preconditions.checkArgument(env != null, "env not exists");
-            appLocks = appLockRepo.findByEnv(env, new PageRequest(pageNum, pageSize)).map(AppConvertor::toDTO);
+            appLocks = appLockRepo.findByEnv(env, new PageRequest(pageNum, pageSize, Sort.Direction.DESC, "id"))
+                    .map(AppConvertor::toDTO);
         } else {
-            appLocks = appLockRepo.findAll(new PageRequest(pageNum, pageSize)).map(AppConvertor::toDTO);
+            appLocks = appLockRepo.findAll(new PageRequest(pageNum, pageSize, Sort.Direction.DESC, "id"))
+                    .map(AppConvertor::toDTO);
         }
 
         return appLocks;
