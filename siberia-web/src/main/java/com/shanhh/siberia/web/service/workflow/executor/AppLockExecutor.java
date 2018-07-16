@@ -1,9 +1,7 @@
 package com.shanhh.siberia.web.service.workflow.executor;
 
 
-import com.shanhh.siberia.client.dto.app.AppDTO;
 import com.shanhh.siberia.client.dto.app.LockStatus;
-import com.shanhh.siberia.client.dto.pipeline.PipelineDeploymentDTO;
 import com.shanhh.siberia.client.dto.task.TaskDTO;
 import com.shanhh.siberia.client.dto.task.TaskStepDTO;
 import com.shanhh.siberia.client.dto.task.TaskStepResult;
@@ -47,11 +45,9 @@ public class AppLockExecutor implements StepExecutor {
     @Override
     public void exec(WorkflowDTO workflow) {
         TaskDTO task = workflow.getTask();
-        PipelineDeploymentDTO deployment = task.getDeployment();
-        AppDTO app = deployment.getApp();
 
-        appService.updateLockStatus(app, task.getEnv(), lockStatus, task.getUpdateBy())
-                .orElseThrow(() -> new IllegalStateException(String.format("update lock status failed: %s, %s", deployment.getBuildNo(), task.getEnv())));
+        appService.updateLockStatus(task.getAppId(), task.getEnv(), lockStatus, task.getUpdateBy())
+                .orElseThrow(() -> new IllegalStateException(String.format("update lock status failed: %s, %s", task.getBuildNo(), task.getEnv())));
     }
 
     @Override

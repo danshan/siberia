@@ -20,6 +20,8 @@ public interface TaskService {
 
     List<TaskDTO> findTasksByStatus(TaskStatus status);
 
+    Optional<TaskDTO> loadTaskById(int taskId);
+
     Optional<TaskDTO> updateTaskStatusById(TaskDTO taskDTO, TaskStatus targetStatus);
 
     List<TaskStepDTO> findTaskStepsByTaskId(int taskId);
@@ -29,6 +31,8 @@ public interface TaskService {
     int startTaskById(int taskId, TaskStatus taskStatus);
 
     int endTaskById(int taskId, TaskStatus taskStatus);
+
+    Optional<TaskDTO> loadLastOkTask(TaskDTO currentTask);
 
     int updateTaskNodesById(int taskId, List<String> nodes);
 

@@ -1,6 +1,7 @@
 package com.shanhh.siberia.web.repo;
 
 import com.shanhh.siberia.client.dto.task.TaskStatus;
+import com.shanhh.siberia.web.repo.entity.Env;
 import com.shanhh.siberia.web.repo.entity.Task;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -17,8 +18,15 @@ public interface TaskRepo extends PagingAndSortingRepository<Task, Integer> {
 
     List<Task> findByStatus(TaskStatus status);
 
-    @Query("from Task where deployment.id = :deploymentId")
+    @Query("from Task where deploymentId = :deploymentId")
     List<Task> findStatusByDeploymentId(@Param("deploymentId") int deploymentId);
+
+    @Query("from Task where project=:project and module=:module and env=:env and status=:status and id < :id")
+    Task findLastTask(@Param("id") int id,
+                            @Param("project") String project,
+                            @Param("module") String module,
+                            @Param("env") Env env,
+                            @Param("status") TaskStatus status);
 
     @Modifying
     @Query("update Task set status=:taskStatus, startTime=current_timestamp, updateTime=current_time where id = :taskId")

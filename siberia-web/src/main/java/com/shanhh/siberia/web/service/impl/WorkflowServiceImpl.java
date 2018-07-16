@@ -3,11 +3,14 @@ package com.shanhh.siberia.web.service.impl;
 import com.google.common.collect.Lists;
 import com.shanhh.siberia.client.dto.app.AppDTO;
 import com.shanhh.siberia.client.dto.app.LockStatus;
-import com.shanhh.siberia.client.dto.pipeline.PipelineDeploymentDTO;
 import com.shanhh.siberia.client.dto.task.TaskDTO;
+import com.shanhh.siberia.client.dto.task.TaskRollbackReq;
 import com.shanhh.siberia.client.dto.task.TaskStatus;
 import com.shanhh.siberia.client.dto.workflow.StepExecutor;
 import com.shanhh.siberia.client.dto.workflow.WorkflowDTO;
+import com.shanhh.siberia.web.resource.errors.BadRequestAlertException;
+import com.shanhh.siberia.web.service.AppService;
+import com.shanhh.siberia.web.service.TaskService;
 import com.shanhh.siberia.web.service.WorkflowService;
 import com.shanhh.siberia.web.service.workflow.TaskStepRegisterFactory;
 import com.shanhh.siberia.web.service.workflow.WorkflowBuilder;
@@ -20,7 +23,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import javax.annotation.Resource;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author shanhonghao
@@ -30,13 +35,18 @@ import java.util.List;
 @Slf4j
 public class WorkflowServiceImpl implements WorkflowService {
 
+    @Resource
+    private TaskService taskService;
+    @Resource
+    private AppService appService;
+
     @Override
     @Transactional
-    public void startTaskWorkflow(TaskDTO task) {
+    public Optional<TaskDTO> startTaskWorkflow(TaskDTO task) {
         List<String> relatedUsers = Lists.newArrayList(task.getCreateBy());
 
-        PipelineDeploymentDTO deployment = task.getDeployment();
-        AppDTO app = deployment.getApp();
+        AppDTO app = appService.loadAppById(task.getId())
+                .orElseThrow(() -> new BadRequestAlertException("app not found", "task", "appId"));
 
         WorkflowBuilder workflowBuilder = WorkflowBuilder.getInstance();
 
@@ -49,7 +59,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 
         TaskStepRegisterFactory factory = new TaskStepRegisterFactory();
         TaskStepRegister register = factory.getRegister(app.getAppType());
-        register.registerDeploySteps(workflowBuilder, task, deployment);
+        register.registerDeploySteps(workflowBuilder, task);
 
         workflowBuilder
                 .register(new TaskEndExecutor(TaskStatus.OK))
@@ -73,6 +83,59 @@ public class WorkflowServiceImpl implements WorkflowService {
                 log.error("", t);
             }
         }
+        return Optional.ofNullable(task);
+    }
+
+    @Override
+    @Transactional
+    public Optional<TaskDTO> rollbackTaskById(TaskRollbackReq taskReq) {
+        TaskDTO task = taskService.loadTaskById(taskReq.getTaskId())
+                .orElseThrow(() -> new BadRequestAlertException("task not exists", "taskId", "taskId"));
+
+        TaskDTO previousTask = taskService.loadLastOkTask(task)
+                .orElseThrow(() -> new IllegalArgumentException("last success task not found"));
+
+        AppDTO app = appService.loadAppById(task.getId())
+                .orElseThrow(() -> new BadRequestAlertException("app not found", "task", "appId"));
+        List<String> relatedUsers = Lists.newArrayList(task.getCreateBy());
+
+        WorkflowBuilder workflowBuilder = WorkflowBuilder.getInstance()
+                .withTask(task)
+                // 修改task 状态为 running
+                .register(new TaskStartExecutor(TaskStatus.RUNNING))
+                // 锁定task环境
+                .register(new AppLockExecutor(LockStatus.LOCKED));
+        // 通知相关人员发布开始
+//                .register(new WechatMsgExecutor(context, relatedUsers, buildWxMsgTitle("回滚开始", task),
+//                        buildWxMsgContent(task), sibTaskStepService));
+
+        TaskStepRegisterFactory factory = new TaskStepRegisterFactory();
+        TaskStepRegister register = factory.getRegister(app.getAppType());
+        register.registerRollbackSteps(workflowBuilder, task, previousTask.getBuildNo());
+
+        workflowBuilder
+                .register(new TaskEndExecutor(TaskStatus.ROLLBACK))
+                // 解锁task环境
+                .register(new AppLockExecutor(LockStatus.UNLOCKED))
+                // 通知相关人员发布完成
+//                .register(new WechatMsgExecutor(context, relatedUsers, buildWxMsgTitle("回滚完成", task),
+//                        buildWxMsgContent(task), sibTaskStepService))
+                // 通知相关人员发布失败
+                .registerFailed(new TaskEndExecutor(TaskStatus.FAIL));
+//                .registerFailed(new WechatMsgExecutor(context, relatedUsers, buildWxMsgTitle("回滚失败", task),
+//                        buildWxMsgContent(task), sibTaskStepService));
+        WorkflowDTO workflow = workflowBuilder.build();
+
+        try {
+            startWorkflowStep(workflow, workflow.getStepChain());
+        } catch (Throwable throwable) {
+            try {
+                startWorkflowStep(workflow, workflow.getFailedChain());
+            } catch (Throwable t) {
+                log.error("", t);
+            }
+        }
+        return Optional.ofNullable(previousTask);
     }
 
     private void startWorkflowStep(WorkflowDTO workflow, List<StepExecutor> chain) throws Throwable {

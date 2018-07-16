@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.concurrent.Executor;
 
 /**
  * @author shanhonghao
@@ -23,26 +24,27 @@ public class ScheduleTasks {
     private TaskService taskService;
     @Resource
     private WorkflowService workflowService;
+    @Resource
+    private Executor taskExecutor;
 
     @Scheduled(cron = "0/3 * * * * ? ")   //每3秒执行一次
     public void checkCreatedTasks() {
         List<TaskDTO> tasks = taskService.findTasksByStatus(TaskStatus.CREATED);
 
         // 循环队列, 并执行上线操作
-        tasks.stream().forEach(this::startWorkflow);
+        tasks.stream().forEach(task ->
+                taskExecutor.execute(() -> taskService.updateTaskStatusById(task, TaskStatus.SERVICING)
+                        .ifPresent(targetTask -> {
+                            try {
+                                log.info("start task: {}", task.getId());
+                                workflowService.startTaskWorkflow(task);
+                                log.info("finish task: {}", task.getId());
+                            } catch (Exception e) {
+                                log.error("task interrupted", e);
+                                taskService.updateTaskStatusById(targetTask, TaskStatus.FAIL);
+                            }
+                        }))
+        );
     }
 
-    private void startWorkflow(TaskDTO task) {
-        taskService.updateTaskStatusById(task, TaskStatus.SERVICING)
-                .ifPresent(targetTask -> {
-                    try {
-                        log.info("start task: {}", task.getId());
-                        workflowService.startTaskWorkflow(task);
-                        log.info("finish task: {}", task.getId());
-                    } catch (Exception e) {
-                        log.error("task interrupted", e);
-                        taskService.updateTaskStatusById(targetTask, TaskStatus.FAIL);
-                    }
-                });
-    }
 }

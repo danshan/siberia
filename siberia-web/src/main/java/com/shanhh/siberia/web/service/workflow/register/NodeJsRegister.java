@@ -4,9 +4,7 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.shanhh.siberia.client.dto.app.AppConfigDTO;
-import com.shanhh.siberia.client.dto.app.AppDTO;
 import com.shanhh.siberia.client.dto.app.AppHostDTO;
-import com.shanhh.siberia.client.dto.pipeline.PipelineDeploymentDTO;
 import com.shanhh.siberia.client.dto.task.TaskDTO;
 import com.shanhh.siberia.client.dto.task.TaskStatus;
 import com.shanhh.siberia.core.SpringContextHolder;
@@ -29,13 +27,12 @@ import java.util.List;
 public class NodeJsRegister implements TaskStepRegister {
 
     @Override
-    public void registerDeploySteps(WorkflowBuilder builder, TaskDTO task, PipelineDeploymentDTO deployment) {
+    public void registerDeploySteps(WorkflowBuilder builder, TaskDTO task) {
         AppService appService = SpringContextHolder.getBean(AppService.class);
-        AppDTO app = deployment.getApp();
 
         List<String> toDeployHosts = Lists.newLinkedList();
         try {
-            AppHostDTO sibAppHostDTO = appService.loadAppHostByAppAndEnv(app.getId(), task.getEnv().getId()).orElse(new AppHostDTO());
+            AppHostDTO sibAppHostDTO = appService.loadAppHostByAppAndEnv(task.getAppId(), task.getEnv().getId()).orElse(new AppHostDTO());
             List<String> hosts = (sibAppHostDTO == null || sibAppHostDTO.getHosts() == null) ? Lists.newArrayList() : sibAppHostDTO.getHosts();
             toDeployHosts.addAll(hosts);
             log.info("task {}, affect hosts: {}", task.getId(), Joiner.on(",").join(toDeployHosts));
@@ -48,11 +45,11 @@ public class NodeJsRegister implements TaskStepRegister {
 
         builder.register(new TaskNodeUpdateExecutor(toDeployHosts));
 
-        registerSteps(builder, task, deployment, toDeployHosts, deployment.getBuildNo());
+        registerSteps(builder, task, toDeployHosts, task.getBuildNo());
     }
 
     @Override
-    public void registerRollbackSteps(WorkflowBuilder builder, TaskDTO task, PipelineDeploymentDTO deployment, int rollbackBuildNo) {
+    public void registerRollbackSteps(WorkflowBuilder builder, TaskDTO task, int rollbackBuildNo) {
         log.info("task {} rollback to {}, task={}", task.getId(), rollbackBuildNo, task);
 
         TaskService sibTaskService = SpringContextHolder.getBean(TaskService.class);
@@ -60,26 +57,26 @@ public class NodeJsRegister implements TaskStepRegister {
         memo.setRollbackVersion(rollbackBuildNo);
         sibTaskService.updateTaskStatusAndMemoById(task.getId(), TaskStatus.RUNNING, memo);
 
-        registerSteps(builder, task, deployment, task.getNodes(), rollbackBuildNo);
+        registerSteps(builder, task, task.getNodes(), rollbackBuildNo);
     }
 
-    private void registerSteps(WorkflowBuilder builder, TaskDTO task, PipelineDeploymentDTO deployment, List<String> toDeployHosts, int buildNo) {
+    private void registerSteps(WorkflowBuilder builder, TaskDTO task, List<String> toDeployHosts, int buildNo) {
         AppService appService = SpringContextHolder.getBean(AppService.class);
-        AppConfigDTO config = appService.loadConfigByEnv(deployment.getApp().getId(), task.getEnv().getId())
+        AppConfigDTO config = appService.loadConfigByEnv(task.getAppId(), task.getEnv().getId())
                 .orElseThrow(() -> new InternalServerErrorException("app config not found"));
         builder.register(new AnsibleExecutor("inventory",
                 "_app_nodejs_nodes_update.yml",
                 ImmutableMap.<String, Object>builder()
                         .put("buildno", buildNo)
                         .put("hosts", Joiner.on(",").join(toDeployHosts))
-                        .put("app", buildAppName(deployment.getApp()))
-                        .put("project", deployment.getApp().getProject())
-                        .put("module", deployment.getApp().getModule())
+                        .put("app", buildAppName(task))
+                        .put("project", task.getProject())
+                        .put("module", task.getModule())
                         .put("port", config.getContent().getOrDefault("SERVER_PORT", 80))
                         .build()));
     }
 
-    private String buildAppName(AppDTO app) {
-        return StringUtils.defaultIfBlank(app.getModule(), app.getProject());
+    private String buildAppName(TaskDTO task) {
+        return StringUtils.defaultIfBlank(task.getModule(), task.getProject());
     }
 }

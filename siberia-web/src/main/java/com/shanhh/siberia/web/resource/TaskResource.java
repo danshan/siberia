@@ -4,8 +4,10 @@ import com.codahale.metrics.annotation.Timed;
 import com.shanhh.siberia.client.base.BaseResponse;
 import com.shanhh.siberia.client.dto.task.TaskCreateReq;
 import com.shanhh.siberia.client.dto.task.TaskDTO;
+import com.shanhh.siberia.client.dto.task.TaskRollbackReq;
 import com.shanhh.siberia.web.resource.errors.InternalServerErrorException;
 import com.shanhh.siberia.web.service.TaskService;
+import com.shanhh.siberia.web.service.WorkflowService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -29,6 +31,8 @@ public class TaskResource {
 
     @Resource
     private TaskService taskService;
+    @Resource
+    private WorkflowService workflowService;
 
     private static final int LIMIT_MAX = 50;
     private static final String LIMIT_DEFAULT = "10";
@@ -58,6 +62,18 @@ public class TaskResource {
         Page<TaskDTO> pageInfo = taskService.paginateTasks(
                 Math.max(pageNum, 0), Math.min(pageSize, LIMIT_MAX));
         return new BaseResponse(pageInfo);
+    }
+
+    @Timed
+    @RequestMapping(value = "/rollback", method = RequestMethod.POST)
+    @ApiOperation(value = "rollback task", response = BaseResponse.class)
+    @ResponseStatus(HttpStatus.CREATED)
+    public BaseResponse<TaskDTO> rollbackTask(
+            @RequestBody TaskRollbackReq task
+    ) {
+        task.setCreateBy("sys");
+        return new BaseResponse<>(workflowService.rollbackTaskById(task)
+                .orElseThrow(() -> new InternalServerErrorException("create task failed")));
     }
 
 }

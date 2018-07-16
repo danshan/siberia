@@ -1,7 +1,6 @@
 package com.shanhh.siberia.web.service.workflow.register;
 
 
-import com.shanhh.siberia.client.dto.pipeline.PipelineDeploymentDTO;
 import com.shanhh.siberia.client.dto.task.TaskDTO;
 import com.shanhh.siberia.web.service.workflow.WorkflowBuilder;
 
@@ -14,7 +13,7 @@ public interface TaskStepRegister {
     /**
      * 注册上线发布流程
      */
-    void registerDeploySteps(WorkflowBuilder builder, TaskDTO task, PipelineDeploymentDTO deployment);
+    void registerDeploySteps(WorkflowBuilder builder, TaskDTO task);
 
 
     /**
@@ -22,5 +21,5 @@ public interface TaskStepRegister {
      *
      * @param rollbackBuildNo 回滚的版本号
      */
-    void registerRollbackSteps(WorkflowBuilder builder, TaskDTO task, PipelineDeploymentDTO deployment, int rollbackBuildNo);
+    void registerRollbackSteps(WorkflowBuilder builder, TaskDTO task, int rollbackBuildNo);
 }

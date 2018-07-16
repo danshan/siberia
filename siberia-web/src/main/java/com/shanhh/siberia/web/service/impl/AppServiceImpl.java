@@ -129,11 +129,11 @@ public class AppServiceImpl implements AppService {
     }
 
     @Override
-    public Optional<AppLockDTO> updateLockStatus(AppDTO app, EnvDTO env, LockStatus lockStatus, String operator) {
-        Preconditions.checkArgument(app != null, "app should not be empty");
+    public Optional<AppLockDTO> updateLockStatus(int appId, EnvDTO env, LockStatus lockStatus, String operator) {
+        Preconditions.checkArgument(appId > 0, "app should not be empty");
         Preconditions.checkArgument(env != null, "env should not be empty");
 
-        AppLock exists = appLockRepo.findByAppIdAndEnvId(app.getId(), env.getId());
+        AppLock exists = appLockRepo.findByAppIdAndEnvId(appId, env.getId());
         if (exists != null) {
             exists.setUpdateBy(operator);
             exists.setUpdateTime(new Date());
@@ -148,7 +148,7 @@ public class AppServiceImpl implements AppService {
             return Optional.ofNullable(result);
         } else {
             AppLock appLock = new AppLock();
-            appLock.setApp(AppConvertor.toPO(app));
+            appLock.setApp(appRepo.findOne(appId));
             appLock.setEnv(EnvConvertor.toPO(env));
             appLock.setLockStatus(lockStatus);
             appLock.setCreateBy(operator);

@@ -56,6 +56,15 @@ export default class TaskList extends PureComponent {
     });
   };
 
+  handleRollback = record => {
+    this.props.dispatch({
+      type: 'task/rollbackTask',
+      payload: {
+        taskId: record.id,
+      },
+    });
+  };
+
   render() {
     const { task: { taskList }, loading } = this.props;
 
@@ -81,11 +90,18 @@ export default class TaskList extends PureComponent {
     const columns = [
       {
         title: 'App',
-        dataIndex: 'deployment.app.name',
+        dataIndex: 'module',
+        render: (module, record) => {
+          if (module) {
+            return `${record.project}:${record.module}`;
+          } else {
+            return `${record.project}`;
+          }
+        },
       },
       {
         title: 'Build No.',
-        dataIndex: 'deployment.buildNo',
+        dataIndex: 'buildNo',
       },
       {
         title: 'Env',
@@ -115,6 +131,8 @@ export default class TaskList extends PureComponent {
             <a onClick={() => this.handleLog(record)}>Log</a>
             <Divider type="vertical" />
             <a href="">重新发布</a>
+            <Divider type="vertical" />
+            <a onClick={() => this.handleRollback(record)}>回滚</a>
           </Fragment>
         ),
       },

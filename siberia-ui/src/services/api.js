@@ -226,6 +226,13 @@ export async function createTask(params) {
   });
 }
 
+export async function rollbackTask(params) {
+  return request(`/api/tasks/rollback`, {
+    method: 'POST',
+    body: params,
+  });
+}
+
 // settings
 
 export async function findEnvList() {

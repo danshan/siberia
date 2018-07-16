@@ -3,15 +3,19 @@ package com.shanhh.siberia.web.service.impl;
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+import com.shanhh.siberia.client.dto.pipeline.PipelineDeploymentDTO;
 import com.shanhh.siberia.client.dto.task.*;
 import com.shanhh.siberia.web.config.WebSocketConfiguration;
 import com.shanhh.siberia.web.repo.EnvRepo;
-import com.shanhh.siberia.web.repo.PipelineDeploymentRepo;
 import com.shanhh.siberia.web.repo.TaskRepo;
 import com.shanhh.siberia.web.repo.TaskStepRepo;
+import com.shanhh.siberia.web.repo.convertor.EnvConvertor;
 import com.shanhh.siberia.web.repo.convertor.TaskConvertor;
+import com.shanhh.siberia.web.repo.entity.Env;
 import com.shanhh.siberia.web.repo.entity.Task;
 import com.shanhh.siberia.web.repo.entity.TaskStep;
+import com.shanhh.siberia.web.resource.errors.BadRequestAlertException;
+import com.shanhh.siberia.web.service.PipelineService;
 import com.shanhh.siberia.web.service.TaskService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -44,15 +48,22 @@ public class TaskServiceImpl implements TaskService {
     @Resource
     private EnvRepo envRepo;
     @Resource
-    private PipelineDeploymentRepo pipelineDeploymentRepo;
+    private PipelineService pipelineService;
 
     @Resource
     private SimpMessagingTemplate simpMessagingTemplate;
 
     @Override
     public Optional<TaskDTO> createTask(TaskCreateReq taskReq) {
+        PipelineDeploymentDTO deployment = pipelineService.loadPipelineDeploymentById(taskReq.getDeploymentId())
+                .orElseThrow(() -> new BadRequestAlertException("deployment not found", "task", "deploymentId"));
+
         Task task = new Task();
-        task.setDeployment(pipelineDeploymentRepo.findOne(taskReq.getDeploymentId()));
+        task.setDeploymentId(deployment.getId());
+        task.setBuildNo(deployment.getBuildNo());
+        task.setAppId(deployment.getApp().getId());
+        task.setProject(deployment.getApp().getProject());
+        task.setModule(deployment.getApp().getModule());
         task.setEnv(envRepo.findOne(taskReq.getEnvId()));
         task.setStatus(TaskStatus.CREATED);
         task.setCreateBy(taskReq.getCreateBy());
@@ -81,6 +92,11 @@ public class TaskServiceImpl implements TaskService {
     public List<TaskDTO> findTasksByStatus(TaskStatus status) {
         List<Task> tasks = taskRepo.findByStatus(status);
         return tasks.stream().map(TaskConvertor::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<TaskDTO> loadTaskById(int taskId) {
+        return Optional.ofNullable(TaskConvertor.toDTO(taskRepo.findOne(taskId)));
     }
 
     @Override
@@ -138,6 +154,24 @@ public class TaskServiceImpl implements TaskService {
         log.info("task status updated to {}, taskId={}", taskStatus, taskId);
         pushTaskUpdatedEvent(taskId, taskStatus);
         return result;
+    }
+
+
+
+    /**
+     * find last success task of same project / module / environment
+     *
+     * @param currentTask
+     * @return
+     */
+    @Override
+    public Optional<TaskDTO> loadLastOkTask(TaskDTO currentTask) {
+        Preconditions.checkNotNull(currentTask, "current task not exists");
+
+        Env env = EnvConvertor.toPO(currentTask.getEnv());
+        // 上一次的成功的发布
+        Task lastTask = taskRepo.findLastTask(currentTask.getId(), currentTask.getProject(), currentTask.getModule(), env, TaskStatus.OK);
+        return Optional.ofNullable(TaskConvertor.toDTO(lastTask));
     }
 
     private void pushTaskUpdatedEvent(int taskId, TaskStatus status) {
