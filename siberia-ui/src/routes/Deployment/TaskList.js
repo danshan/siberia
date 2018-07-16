@@ -65,6 +65,15 @@ export default class TaskList extends PureComponent {
     });
   };
 
+  handleRedeploy = record => {
+    this.props.dispatch({
+      type: 'task/redeployTask',
+      payload: {
+        taskId: record.id,
+      },
+    });
+  };
+
   render() {
     const { task: { taskList }, loading } = this.props;
 
@@ -88,6 +97,10 @@ export default class TaskList extends PureComponent {
     );
 
     const columns = [
+      {
+        title: '#',
+        dataIndex: 'id',
+      },
       {
         title: 'App',
         dataIndex: 'module',
@@ -125,12 +138,16 @@ export default class TaskList extends PureComponent {
         },
       },
       {
+        title: 'Create Time',
+        dataIndex: 'createTime',
+      },
+      {
         title: '操作',
         render: record => (
           <Fragment>
             <a onClick={() => this.handleLog(record)}>Log</a>
             <Divider type="vertical" />
-            <a href="">重新发布</a>
+            <a onClick={() => this.handleRedeploy(record)}>重新发布</a>
             <Divider type="vertical" />
             <a onClick={() => this.handleRollback(record)}>回滚</a>
           </Fragment>

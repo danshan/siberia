@@ -1,4 +1,4 @@
-import { createTask, paginateTaskList, rollbackTask } from '../services/api';
+import { createTask, paginateTaskList, rollbackTask, redeployTask } from '../services/api';
 
 export default {
   namespace: 'task',
@@ -33,6 +33,11 @@ export default {
 
     *rollbackTask({ payload }, { call }) {
       const response = yield call(rollbackTask, payload);
+      return response;
+    },
+
+    *redeployTask({ payload }, { call }) {
+      const response = yield call(redeployTask, payload);
       return response;
     },
   },

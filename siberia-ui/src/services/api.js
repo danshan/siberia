@@ -233,6 +233,13 @@ export async function rollbackTask(params) {
   });
 }
 
+export async function redeployTask(params) {
+  return request(`/api/tasks/redeploy`, {
+    method: 'POST',
+    body: params,
+  });
+}
+
 // settings
 
 export async function findEnvList() {

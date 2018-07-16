@@ -4,6 +4,7 @@ import com.codahale.metrics.annotation.Timed;
 import com.shanhh.siberia.client.base.BaseResponse;
 import com.shanhh.siberia.client.dto.task.TaskCreateReq;
 import com.shanhh.siberia.client.dto.task.TaskDTO;
+import com.shanhh.siberia.client.dto.task.TaskRedeployReq;
 import com.shanhh.siberia.client.dto.task.TaskRollbackReq;
 import com.shanhh.siberia.web.resource.errors.InternalServerErrorException;
 import com.shanhh.siberia.web.service.TaskService;
@@ -65,7 +66,7 @@ public class TaskResource {
     }
 
     @Timed
-    @RequestMapping(value = "/rollback", method = RequestMethod.POST)
+    @RequestMapping(value = "rollback", method = RequestMethod.POST)
     @ApiOperation(value = "rollback task", response = BaseResponse.class)
     @ResponseStatus(HttpStatus.CREATED)
     public BaseResponse<TaskDTO> rollbackTask(
@@ -73,7 +74,19 @@ public class TaskResource {
     ) {
         task.setCreateBy("sys");
         return new BaseResponse<>(workflowService.rollbackTaskById(task)
-                .orElseThrow(() -> new InternalServerErrorException("create task failed")));
+                .orElseThrow(() -> new InternalServerErrorException("rollback task failed")));
+    }
+
+    @Timed
+    @RequestMapping(value = "redeploy", method = RequestMethod.POST)
+    @ApiOperation(value = "redeploy task", response = BaseResponse.class)
+    @ResponseStatus(HttpStatus.CREATED)
+    public BaseResponse<TaskDTO> redeployTask(
+            @RequestBody TaskRedeployReq task
+    ) {
+        task.setCreateBy("sys");
+        return new BaseResponse<>(workflowService.redeployTaskById(task)
+                .orElseThrow(() -> new InternalServerErrorException("redeploy task failed")));
     }
 
 }

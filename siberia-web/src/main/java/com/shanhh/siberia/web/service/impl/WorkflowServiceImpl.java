@@ -3,9 +3,7 @@ package com.shanhh.siberia.web.service.impl;
 import com.google.common.collect.Lists;
 import com.shanhh.siberia.client.dto.app.AppDTO;
 import com.shanhh.siberia.client.dto.app.LockStatus;
-import com.shanhh.siberia.client.dto.task.TaskDTO;
-import com.shanhh.siberia.client.dto.task.TaskRollbackReq;
-import com.shanhh.siberia.client.dto.task.TaskStatus;
+import com.shanhh.siberia.client.dto.task.*;
 import com.shanhh.siberia.client.dto.workflow.StepExecutor;
 import com.shanhh.siberia.client.dto.workflow.WorkflowDTO;
 import com.shanhh.siberia.web.resource.errors.BadRequestAlertException;
@@ -136,6 +134,18 @@ public class WorkflowServiceImpl implements WorkflowService {
             }
         }
         return Optional.ofNullable(previousTask);
+    }
+
+    @Override
+    public Optional<TaskDTO> redeployTaskById(TaskRedeployReq task) {
+        TaskDTO exists = taskService.loadTaskById(task.getTaskId())
+                .orElseThrow(() -> new BadRequestAlertException("task not exists", "task", "taskId"));
+        TaskCreateReq createReq = new TaskCreateReq();
+        createReq.setDeploymentId(exists.getDeploymentId());
+        createReq.setEnvId(exists.getEnv().getId());
+        createReq.setCreateBy(task.getCreateBy());
+
+        return taskService.createTask(createReq);
     }
 
     private void startWorkflowStep(WorkflowDTO workflow, List<StepExecutor> chain) throws Throwable {
