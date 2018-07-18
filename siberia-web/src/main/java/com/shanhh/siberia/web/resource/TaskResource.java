@@ -6,7 +6,7 @@ import com.shanhh.siberia.client.dto.task.TaskCreateReq;
 import com.shanhh.siberia.client.dto.task.TaskDTO;
 import com.shanhh.siberia.client.dto.task.TaskRedeployReq;
 import com.shanhh.siberia.client.dto.task.TaskRollbackReq;
-import com.shanhh.siberia.web.resource.errors.InternalServerErrorException;
+import com.shanhh.siberia.web.resource.errors.SiberiaException;
 import com.shanhh.siberia.web.service.TaskService;
 import com.shanhh.siberia.web.service.WorkflowService;
 import io.swagger.annotations.Api;
@@ -47,7 +47,7 @@ public class TaskResource {
     ) {
         task.setCreateBy("sys");
         return new BaseResponse<>(taskService.createTask(task)
-                .orElseThrow(() -> new InternalServerErrorException("create task failed")));
+                .orElseThrow(() -> new SiberiaException("create task failed")));
     }
 
     @Timed
@@ -74,7 +74,7 @@ public class TaskResource {
     ) {
         task.setCreateBy("sys");
         return new BaseResponse<>(workflowService.rollbackTaskById(task)
-                .orElseThrow(() -> new InternalServerErrorException("rollback task failed")));
+                .orElseThrow(() -> new SiberiaException("rollback task failed")));
     }
 
     @Timed
@@ -86,7 +86,7 @@ public class TaskResource {
     ) {
         task.setCreateBy("sys");
         return new BaseResponse<>(workflowService.redeployTaskById(task)
-                .orElseThrow(() -> new InternalServerErrorException("redeploy task failed")));
+                .orElseThrow(() -> new SiberiaException("redeploy task failed")));
     }
 
 }

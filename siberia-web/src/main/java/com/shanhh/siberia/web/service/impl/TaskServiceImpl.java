@@ -3,6 +3,7 @@ package com.shanhh.siberia.web.service.impl;
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+import com.shanhh.siberia.client.dto.app.LockStatus;
 import com.shanhh.siberia.client.dto.pipeline.PipelineDeploymentDTO;
 import com.shanhh.siberia.client.dto.task.*;
 import com.shanhh.siberia.web.config.WebSocketConfiguration;
@@ -14,7 +15,7 @@ import com.shanhh.siberia.web.repo.convertor.TaskConvertor;
 import com.shanhh.siberia.web.repo.entity.Env;
 import com.shanhh.siberia.web.repo.entity.Task;
 import com.shanhh.siberia.web.repo.entity.TaskStep;
-import com.shanhh.siberia.web.resource.errors.BadRequestAlertException;
+import com.shanhh.siberia.web.service.AppService;
 import com.shanhh.siberia.web.service.PipelineService;
 import com.shanhh.siberia.web.service.TaskService;
 import lombok.extern.slf4j.Slf4j;
@@ -49,6 +50,8 @@ public class TaskServiceImpl implements TaskService {
     private EnvRepo envRepo;
     @Resource
     private PipelineService pipelineService;
+    @Resource
+    private AppService appService;
 
     @Resource
     private SimpMessagingTemplate simpMessagingTemplate;
@@ -56,7 +59,9 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public Optional<TaskDTO> createTask(TaskCreateReq taskReq) {
         PipelineDeploymentDTO deployment = pipelineService.loadPipelineDeploymentById(taskReq.getDeploymentId())
-                .orElseThrow(() -> new BadRequestAlertException("deployment not found", "task", "deploymentId"));
+                .orElseThrow(() -> new IllegalArgumentException("deployment not found"));
+        appService.loadLockByApp(deployment.getApp().getId(), taskReq.getEnvId())
+                .ifPresent(lock -> Preconditions.checkState(lock.getLockStatus() == LockStatus.UNLOCKED, "app is locked"));
 
         Task task = new Task();
         task.setDeploymentId(deployment.getId());

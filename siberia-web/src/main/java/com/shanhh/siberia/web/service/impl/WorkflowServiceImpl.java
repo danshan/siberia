@@ -6,7 +6,6 @@ import com.shanhh.siberia.client.dto.app.LockStatus;
 import com.shanhh.siberia.client.dto.task.*;
 import com.shanhh.siberia.client.dto.workflow.StepExecutor;
 import com.shanhh.siberia.client.dto.workflow.WorkflowDTO;
-import com.shanhh.siberia.web.resource.errors.BadRequestAlertException;
 import com.shanhh.siberia.web.service.AppService;
 import com.shanhh.siberia.web.service.TaskService;
 import com.shanhh.siberia.web.service.WorkflowService;
@@ -44,7 +43,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         List<String> relatedUsers = Lists.newArrayList(task.getCreateBy());
 
         AppDTO app = appService.loadAppById(task.getId())
-                .orElseThrow(() -> new BadRequestAlertException("app not found", "task", "appId"));
+                .orElseThrow(() -> new IllegalArgumentException("app not found"));
 
         WorkflowBuilder workflowBuilder = WorkflowBuilder.getInstance();
 
@@ -88,13 +87,13 @@ public class WorkflowServiceImpl implements WorkflowService {
     @Transactional
     public Optional<TaskDTO> rollbackTaskById(TaskRollbackReq taskReq) {
         TaskDTO task = taskService.loadTaskById(taskReq.getTaskId())
-                .orElseThrow(() -> new BadRequestAlertException("task not exists", "taskId", "taskId"));
+                .orElseThrow(() -> new IllegalArgumentException("task not exists"));
 
         TaskDTO previousTask = taskService.loadLastOkTask(task)
                 .orElseThrow(() -> new IllegalArgumentException("last success task not found"));
 
         AppDTO app = appService.loadAppById(task.getId())
-                .orElseThrow(() -> new BadRequestAlertException("app not found", "task", "appId"));
+                .orElseThrow(() -> new IllegalArgumentException("app not found"));
         List<String> relatedUsers = Lists.newArrayList(task.getCreateBy());
 
         WorkflowBuilder workflowBuilder = WorkflowBuilder.getInstance()
@@ -139,7 +138,7 @@ public class WorkflowServiceImpl implements WorkflowService {
     @Override
     public Optional<TaskDTO> redeployTaskById(TaskRedeployReq task) {
         TaskDTO exists = taskService.loadTaskById(task.getTaskId())
-                .orElseThrow(() -> new BadRequestAlertException("task not exists", "task", "taskId"));
+                .orElseThrow(() -> new IllegalArgumentException("task not exists"));
         TaskCreateReq createReq = new TaskCreateReq();
         createReq.setDeploymentId(exists.getDeploymentId());
         createReq.setEnvId(exists.getEnv().getId());

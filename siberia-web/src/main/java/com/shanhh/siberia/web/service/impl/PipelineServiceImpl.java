@@ -12,7 +12,6 @@ import com.shanhh.siberia.web.repo.PipelineRepo;
 import com.shanhh.siberia.web.repo.convertor.PipelineConvertor;
 import com.shanhh.siberia.web.repo.entity.Pipeline;
 import com.shanhh.siberia.web.repo.entity.PipelineDeployment;
-import com.shanhh.siberia.web.resource.errors.BadRequestAlertException;
 import com.shanhh.siberia.web.service.AppService;
 import com.shanhh.siberia.web.service.PipelineService;
 import com.shanhh.siberia.web.service.TaskService;
@@ -109,7 +108,7 @@ public class PipelineServiceImpl implements PipelineService {
 
     @Override
     public Optional<PipelineDTO> updatePipelineById(PipelineUpdateReq request) {
-        PipelineDTO pipeline = loadPipeline(request.getPipelineId()).orElseThrow(() -> new BadRequestAlertException("pipeline not exists", "pipelineId", "pipelineId"));
+        PipelineDTO pipeline = loadPipeline(request.getPipelineId()).orElseThrow(() -> new IllegalArgumentException("pipeline not exists"));
         pipeline.setTitle(StringUtils.trimToEmpty(request.getTitle()));
         pipeline.setDescription(StringUtils.trimToEmpty(request.getDescription()));
         pipeline.setUpdateBy(request.getUpdateBy());
@@ -123,7 +122,7 @@ public class PipelineServiceImpl implements PipelineService {
 
     @Override
     public Optional<PipelineDTO> updatePipelineStatusById(PipelineStatusUpdateReq request) {
-        PipelineDTO pipeline = loadPipeline(request.getPipelineId()).orElseThrow(() -> new BadRequestAlertException("pipeline not exists", "pipelineId", "pipelineId"));
+        PipelineDTO pipeline = loadPipeline(request.getPipelineId()).orElseThrow(() -> new IllegalArgumentException("pipeline not exists"));
         pipeline.setStatus(request.getStatus());
         pipeline.setUpdateBy(request.getUpdateBy());
         pipeline.setUpdateTime(new Date());
@@ -137,7 +136,7 @@ public class PipelineServiceImpl implements PipelineService {
     @Override
     public Optional<PipelineDeploymentDTO> createPipelineDeployment(PipelineDeploymentCreateReq request) {
         AppDTO app = appService.loadAppByModule(request.getProject(), request.getModule())
-                .orElseThrow(() -> new BadRequestAlertException("app not found", "request", "module"));
+                .orElseThrow(() -> new IllegalArgumentException("app not found"));
         PipelineDeploymentDTO deployment = new PipelineDeploymentDTO();
         deployment.setPipelineId(request.getPipelineId());
         deployment.setBuildNo(request.getBuildNo());

@@ -9,7 +9,6 @@ import com.shanhh.siberia.web.repo.*;
 import com.shanhh.siberia.web.repo.convertor.AppConvertor;
 import com.shanhh.siberia.web.repo.convertor.EnvConvertor;
 import com.shanhh.siberia.web.repo.entity.*;
-import com.shanhh.siberia.web.resource.errors.BadRequestAlertException;
 import com.shanhh.siberia.web.service.AppService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -85,7 +84,7 @@ public class AppServiceImpl implements AppService {
 
     @Override
     public Optional<AppDTO> updateAppById(AppDTO app) {
-        AppDTO exists = this.loadAppById(app.getId()).orElseThrow(() -> new BadRequestAlertException("app not exists", "app", "appId"));
+        AppDTO exists = this.loadAppById(app.getId()).orElseThrow(() -> new IllegalArgumentException("app not exists"));
         exists.setProject(app.getProject());
         exists.setModule(app.getModule());
         exists.setUpdateTime(new Date());
@@ -96,7 +95,7 @@ public class AppServiceImpl implements AppService {
 
     @Override
     public Optional<AppDTO> deleteAppById(int appId) {
-        AppDTO app = this.loadAppById(appId).orElseThrow(() -> new BadRequestAlertException("app not exists", "appId", "appId"));
+        AppDTO app = this.loadAppById(appId).orElseThrow(() -> new IllegalArgumentException("app not exists"));
         app.setDeleted(true);
         app.setUpdateTime(new Date());
         App result = appRepo.save(AppConvertor.toPO(app));
@@ -126,6 +125,11 @@ public class AppServiceImpl implements AppService {
         }
 
         return appLocks;
+    }
+
+    @Override
+    public Optional<AppLockDTO> loadLockByApp(int appId, int envId) {
+        return Optional.ofNullable(AppConvertor.toDTO(appLockRepo.findByAppIdAndEnvId(appId, envId)));
     }
 
     @Override

@@ -26,17 +26,19 @@ function checkStatus(response) {
   }
   let errortext = codeMessage[response.status] || response.statusText;
   response.json().then(body => {
-    errortext = body.detail || errortext;
+    errortext = body.respCode || errortext;
     notification.error({
-      message: `请求错误 ${response.status}: ${response.url}`,
-      description: errortext,
+      message: `请求错误 ${body.respCode.code}: ${response.url}`,
+      description: body.respCode.message,
     });
   });
 
-  const error = new Error(errortext);
-  error.name = response.status;
-  error.response = response;
-  throw error;
+  if (response.status >= 500) {
+    const error = new Error(errortext);
+    error.name = response.status;
+    error.response = response;
+    throw error;
+  }
 }
 
 /**

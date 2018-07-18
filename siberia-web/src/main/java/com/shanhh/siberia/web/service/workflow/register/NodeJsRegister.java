@@ -8,7 +8,7 @@ import com.shanhh.siberia.client.dto.app.AppHostDTO;
 import com.shanhh.siberia.client.dto.task.TaskDTO;
 import com.shanhh.siberia.client.dto.task.TaskStatus;
 import com.shanhh.siberia.core.SpringContextHolder;
-import com.shanhh.siberia.web.resource.errors.InternalServerErrorException;
+import com.shanhh.siberia.web.resource.errors.SiberiaException;
 import com.shanhh.siberia.web.service.AppService;
 import com.shanhh.siberia.web.service.TaskService;
 import com.shanhh.siberia.web.service.workflow.WorkflowBuilder;
@@ -63,7 +63,7 @@ public class NodeJsRegister implements TaskStepRegister {
     private void registerSteps(WorkflowBuilder builder, TaskDTO task, List<String> toDeployHosts, int buildNo) {
         AppService appService = SpringContextHolder.getBean(AppService.class);
         AppConfigDTO config = appService.loadConfigByEnv(task.getAppId(), task.getEnv().getId())
-                .orElseThrow(() -> new InternalServerErrorException("app config not found"));
+                .orElseThrow(() -> new IllegalArgumentException("app config not found"));
         builder.register(new AnsibleExecutor("inventory",
                 "_app_nodejs_nodes_update.yml",
                 ImmutableMap.<String, Object>builder()

@@ -12,7 +12,7 @@ import com.shanhh.siberia.client.dto.app.AppHostDTO;
 import com.shanhh.siberia.client.dto.task.TaskDTO;
 import com.shanhh.siberia.client.dto.task.TaskStatus;
 import com.shanhh.siberia.core.SpringContextHolder;
-import com.shanhh.siberia.web.resource.errors.InternalServerErrorException;
+import com.shanhh.siberia.web.resource.errors.SiberiaException;
 import com.shanhh.siberia.web.service.AppService;
 import com.shanhh.siberia.web.service.TaskService;
 import com.shanhh.siberia.web.service.workflow.WorkflowBuilder;
@@ -71,7 +71,7 @@ public class SpringCloudRegister implements TaskStepRegister {
         try {
             AppService appService = SpringContextHolder.getBean(AppService.class);
             AppConfigDTO config = appService.loadConfigByEnv(task.getAppId(), task.getEnv().getId())
-                    .orElseThrow(() -> new InternalServerErrorException("app config not found"));
+                    .orElseThrow(() -> new IllegalArgumentException("app config not found"));
             builder.register(new AnsibleExecutor("inventory",
                     "_app_springcloud_nodes_update.yml",
                     ImmutableMap.<String, Object>builder()
@@ -84,7 +84,7 @@ public class SpringCloudRegister implements TaskStepRegister {
                             .put("port", config.getContent().getOrDefault("SERVER_PORT", 8080))
                             .build()));
         } catch (Exception e) {
-            throw new InternalServerErrorException(String.format("task %s, register spring cloud failed, %s, %s", task.getId(), task, e.getMessage()));
+            throw new SiberiaException(String.format("task %s, register spring cloud failed, %s, %s", task.getId(), task, e.getMessage()));
         }
     }
 
@@ -97,7 +97,7 @@ public class SpringCloudRegister implements TaskStepRegister {
 
         AppService appService = SpringContextHolder.getBean(AppService.class);
         Map<String, Object> configs = appService.loadConfigByEnv(task.getAppId(), task.getEnv().getId())
-                .orElseThrow(() -> new InternalServerErrorException("app config not found"))
+                .orElseThrow(() -> new IllegalArgumentException("app config not found"))
                 .getContent();
 
         PropertiesConfiguration defaultConfig = new PropertiesConfiguration(Resources.getResource("templates/spring-boot.boot.properties"));

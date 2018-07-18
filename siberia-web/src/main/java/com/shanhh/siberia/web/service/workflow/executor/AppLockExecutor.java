@@ -8,7 +8,7 @@ import com.shanhh.siberia.client.dto.task.TaskStepResult;
 import com.shanhh.siberia.client.dto.workflow.StepExecutor;
 import com.shanhh.siberia.client.dto.workflow.WorkflowDTO;
 import com.shanhh.siberia.core.SpringContextHolder;
-import com.shanhh.siberia.web.resource.errors.InternalServerErrorException;
+import com.shanhh.siberia.web.resource.errors.SiberiaException;
 import com.shanhh.siberia.web.service.AppService;
 import com.shanhh.siberia.web.service.TaskService;
 import lombok.AllArgsConstructor;
@@ -61,7 +61,7 @@ public class AppLockExecutor implements StepExecutor {
                 TaskStepResult.OK,
                 detail,
                 task.getUpdateBy())
-                .orElseThrow(() -> new InternalServerErrorException(String.format("create step failed, taskId=%s, step=%s, detail=%s", task.getId(), step, detail)));
+                .orElseThrow(() -> new SiberiaException(String.format("create step failed, taskId=%s, step=%s, detail=%s", task.getId(), step, detail)));
     }
 
     @Override
@@ -75,7 +75,7 @@ public class AppLockExecutor implements StepExecutor {
                 TaskStepResult.ERROR,
                 detail,
                 task.getUpdateBy())
-                .orElseThrow(() -> new InternalServerErrorException(String.format("create step failed, taskId=%s, step=%s, detail=%s", task.getId(), step, detail)));
+                .orElseThrow(() -> new SiberiaException(String.format("create step failed, taskId=%s, step=%s, detail=%s", task.getId(), step, detail)));
         throw throwable;
     }
 }
