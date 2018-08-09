@@ -75,7 +75,14 @@ export default function request(url, options) {
       Object.keys(newOptions.body).forEach(val => {
         finalUrl = `${finalUrl}${val}=${newOptions.body[val]}&`;
       });
+      if (!finalUrl.endsWith('&')) {
+        finalUrl = `${finalUrl}&`;
+      }
+      finalUrl = `${finalUrl}&_t=${new Date().getTime()}`;
     }
+  }
+  if (newOptions.method === 'GET' || newOptions.method === 'HEAD') {
+    delete newOptions.body;
   }
 
   return fetch(finalUrl, newOptions)
