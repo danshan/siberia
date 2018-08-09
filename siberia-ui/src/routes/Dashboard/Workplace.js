@@ -70,7 +70,8 @@ const members = [
   },
 ];
 
-@connect(({ project, activities, chart, loading }) => ({
+@connect(({ user, project, activities, chart, loading }) => ({
+  user,
   project,
   activities,
   chart,
@@ -80,6 +81,10 @@ const members = [
 export default class Workplace extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
+    dispatch({
+      type: 'user/fetchCurrent',
+    });
+
     dispatch({
       type: 'project/fetchNotice',
     });
@@ -135,6 +140,7 @@ export default class Workplace extends PureComponent {
 
   render() {
     const {
+      user: { currentUser },
       project: { notice },
       projectLoading,
       activitiesLoading,
@@ -144,14 +150,13 @@ export default class Workplace extends PureComponent {
     const pageHeaderContent = (
       <div className={styles.pageHeaderContent}>
         <div className={styles.avatar}>
-          <Avatar
-            size="large"
-            src="https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png"
-          />
+          <Avatar size="large" src={currentUser.avatar} />
         </div>
         <div className={styles.content}>
-          <div className={styles.contentTitle}>早安，曲丽丽，祝你开心每一天！</div>
-          <div>交互专家 | 蚂蚁金服－某某某事业群－某某平台部－某某技术部－UED</div>
+          <div className={styles.contentTitle}>早安，{currentUser.name}，祝你开心每一天！</div>
+          <div>
+            {currentUser.position} - {currentUser.jobTitle}
+          </div>
         </div>
       </div>
     );

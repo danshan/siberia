@@ -53,6 +53,11 @@ public class PipelineServiceImpl implements PipelineService {
 
     @Override
     public Page<PipelineDTO> paginatePipelines(int pageNum, int pageSize, PipelineStatus status) {
+        return this.paginatePipelines(pageNum, pageSize, status, null);
+    }
+
+    @Override
+    public Page<PipelineDTO> paginatePipelines(int pageNum, int pageSize, PipelineStatus status, String createBy) {
         List<PipelineStatus> statusVals = Stream.of(PipelineStatus.values())
                 .filter(s -> s != PipelineStatus.UNKNOWN)
                 .collect(Collectors.toList());

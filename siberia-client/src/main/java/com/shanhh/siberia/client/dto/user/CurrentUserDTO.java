@@ -17,12 +17,16 @@ public class CurrentUserDTO implements Serializable {
     private String id;
     private String name;
     private String avatar;
+    private String jobTitle;
+    private String position;
 
     public static CurrentUserDTO mock() {
         CurrentUserDTO mock = new CurrentUserDTO();
         mock.setId("0009849");
         mock.setName("FuckGFW");
         mock.setAvatar("https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png");
+        mock.setJobTitle("Java 架构师");
+        mock.setPosition("技术部 - 公共平台研发中心");
         return mock;
     }
 }

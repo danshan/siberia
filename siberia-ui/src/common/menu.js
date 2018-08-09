@@ -6,6 +6,7 @@ const menuData = [
     icon: 'dashboard',
     path: 'dashboard',
     children: [
+      /*
       {
         name: '分析页',
         path: 'analysis',
@@ -14,6 +15,7 @@ const menuData = [
         name: '监控页',
         path: 'monitor',
       },
+      */
       {
         name: '工作台',
         path: 'workplace',
@@ -53,6 +55,7 @@ const menuData = [
       },
     ],
   },
+  /*
   {
     name: '表单页',
     icon: 'form',
@@ -185,6 +188,7 @@ const menuData = [
       },
     ],
   },
+  */
 ];
 
 function formatter(data, parentPath = '/', parentAuthority) {

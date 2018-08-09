@@ -16,6 +16,8 @@ public interface PipelineService {
 
     Page<PipelineDTO> paginatePipelines(int pageNum, int pageSize, PipelineStatus status);
 
+    Page<PipelineDTO> paginatePipelines(int pageNum, int pageSize, PipelineStatus status, String createBy);
+
     Optional<PipelineDTO> loadPipeline(int pipelineId);
 
     Optional<PipelineDTO> createPipeline(String title, String description, String createBy);

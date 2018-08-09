@@ -19,7 +19,7 @@ export default {
     *fetchCurrent(_, { call, put }) {
       const response = yield call(queryCurrent);
       yield put({
-        type: 'saveCurrentUser',
+        type: 'currentUser',
         payload: response,
       });
     },
@@ -32,10 +32,10 @@ export default {
         list: action.payload,
       };
     },
-    saveCurrentUser(state, action) {
+    currentUser(state, action) {
       return {
         ...state,
-        currentUser: action.payload,
+        currentUser: action.payload.data,
       };
     },
     changeNotifyCount(state, action) {

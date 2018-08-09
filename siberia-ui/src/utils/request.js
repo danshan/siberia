@@ -28,8 +28,8 @@ function checkStatus(response) {
   response.json().then(body => {
     errortext = body.respCode || errortext;
     notification.error({
-      message: `请求错误 ${body.respCode.code}: ${response.url}`,
-      description: body.respCode.message,
+      message: `请求错误 ${body.respCode ? body.respCode.code : 404}: ${response.url}`,
+      description: body.respCode ? body.respCode.message : codeMessage['404'],
     });
   });
 

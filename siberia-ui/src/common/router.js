@@ -79,7 +79,7 @@ export const getRouterData = app => {
       component: dynamicWrapper(app, ['monitor'], () => import('../routes/Dashboard/Monitor')),
     },
     '/dashboard/workplace': {
-      component: dynamicWrapper(app, ['project', 'activities', 'chart'], () =>
+      component: dynamicWrapper(app, ['user', 'project', 'activities', 'chart'], () =>
         import('../routes/Dashboard/Workplace')
       ),
       // hideInBreadcrumb: true,

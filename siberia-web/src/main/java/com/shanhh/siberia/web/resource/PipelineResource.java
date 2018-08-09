@@ -36,7 +36,7 @@ public class PipelineResource {
     private static final String LIMIT_DEFAULT = "10";
 
     @Timed
-    @RequestMapping(method = RequestMethod.GET)
+    @GetMapping
     @ApiOperation(value = "paginate pipelines", response = BaseResponse.class)
     public BaseResponse paginatePipelines(
             @ApiParam(value = "start page index", required = false, defaultValue = "0")
@@ -46,7 +46,10 @@ public class PipelineResource {
             @RequestParam(value = "pageSize", required = false, defaultValue = LIMIT_DEFAULT) int pageSize,
 
             @ApiParam(value = "pipepline status", required = false, defaultValue = "0")
-            @RequestParam(value = "status", required = false, defaultValue = "0") int status
+            @RequestParam(value = "status", required = false, defaultValue = "0") int status,
+
+            @ApiParam(value = "create by", required = false, defaultValue = "")
+            @RequestParam(value = "createBy", required = false, defaultValue = "0") String createBy
     ) {
         Page<PipelineDTO> pageInfo = pipelineService.paginatePipelines(
                 Math.max(pageNum, 0), Math.min(pageSize, LIMIT_MAX), PipelineStatus.of(status));
@@ -54,7 +57,7 @@ public class PipelineResource {
     }
 
     @Timed
-    @RequestMapping(value = "{pipelineId}", method = RequestMethod.GET)
+    @GetMapping(value = "{pipelineId}")
     @ApiOperation(value = "paginate pipelines", response = BaseResponse.class)
     public BaseResponse<PipelineDTO> loadPipeline(
             @ApiParam(value = "pipeline id", required = true)
@@ -65,7 +68,7 @@ public class PipelineResource {
 
     @Timed
     @RequestMapping(value = "{pipelineId}", method = RequestMethod.PUT)
-    @ApiOperation(value = "paginate pipelines", response = BaseResponse.class)
+    @ApiOperation(value = "update pipeline by id", response = BaseResponse.class)
     public BaseResponse<PipelineDTO> updatePipelineById(
             @ApiParam(value = "pipeline id", required = true)
             @PathVariable("pipelineId") int pipelineId,
